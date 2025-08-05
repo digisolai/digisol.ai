@@ -19,30 +19,31 @@ import {
   Text,
   Box,
 } from '@chakra-ui/react';
+import { FiDollarSign, FiInfo, FiTarget } from 'react-icons/fi';
 
 interface BudgetingModalsProps {
   // Budget Modal
   isBudgetModalOpen: boolean;
   onBudgetModalClose: () => void;
-  budgetForm: unknown;
-  setBudgetForm: (form: unknown) => void;
+  budgetForm: any;
+  setBudgetForm: (form: any) => void;
   handleBudgetSubmit: () => void;
   submitting: boolean;
-  categories: unknown[];
+  categories: any[];
 
   // Expense Modal
   isExpenseModalOpen: boolean;
   onExpenseModalClose: () => void;
-  expenseForm: unknown;
-  setExpenseForm: (form: unknown) => void;
+  expenseForm: any;
+  setExpenseForm: (form: any) => void;
   handleExpenseSubmit: () => void;
-  budgets: unknown[];
+  budgets: any[];
 
   // Goal Modal
   isGoalModalOpen: boolean;
   onGoalModalClose: () => void;
-  goalForm: unknown;
-  setGoalForm: (form: unknown) => void;
+  goalForm: any;
+  setGoalForm: (form: any) => void;
   handleGoalSubmit: () => void;
 }
 

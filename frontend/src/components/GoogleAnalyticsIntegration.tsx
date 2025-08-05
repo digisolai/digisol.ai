@@ -23,7 +23,7 @@ import {
   FormControl,
   FormLabel,
 } from '@chakra-ui/react';
-import {FiGlobe} from 'react-icons/fi';
+import {FiGlobe, FiUsers, FiTrendingUp, FiEye} from 'react-icons/fi';
 
 interface GoogleAnalyticsData {
   propertyId: string;

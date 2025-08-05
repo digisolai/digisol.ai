@@ -110,7 +110,7 @@ const GanttChart: React.FC<GanttChartProps> = ({ projectName = "Project Timeline
                       <Text fontSize="sm">{task}</Text>
                     </Td>
                     {months.map((month, monthIndex) => (
-                      month.weeks.map(() => (
+                      month.weeks.map((_, weekIndex) => (
                         <Td key={`${monthIndex}-${weekIndex}`} p={1} border="1px solid" borderColor="gray.200">
                           {renderWeekCell(taskIndex, weekIndex)}
                         </Td>

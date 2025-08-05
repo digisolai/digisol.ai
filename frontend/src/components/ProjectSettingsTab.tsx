@@ -28,7 +28,6 @@ const ProjectSettingsTab: React.FC<ProjectSettingsTabProps> = ({ project, onProj
   const [formData, setFormData] = useState({
     name: project.name,
     description: project.description,
-    project_type: project.project_type,
     start_date: project.start_date,
     end_date: project.end_date,
     status: project.status,

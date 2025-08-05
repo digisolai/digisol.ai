@@ -18,7 +18,7 @@ import {
 } from "@chakra-ui/react";
 import { Layout } from "../components/Layout";
 import api from "../services/api";
-import {FiCpu, FiBarChart, FiGlobe, FiBook} from "react-icons/fi";
+import {FiCpu, FiBarChart, FiGlobe, FiBook, FiZap, FiTrendingUp, FiUsers, FiSettings} from "react-icons/fi";
 
 interface AIProfile {
   id: string;

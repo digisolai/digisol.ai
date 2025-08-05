@@ -37,6 +37,16 @@ import {
   Thead,
   Tr,
   Th,
+  Tbody,
+  Td,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+  Textarea,
 } from '@chakra-ui/react';
 import {
   FiGlobe, FiSend, FiLock, FiUnlock, FiEye, FiCheckCircle, FiXCircle,

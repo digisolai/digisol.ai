@@ -82,7 +82,7 @@ export const AnalyticsCharts: React.FC<AnalyticsChartsProps> = ({
               fill="#8884d8"
               dataKey="value"
             >
-              {data.map(() => (
+              {data.map((_, index) => (
                 <Cell key={`cell-${index}`} fill={colors[index % colors.length]} />
               ))}
             </Pie>

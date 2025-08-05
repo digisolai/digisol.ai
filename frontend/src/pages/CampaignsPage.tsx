@@ -115,10 +115,6 @@ import {
   OrderedList,
   UnorderedList,
   ListItem as ChakraListItem,
-  DefinitionList,
-  DefinitionTerm,
-  DefinitionDescription,
-  Blockquote,
   AlertTitle,
   AlertDescription,
   CloseButton,
@@ -2042,10 +2038,10 @@ export default function CampaignsPage() {
                               <Text fontWeight="medium" mb={2}>Action Items:</Text>
                               <List spacing={1}>
                                 {recommendation.action_items.map((item, idx) => (
-                                  <ListItem key={idx} fontSize="sm">
+                                  <ChakraListItem key={idx} fontSize="sm">
                                     <ListIcon as={FiCheck} color="green.500" />
                                     {item}
-                                  </ListItem>
+                                  </ChakraListItem>
                                 ))}
                               </List>
                             </Box>
@@ -2146,10 +2142,10 @@ export default function CampaignsPage() {
                                     </Text>
                                     <List spacing={1} fontSize="xs">
                                       {template.features.slice(0, 3).map((feature, idx) => (
-                                        <ListItem key={idx}>
+                                        <ChakraListItem key={idx}>
                                           <ListIcon as={FiCheck} color="green.500" />
                                           {feature}
-                                        </ListItem>
+                                        </ChakraListItem>
                                       ))}
                                       {template.features.length > 3 && (
                                         <Text fontSize="xs" color="gray.500">
@@ -2423,7 +2419,7 @@ export default function CampaignsPage() {
                   <Heading size="md" mb={2}>Conversion Goals</Heading>
                   <List spacing={2}>
                     {selectedCampaignForDetail?.conversion_goals.map((goal) => (
-                      <ListItem key={goal.id}>
+                      <ChakraListItem key={goal.id}>
                         <HStack justify="space-between" align="center">
                           <Text fontWeight="medium">{goal.name}</Text>
                           <Badge colorScheme="purple" variant="subtle">
@@ -2442,7 +2438,7 @@ export default function CampaignsPage() {
                             <StatNumber>{goal.achieved || 0}</StatNumber>
                           </Stat>
                         </HStack>
-                      </ListItem>
+                      </ChakraListItem>
                     ))}
                   </List>
                 </Box>
@@ -2451,7 +2447,7 @@ export default function CampaignsPage() {
                   <Heading size="md" mb={2}>Catalyst Recommendations</Heading>
                   <List spacing={2}>
                     {selectedCampaignForDetail?.catalyst_recommendations.map((recommendation) => (
-                      <ListItem key={recommendation.id}>
+                      <ChakraListItem key={recommendation.id}>
                         <HStack justify="space-between" align="center">
                           <VStack align="start" spacing={0}>
                             <Text fontWeight="medium">{recommendation.title}</Text>
@@ -2485,14 +2481,14 @@ export default function CampaignsPage() {
                           <Text fontWeight="medium" mb={1}>Action Items:</Text>
                           <List spacing={1}>
                             {recommendation.action_items.map((item, idx) => (
-                              <ListItem key={idx} fontSize="sm">
+                              <ChakraListItem key={idx} fontSize="sm">
                                 <ListIcon as={FiCheck} color="green.500" />
                                 {item}
-                              </ListItem>
+                              </ChakraListItem>
                             ))}
                           </List>
                         </Box>
-                      </ListItem>
+                      </ChakraListItem>
                     ))}
                   </List>
                 </Box>
@@ -2501,7 +2497,7 @@ export default function CampaignsPage() {
                   <Heading size="md" mb={2}>Creative Assets</Heading>
                   <List spacing={2}>
                     {selectedCampaignForDetail?.creative_assets?.map((asset) => (
-                      <ListItem key={asset.id}>
+                      <ChakraListItem key={asset.id}>
                         <HStack justify="space-between" align="center">
                           <VStack align="start" spacing={0}>
                             <Text fontWeight="medium">{asset.name}</Text>
@@ -2511,7 +2507,7 @@ export default function CampaignsPage() {
                             <FiDownload />
                           </Button>
                         </HStack>
-                      </ListItem>
+                      </ChakraListItem>
                     ))}
                   </List>
                 </Box>
@@ -2672,7 +2668,7 @@ export default function CampaignsPage() {
                   <Heading size="md" mb={2}>Insights</Heading>
                   <List spacing={2}>
                     {selectedCampaignForDetail?.active_insights > 0 && (
-                      <ListItem>
+                      <ChakraListItem>
                         <HStack justify="space-between" align="center">
                           <VStack align="start" spacing={0}>
                             <Text fontWeight="medium">Active Insights</Text>
@@ -2684,10 +2680,10 @@ export default function CampaignsPage() {
                             {selectedCampaignForDetail.active_insights}
                           </Badge>
                         </HStack>
-                      </ListItem>
+                      </ChakraListItem>
                     )}
                     {selectedCampaignForDetail?.recent_insights.map((insight) => (
-                      <ListItem key={insight.id}>
+                      <ChakraListItem key={insight.id}>
                         <HStack justify="space-between" align="center">
                           <VStack align="start" spacing={0}>
                             <Text fontWeight="medium">{insight.title}</Text>
@@ -2732,7 +2728,7 @@ export default function CampaignsPage() {
                             <StatNumber>{insight.action_taken || 'N/A'}</StatNumber>
                           </Stat>
                         </HStack>
-                      </ListItem>
+                      </ChakraListItem>
                     ))}
                   </List>
                 </Box>
@@ -2741,7 +2737,7 @@ export default function CampaignsPage() {
                   <Heading size="md" mb={2}>Activity Log</Heading>
                   <List spacing={2}>
                     {selectedCampaignForDetail?.recent_activity.map((log) => (
-                      <ListItem key={log.id}>
+                      <ChakraListItem key={log.id}>
                         <HStack justify="space-between" align="center">
                           <VStack align="start" spacing={0}>
                             <Text fontWeight="medium">{log.action}</Text>
@@ -2758,7 +2754,7 @@ export default function CampaignsPage() {
                             Details: {log.details}
                           </Text>
                         )}
-                      </ListItem>
+                      </ChakraListItem>
                     ))}
                   </List>
                 </Box>

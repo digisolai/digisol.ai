@@ -50,11 +50,9 @@ import {
   FormLabel,
 } from '@chakra-ui/react';
 import {
-  FiUpload, FiDownload, FiEye, FiTrash2, FiMoreVertical, FiFolder,
+  FiUpload, FiDownload, FiTrash2, FiMoreVertical, FiFolder,
   FiFile, FiFileText, FiImage, FiVideo, FiMusic, FiArchive,
-  FiEdit, FiShare, FiLock, FiUnlock, FiSearch, FiFilter,
-  FiGrid, FiList, FiFolderPlus, FiTag, FiZap, FiClock,
-  FiUser, FiHardDrive, FiCheckCircle, FiAlertCircle
+  FiEdit, FiShare, FiSearch, FiGrid, FiList, FiFolderPlus, FiZap, FiChevronRight
 } from 'react-icons/fi';
 import api from '../services/api';
 
@@ -386,7 +384,7 @@ const FilesDocumentsTab: React.FC<FilesDocumentsTabProps> = ({ project }) => {
       }}
     >
       <CardBody py={3}>
-        <Grid templateColumns="1fr auto auto auto auto auto" gap={4} align="center">
+        <Grid templateColumns="1fr auto auto auto auto auto" gap={4} alignItems="center">
           <HStack spacing={3}>
             <Icon
               as={getFileIcon(file.file_type)}

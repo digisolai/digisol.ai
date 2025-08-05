@@ -21,7 +21,7 @@ import {
   IconButton,
   Tooltip,
 } from '@chakra-ui/react';
-import {FiRotateCcw, FiType, FiEdit3, FiCrop} from 'react-icons/fi';
+import {FiRotateCcw, FiType, FiEdit3, FiCrop, FiDownload, FiX, FiSave} from 'react-icons/fi';
 import api from '../services/api';
 
 interface ImageEditorProps {

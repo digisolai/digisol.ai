@@ -6,7 +6,7 @@ import {
 import {
   FiEdit, FiCalendar, FiFileText, FiMessageSquare, FiUpload, FiDownload, FiEye, FiTrash2, FiMoreVertical, FiCheckCircle, FiClock, FiTarget, FiZap, FiStar,
 } from 'react-icons/fi';
- import type { Project, TeamMember, ProjectRisk, PromanaRecommendation } from '../types/project';
+ import type { Project } from '../types/project';
 
 interface Milestone {
   id: string;
@@ -188,9 +188,8 @@ const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project }) => {
     try {
       setLoading(true);
       const response = await api.post(`/project-management/projects/${project.id}/ask_promana/`, {
-        query: `Suggest goals and scope for a ${project.project_type} project called "${project.name}". Consider the current description: ${project.description}`,
+        query: `Suggest goals and scope for a project called "${project.name}". Consider the current description: ${project.description}`,
         context: {
-          project_type: project.project_type,
           current_description: project.description
         }
       });
