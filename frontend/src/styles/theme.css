@@ -1,0 +1,197 @@
+/* Dynamic Theme CSS Custom Properties */
+:root {
+  /* Default brand colors - these will be overridden by JavaScript */
+  --brand-primary-color: #1F4287;
+  --brand-accent-color: #FFC300;
+  --brand-header-font: 'Lato', sans-serif;
+  --brand-body-font: 'Open Sans', sans-serif;
+  
+  /* Derived colors for consistent theming */
+  --brand-primary-light: color-mix(in srgb, var(--brand-primary-color) 80%, white);
+  --brand-primary-dark: color-mix(in srgb, var(--brand-primary-color) 80%, black);
+  --brand-accent-light: color-mix(in srgb, var(--brand-accent-color) 80%, white);
+  --brand-accent-dark: color-mix(in srgb, var(--brand-accent-color) 80%, black);
+  
+  /* Semantic color mappings */
+  --color-primary: var(--brand-primary-color);
+  --color-primary-light: var(--brand-primary-light);
+  --color-primary-dark: var(--brand-primary-dark);
+  --color-accent: var(--brand-accent-color);
+  --color-accent-light: var(--brand-accent-light);
+  --color-accent-dark: var(--brand-accent-dark);
+  
+  /* Typography */
+  --font-family-heading: var(--brand-header-font);
+  --font-family-body: var(--brand-body-font);
+  
+  /* Spacing and sizing */
+  --border-radius: 8px;
+  --border-radius-sm: 4px;
+  --border-radius-lg: 12px;
+  --box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --box-shadow-lg: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Apply brand fonts to headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-family-heading);
+  color: var(--color-primary);
+}
+
+/* Apply brand fonts to body text */
+body {
+  font-family: var(--font-family-body);
+}
+
+/* Brand-themed button styles */
+.btn-brand-primary {
+  background-color: var(--color-primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-brand-primary:hover {
+  background-color: var(--color-primary-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--box-shadow-lg);
+}
+
+.btn-brand-accent {
+  background-color: var(--color-accent);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  padding: 8px 16px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-brand-accent:hover {
+  background-color: var(--color-accent-dark);
+  transform: translateY(-1px);
+  box-shadow: var(--box-shadow-lg);
+}
+
+/* Brand-themed card styles */
+.card-brand {
+  border: 1px solid var(--color-primary-light);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  transition: all 0.2s ease;
+}
+
+.card-brand:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--box-shadow-lg);
+}
+
+/* Brand-themed input styles */
+.input-brand {
+  border: 2px solid var(--color-primary-light);
+  border-radius: var(--border-radius-sm);
+  padding: 8px 12px;
+  font-family: var(--font-family-body);
+  transition: border-color 0.2s ease;
+}
+
+.input-brand:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-primary) 20%, transparent);
+}
+
+/* Brand-themed link styles */
+.link-brand {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.link-brand:hover {
+  color: var(--color-primary-dark);
+  text-decoration: underline;
+}
+
+/* Brand-themed badge styles */
+.badge-brand-primary {
+  background-color: var(--color-primary);
+  color: white;
+  padding: 4px 8px;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.badge-brand-accent {
+  background-color: var(--color-accent);
+  color: white;
+  padding: 4px 8px;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* Brand-themed alert styles */
+.alert-brand-info {
+  background-color: color-mix(in srgb, var(--color-primary) 10%, white);
+  border: 1px solid var(--color-primary-light);
+  border-radius: var(--border-radius);
+  padding: 12px 16px;
+  color: var(--color-primary-dark);
+}
+
+.alert-brand-success {
+  background-color: color-mix(in srgb, #10B981 10%, white);
+  border: 1px solid #10B981;
+  border-radius: var(--border-radius);
+  padding: 12px 16px;
+  color: #065F46;
+}
+
+.alert-brand-warning {
+  background-color: color-mix(in srgb, var(--color-accent) 10%, white);
+  border: 1px solid var(--color-accent-light);
+  border-radius: var(--border-radius);
+  padding: 12px 16px;
+  color: var(--color-accent-dark);
+}
+
+.alert-brand-error {
+  background-color: color-mix(in srgb, #EF4444 10%, white);
+  border: 1px solid #EF4444;
+  border-radius: var(--border-radius);
+  padding: 12px 16px;
+  color: #991B1B;
+}
+
+/* Utility classes for brand colors */
+.text-brand-primary { color: var(--color-primary); }
+.text-brand-accent { color: var(--color-accent); }
+.bg-brand-primary { background-color: var(--color-primary); }
+.bg-brand-accent { background-color: var(--color-accent); }
+.border-brand-primary { border-color: var(--color-primary); }
+.border-brand-accent { border-color: var(--color-accent); }
+
+/* Responsive design considerations */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode adjustments for brand colors */
+    --brand-primary-light: color-mix(in srgb, var(--brand-primary-color) 60%, white);
+    --brand-primary-dark: color-mix(in srgb, var(--brand-primary-color) 40%, black);
+    --brand-accent-light: color-mix(in srgb, var(--brand-accent-color) 60%, white);
+    --brand-accent-dark: color-mix(in srgb, var(--brand-accent-color) 40%, black);
+  }
+}
+
+/* Print styles */
+@media print {
+  :root {
+    /* Ensure brand colors print properly */
+    --color-primary: #000000;
+    --color-accent: #666666;
+  }
+} 
