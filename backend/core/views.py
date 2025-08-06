@@ -35,16 +35,18 @@ from django.core.cache import cache
 import redis
 import os
 from datetime import datetime
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
 
 
 @api_view(['GET'])
+@permission_classes([AllowAny])
 def health_check(request):
-    """Simple health check endpoint for testing"""
+    """Health check endpoint for Docker and load balancers"""
     return Response({
         'status': 'healthy',
-        'message': 'DigiSol.AI backend is running',
-        'timestamp': timezone.now().isoformat()
-    })
+        'message': 'DigiSol AI Backend is running'
+    }, status=status.HTTP_200_OK)
 
 @csrf_exempt
 @require_http_methods(["GET"])

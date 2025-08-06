@@ -90,6 +90,37 @@ REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
 CELERY_BROKER_URL = REDIS_URL
 CELERY_RESULT_BACKEND = REDIS_URL
 
+# Override INSTALLED_APPS for production (remove development-only apps)
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    
+    # Third-party apps
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'corsheaders',
+    'django_filters',
+    
+    # Custom apps
+    'core.apps.CoreConfig',
+    'accounts.apps.AccountsConfig',
+    'campaigns.apps.CampaignsConfig',
+    'ai_services.apps.AiServicesConfig',
+    'project_management.apps.ProjectManagementConfig',
+    'billing.apps.BillingConfig',
+    'subscription_billing.apps.SubscriptionBillingConfig',
+    'templates_app.apps.TemplatesAppConfig',
+    'marketing_templates.apps.MarketingTemplatesConfig',
+    'learning.apps.LearningConfig',
+    'budgeting.apps.BudgetingConfig',
+    'analytics.apps.AnalyticsConfig',
+    'integrations.apps.IntegrationsConfig',
+]
+
 # CORS settings for production
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
 CORS_ALLOW_CREDENTIALS = True
