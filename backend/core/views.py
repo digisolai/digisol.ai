@@ -108,6 +108,28 @@ def health_check(request):
     return JsonResponse(health_status, status=status_code)
 
 @csrf_exempt
+def db_health_check(request):
+    """Test database connection specifically"""
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+            result = cursor.fetchone()
+            
+        return JsonResponse({
+            'status': 'healthy',
+            'database': 'connected',
+            'result': result[0] if result else None
+        }, status=200)
+        
+    except Exception as e:
+        return JsonResponse({
+            'status': 'unhealthy',
+            'database': 'disconnected',
+            'error': str(e),
+            'error_type': type(e).__name__
+        }, status=500)
+
+@csrf_exempt
 def setup_production(request):
     """Temporary endpoint to setup production database and user"""
     if request.method == 'POST':

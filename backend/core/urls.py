@@ -19,5 +19,6 @@ router.register(r'client-billing', views.AgencyClientBillingViewSet, basename='c
 urlpatterns = [
     path('', include(router.urls)),
     path('health/', views.health_check, name='health_check'),
+    path('db-health/', views.db_health_check, name='db_health_check'),
     path('setup/', views.setup_production, name='setup_production'),
 ]
