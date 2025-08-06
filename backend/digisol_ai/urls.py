@@ -20,7 +20,19 @@ def health_check(request):
         'timestamp': timezone.now().isoformat()
     })
 
+@csrf_exempt
+def root_handler(request):
+    """Root endpoint for Render health checks"""
+    return JsonResponse({
+        'message': 'DigiSol.AI Backend API',
+        'status': 'online',
+        'health_check': '/health/',
+        'api_docs': '/admin/',
+        'timestamp': timezone.now().isoformat()
+    })
+
 urlpatterns = [
+    path('', root_handler, name='root'),  # Handle root URL
     path('health/', health_check, name='health_check'),
     path('admin/', admin.site.urls),
 

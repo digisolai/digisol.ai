@@ -9,13 +9,13 @@ import os
 bind = os.environ.get('GUNICORN_BIND', '0.0.0.0:8000')
 backlog = 2048
 
-# Worker processes
-workers = multiprocessing.cpu_count() * 2 + 1
+# Worker processes (optimized for Render free tier)
+workers = 1  # Use only 1 worker for free tier to save memory
 worker_class = 'sync'
-worker_connections = 1000
-max_requests = 1000
-max_requests_jitter = 50
-timeout = 30
+worker_connections = 50  # Reduced for memory efficiency
+max_requests = 100  # Restart workers more frequently
+max_requests_jitter = 10
+timeout = 60  # Increased timeout for slower free tier
 keepalive = 2
 
 # Restart workers after this many requests, to help prevent memory leaks
