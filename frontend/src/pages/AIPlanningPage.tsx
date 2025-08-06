@@ -36,11 +36,50 @@ import {
   Icon,
   Avatar,
   useDisclosure,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  Progress,
+  Divider,
+  IconButton,
+  Tooltip,
+  Grid,
+  GridItem,
 } from "@chakra-ui/react";
 import { Layout } from "../components/Layout";
 import { AIAgentSection } from "../components/AIAgentSection";
 import api from "../services/api";
-import {FiCpu, FiEye} from "react-icons/fi";
+import {
+  FiCpu, 
+  FiEye, 
+  FiZap, 
+  FiX, 
+  FiTrendingUp, 
+  FiClock, 
+  FiCheckCircle, 
+  FiAlertTriangle,
+  FiUsers,
+  FiTarget,
+  FiBarChart,
+  FiMessageSquare,
+  FiPlay,
+  FiPause,
+  FiRefreshCw,
+  FiDollarSign,
+  FiEdit3,
+  FiUserCheck,
+  FiSettings,
+  FiBookOpen,
+  FiPieChart,
+  FiGrid,
+  FiFolder,
+  FiActivity,
+  FiImage,
+  FiFileText,
+  FiInfo
+} from "react-icons/fi";
 
 interface AIProfile {
   id: string;
@@ -101,6 +140,14 @@ export default function AIPlanningPage() {
   const [isLoadingAgents, setIsLoadingAgents] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
+
+  // Dashboard statistics
+  const completedTasks = aiTasks.filter(task => task.status === 'completed').length;
+  const inProgressTasks = aiTasks.filter(task => task.status === 'in_progress').length;
+  const pendingTasks = aiTasks.filter(task => task.status === 'pending').length;
+  const criticalRecommendations = activeRecommendations.filter(rec => rec.priority === 'critical').length;
+  const highPriorityRecommendations = activeRecommendations.filter(rec => rec.priority === 'high').length;
+  const completionRate = aiTasks.length > 0 ? (completedTasks / aiTasks.length) * 100 : 0;
 
   useEffect(() => {
     fetchAIProfiles();
@@ -341,7 +388,7 @@ export default function AIPlanningPage() {
       }
     } catch (error: unknown) {
       console.error('AI Planning error:', error);
-      const errorMessage = error.response?.data?.message || error.message || 'Failed to submit AI planning request';
+      const errorMessage = (error as any)?.response?.data?.message || (error as Error)?.message || 'Failed to submit AI planning request';
       
       toast({
         title: "AI Planning Failed",
@@ -367,18 +414,232 @@ export default function AIPlanningPage() {
     }
   };
 
+  // Icon mapping for AI agent specializations (same as AIAgentSection)
+  const getAgentIcon = (specialization: string) => {
+    switch (specialization) {
+      case 'marketing_strategy':
+        return FiTarget;
+      case 'budget_analysis':
+        return FiDollarSign;
+      case 'content_creation':
+        return FiEdit3;
+      case 'campaign_optimization':
+        return FiTrendingUp;
+      case 'lead_nurturing':
+        return FiUsers;
+      case 'general_orchestration':
+        return FiZap;
+      case 'data_analysis':
+        return FiBarChart;
+      case 'hr_management':
+        return FiUserCheck;
+      case 'integrations_management':
+        return FiSettings;
+      case 'learning_guidance':
+        return FiBookOpen;
+      case 'reporting_insights':
+        return FiPieChart;
+      case 'organizational_planning':
+        return FiGrid;
+      case 'automation_design':
+        return FiCpu;
+          case 'brand_identity':
+      return FiImage;
+      case 'template_curation':
+        return FiFileText;
+      case 'project_management':
+        return FiFolder;
+      default:
+        return FiActivity;
+    }
+  };
+
+  // Color mapping for AI agent specializations (same as AIAgentSection)
+  const getAgentColor = (specialization: string) => {
+    switch (specialization) {
+      case 'marketing_strategy':
+        return 'blue.500';
+      case 'budget_analysis':
+        return 'green.500';
+      case 'content_creation':
+        return 'purple.500';
+      case 'campaign_optimization':
+        return 'orange.500';
+      case 'lead_nurturing':
+        return 'teal.500';
+      case 'general_orchestration':
+        return 'brand.primary';
+      case 'data_analysis':
+        return 'cyan.500';
+      case 'hr_management':
+        return 'pink.500';
+      case 'integrations_management':
+        return 'gray.500';
+      case 'learning_guidance':
+        return 'yellow.500';
+      case 'reporting_insights':
+        return 'indigo.500';
+      case 'organizational_planning':
+        return 'brand.primary';
+      case 'automation_design':
+        return 'red.500';
+      case 'brand_identity':
+        return 'brand.accent';
+      case 'template_curation':
+        return 'blue.400';
+      case 'project_management':
+        return 'green.400';
+      default:
+        return 'brand.primary';
+    }
+  };
+
   return (
     <Layout>
       <Box py={4} px={{ base: 0, md: 4 }}>
-        <Heading size="lg" color="brand.primary" mb={6}>AI Planning & Orchestration</Heading>
+        {/* Header Section */}
+        <Box mb={8}>
+          <Flex justify="space-between" align="center" mb={4}>
+            <Box>
+              <Heading size="lg" color="brand.primary" mb={2}>
+                <Icon as={FiZap} mr={3} color="brand.accent" />
+                AI Planning & Orchestration
+              </Heading>
+              <Text color="brand.neutral.600" fontSize="lg">
+                Intelligent automation and strategic planning powered by your AI team
+              </Text>
+            </Box>
+            <Tooltip label="Refresh dashboard data">
+              <IconButton
+                aria-label="Refresh"
+                icon={<FiRefreshCw />}
+                colorScheme="brand"
+                variant="outline"
+                onClick={() => {
+                  fetchAIProfiles();
+                  fetchAITasks();
+                  fetchRecommendations();
+                }}
+              />
+            </Tooltip>
+          </Flex>
+        </Box>
+
+        {/* Dashboard Statistics */}
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} mb={8}>
+          <Card bg="white" boxShadow="md" borderLeft="4px solid" borderLeftColor="brand.primary">
+            <CardBody>
+              <Stat>
+                <StatLabel color="brand.neutral.600" fontSize="sm">
+                  <Icon as={FiTarget} mr={2} />
+                  Total Tasks
+                </StatLabel>
+                <StatNumber color="brand.primary" fontSize="2xl">{aiTasks.length}</StatNumber>
+                <StatHelpText>
+                  <StatArrow type="increase" />
+                  {completionRate.toFixed(1)}% completion rate
+                </StatHelpText>
+              </Stat>
+            </CardBody>
+          </Card>
+
+          <Card bg="white" boxShadow="md" borderLeft="4px solid" borderLeftColor="green.500">
+            <CardBody>
+              <Stat>
+                <StatLabel color="brand.neutral.600" fontSize="sm">
+                  <Icon as={FiCheckCircle} mr={2} />
+                  Completed
+                </StatLabel>
+                <StatNumber color="green.500" fontSize="2xl">{completedTasks}</StatNumber>
+                <StatHelpText>
+                  Successfully delivered
+                </StatHelpText>
+              </Stat>
+            </CardBody>
+          </Card>
+
+          <Card bg="white" boxShadow="md" borderLeft="4px solid" borderLeftColor="blue.500">
+            <CardBody>
+              <Stat>
+                <StatLabel color="brand.neutral.600" fontSize="sm">
+                  <Icon as={FiClock} mr={2} />
+                  In Progress
+                </StatLabel>
+                <StatNumber color="blue.500" fontSize="2xl">{inProgressTasks}</StatNumber>
+                <StatHelpText>
+                  Currently being processed
+                </StatHelpText>
+              </Stat>
+            </CardBody>
+          </Card>
+
+          <Card bg="white" boxShadow="md" borderLeft="4px solid" borderLeftColor="orange.500">
+            <CardBody>
+              <Stat>
+                <StatLabel color="brand.neutral.600" fontSize="sm">
+                  <Icon as={FiAlertTriangle} mr={2} />
+                  Critical Alerts
+                </StatLabel>
+                <StatNumber color="orange.500" fontSize="2xl">{criticalRecommendations}</StatNumber>
+                <StatHelpText>
+                  High priority recommendations
+                </StatHelpText>
+              </Stat>
+            </CardBody>
+          </Card>
+        </SimpleGrid>
+
+        {/* Progress Overview */}
+        <Card bg="white" boxShadow="md" mb={8}>
+          <CardHeader>
+            <Heading size="md" color="brand.primary">
+              <Icon as={FiBarChart} mr={2} />
+              Task Progress Overview
+            </Heading>
+          </CardHeader>
+          <CardBody>
+            <VStack spacing={4} align="stretch">
+              <Box>
+                <Flex justify="space-between" mb={2}>
+                  <Text fontSize="sm" color="brand.neutral.600">Overall Completion</Text>
+                  <Text fontSize="sm" fontWeight="bold" color="brand.primary">
+                    {completionRate.toFixed(1)}%
+                  </Text>
+                </Flex>
+                <Progress 
+                  value={completionRate} 
+                  colorScheme="brand" 
+                  size="lg" 
+                  borderRadius="full"
+                  bg="brand.neutral.100"
+                />
+              </Box>
+              
+              <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
+                <Box textAlign="center" p={3} bg="green.50" borderRadius="md">
+                  <Text fontSize="lg" fontWeight="bold" color="green.600">{completedTasks}</Text>
+                  <Text fontSize="sm" color="green.600">Completed</Text>
+                </Box>
+                <Box textAlign="center" p={3} bg="blue.50" borderRadius="md">
+                  <Text fontSize="lg" fontWeight="bold" color="blue.600">{inProgressTasks}</Text>
+                  <Text fontSize="sm" color="blue.600">In Progress</Text>
+                </Box>
+                <Box textAlign="center" p={3} bg="yellow.50" borderRadius="md">
+                  <Text fontSize="lg" fontWeight="bold" color="yellow.600">{pendingTasks}</Text>
+                  <Text fontSize="sm" color="yellow.600">Pending</Text>
+                </Box>
+              </SimpleGrid>
+            </VStack>
+          </CardBody>
+        </Card>
 
         {/* Structura - AI Orchestrator */}
         <AIAgentSection
-              agent={aiAgent} 
+          agent={aiAgent} 
           loading={loadingAgent}
           error={agentError}
-              onAskQuestion={handleAskAIAgent}
-            />
+          onAskQuestion={handleAskAIAgent}
+        />
 
         {error && (
           <Alert status="error" borderRadius="md" mb={4}>
@@ -389,10 +650,31 @@ export default function AIPlanningPage() {
 
         {/* AI Agents Overview - Always Visible */}
         <Box mb={8}>
-          <Heading size="md" color="brand.primary" mb={4}>
-            <Icon as={FiZap} mr={2} />
-            Your AI Team
-          </Heading>
+          <Flex justify="space-between" align="center" mb={4}>
+            <Heading size="md" color="brand.primary">
+              <Icon as={FiUsers} mr={2} />
+              Your AI Team
+            </Heading>
+            <Tooltip label="View AI agent specializations">
+              <Button
+                size="sm"
+                variant="outline"
+                colorScheme="brand"
+                leftIcon={<Icon as={FiInfo} />}
+                onClick={() => {
+                  toast({
+                    title: "AI Agent Specializations",
+                    description: "Each AI agent has a unique specialization and personalized icon. Hover over agents to see their expertise areas.",
+                    status: "info",
+                    duration: 6000,
+                    isClosable: true,
+                  });
+                }}
+              >
+                View Specializations
+              </Button>
+            </Tooltip>
+          </Flex>
           
           {isLoadingAgents ? (
             <Box textAlign="center" py={8}>
@@ -440,146 +722,214 @@ export default function AIPlanningPage() {
           )}
         </Box>
 
-        {/* Quick Plan Generation - Simplified */}
-        <VStack spacing={6} align="stretch" as="form" onSubmit={handleGeneratePlan} p={6} bg="white" borderRadius="lg" boxShadow="md" mb={8}>
-          <Heading size="md" color="brand.primary">Generate Strategic Plan</Heading>
-          
-          <FormControl isRequired>
-            <FormLabel htmlFor="plan-objective">What would you like your AI team to help you with?</FormLabel>
-            <Textarea
-              id="plan-objective"
-              placeholder="e.g., Increase lead conversion rate for Q3 by 10% in SaaS. Or, Plan content strategy for a new product launch targeting SMBs."
-              value={objective}
-              onChange={(e) => setObjective(e.target.value)}
-              rows={4}
-              bg="brand.neutral.50"
-            />
-          </FormControl>
+        {/* Quick Plan Generation - Enhanced */}
+        <Card bg="white" boxShadow="md" mb={8}>
+          <CardHeader>
+            <Heading size="md" color="brand.primary">
+              <Icon as={FiTarget} mr={2} />
+              Generate Strategic Plan
+            </Heading>
+          </CardHeader>
+          <CardBody>
+            <VStack spacing={6} align="stretch" as="form" onSubmit={handleGeneratePlan}>
+              <FormControl isRequired>
+                <FormLabel htmlFor="plan-objective" color="brand.primary" fontWeight="semibold">
+                  What would you like your AI team to help you with?
+                </FormLabel>
+                <Textarea
+                  id="plan-objective"
+                  placeholder="e.g., Increase lead conversion rate for Q3 by 10% in SaaS. Or, Plan content strategy for a new product launch targeting SMBs."
+                  value={objective}
+                  onChange={(e) => setObjective(e.target.value)}
+                  rows={4}
+                  bg="brand.neutral.50"
+                  borderColor="brand.neutral.200"
+                  _focus={{
+                    borderColor: "brand.primary",
+                    boxShadow: "0 0 0 1px var(--chakra-colors-brand-primary)"
+                  }}
+                />
+              </FormControl>
 
-          <Text fontSize="sm" color="brand.neutral.600" mb={3}>
-            💡 The system will automatically select the most appropriate AI agents based on your objective.
-          </Text>
+              <Box p={4} bg="brand.50" borderRadius="md" border="1px solid" borderColor="brand.100">
+                <HStack>
+                  <Icon as={FiMessageSquare} color="brand.accent" />
+                  <Text fontSize="sm" color="brand.neutral.700">
+                    💡 The system will automatically select the most appropriate AI agents based on your objective.
+                  </Text>
+                </HStack>
+              </Box>
 
-          <Button
-            type="submit"
-            colorScheme="brand"
-            bg="brand.primary"
-            color="white"
-            isLoading={isGenerating}
-            loadingText="Generating Plan..."
-            _hover={{ bg: "#163166" }}
-            size="lg"
-            leftIcon={<FiCpu />}
-          >
-            Generate AI-Powered Plan
-          </Button>
-        </VStack>
+              <Button
+                type="submit"
+                colorScheme="brand"
+                bg="brand.primary"
+                color="white"
+                isLoading={isGenerating}
+                loadingText="Generating Plan..."
+                _hover={{ bg: "brand.600" }}
+                size="lg"
+                leftIcon={<FiCpu />}
+                height="50px"
+                fontSize="md"
+                fontWeight="semibold"
+              >
+                Generate AI-Powered Plan
+              </Button>
+            </VStack>
+          </CardBody>
+        </Card>
 
-        {/* Tabs for Tasks and Recommendations */}
-        <Tabs variant="enclosed" colorScheme="brand">
-          <TabList>
-            <Tab>Active Tasks ({aiTasks.length})</Tab>
-            <Tab>AI Recommendations ({activeRecommendations.length})</Tab>
-            <Tab>Dismissed ({dismissedRecommendations.length})</Tab>
-          </TabList>
+        {/* Tabs for Tasks and Recommendations - Enhanced */}
+        <Card bg="white" boxShadow="md">
+          <CardHeader>
+            <Heading size="md" color="brand.primary">
+              <Icon as={FiBarChart} mr={2} />
+              AI Operations Center
+            </Heading>
+          </CardHeader>
+          <CardBody p={0}>
+            <Tabs variant="enclosed" colorScheme="brand">
+              <TabList px={6} pt={2}>
+                <Tab>
+                  <HStack>
+                    <Icon as={FiPlay} />
+                    <Text>Active Tasks ({aiTasks.length})</Text>
+                  </HStack>
+                </Tab>
+                <Tab>
+                  <HStack>
+                    <Icon as={FiTrendingUp} />
+                    <Text>AI Recommendations ({activeRecommendations.length})</Text>
+                  </HStack>
+                </Tab>
+                <Tab>
+                  <HStack>
+                    <Icon as={FiX} />
+                    <Text>Dismissed ({dismissedRecommendations.length})</Text>
+                  </HStack>
+                </Tab>
+              </TabList>
 
-          <TabPanels>
-            {/* Active Tasks Tab */}
-            <TabPanel>
-              {aiTasks.length === 0 ? (
-                <Box textAlign="center" py={8}>
-                  <Icon as={FiZap} fontSize="4xl" color="brand.neutral.300" mb={4} />
-                  <Text color="brand.neutral.500">No active AI tasks. Create your first plan above!</Text>
-                </Box>
-              ) : (
-                <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
-                  {aiTasks.map((task) => (
-                    <Card key={task.id} boxShadow="md">
-                      <CardHeader>
-                        <Flex justify="space-between" align="center">
-                          <Heading size="sm" color="brand.primary">{task.objective.substring(0, 50)}...</Heading>
-                          <Badge colorScheme={getStatusColor(task.status)}>
-                            {task.status.replace('_', ' ')}
-                          </Badge>
-                        </Flex>
-                      </CardHeader>
-                      <CardBody>
-                        <VStack align="start" spacing={3}>
-                          <HStack>
-                            <Avatar size="xs" name={task.assignee_agent?.name} />
-                            <Text fontSize="sm" color="brand.neutral.600">
-                              Assigned to: {task.assignee_agent?.name || 'Auto-assigned'}
-                            </Text>
-                          </HStack>
-                          <Text fontSize="sm" color="brand.neutral.700">
-                            {task.objective}
-                          </Text>
-                          <HStack spacing={2}>
-                            <Button
-                              size="sm"
-                              leftIcon={<FiEye />}
-                              onClick={() => handleViewTaskDetail(task)}
-                            >
-                              View Details
-                            </Button>
-                          </HStack>
-                        </VStack>
-                      </CardBody>
-                    </Card>
-                  ))}
-                </SimpleGrid>
-              )}
-            </TabPanel>
+              <TabPanels>
+                {/* Active Tasks Tab */}
+                <TabPanel>
+                  {aiTasks.length === 0 ? (
+                    <Box textAlign="center" py={12}>
+                      <Icon as={FiZap} fontSize="6xl" color="brand.neutral.300" mb={4} />
+                      <Text color="brand.neutral.500" fontSize="lg" mb={2}>No active AI tasks</Text>
+                      <Text color="brand.neutral.400" fontSize="sm">Create your first plan above to get started!</Text>
+                    </Box>
+                  ) : (
+                    <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
+                      {aiTasks.map((task) => (
+                        <Card key={task.id} boxShadow="sm" border="1px solid" borderColor="brand.neutral.100" _hover={{ boxShadow: "md" }}>
+                          <CardHeader pb={3}>
+                            <Flex justify="space-between" align="center">
+                              <Heading size="sm" color="brand.primary" noOfLines={1}>
+                                {task.objective.substring(0, 50)}...
+                              </Heading>
+                              <Badge colorScheme={getStatusColor(task.status)} variant="solid">
+                                {task.status.replace('_', ' ')}
+                              </Badge>
+                            </Flex>
+                          </CardHeader>
+                          <CardBody pt={0}>
+                                                          <VStack align="start" spacing={3}>
+                                <HStack>
+                                  <Flex
+                                    w={6}
+                                    h={6}
+                                    bg={getAgentColor(task.assignee_agent?.specialization || 'general_orchestration')}
+                                    borderRadius="full"
+                                    align="center"
+                                    justify="center"
+                                    boxShadow="sm"
+                                  >
+                                    <Icon 
+                                      as={getAgentIcon(task.assignee_agent?.specialization || 'general_orchestration')} 
+                                      color="white" 
+                                      boxSize={3} 
+                                    />
+                                  </Flex>
+                                  <Text fontSize="sm" color="brand.neutral.600">
+                                    Assigned to: {task.assignee_agent?.name || 'Auto-assigned'}
+                                  </Text>
+                                </HStack>
+                                <Text fontSize="sm" color="brand.neutral.700" noOfLines={2}>
+                                  {task.objective}
+                                </Text>
+                                <HStack spacing={2}>
+                                  <Button
+                                    size="sm"
+                                    leftIcon={<FiEye />}
+                                    onClick={() => handleViewTaskDetail(task)}
+                                    colorScheme="brand"
+                                    variant="outline"
+                                  >
+                                    View Details
+                                  </Button>
+                                </HStack>
+                              </VStack>
+                          </CardBody>
+                        </Card>
+                      ))}
+                    </SimpleGrid>
+                  )}
+                </TabPanel>
 
-            {/* AI Recommendations Tab */}
-            <TabPanel>
-              {activeRecommendations.length === 0 ? (
-                <Box textAlign="center" py={8}>
-                  <Icon as={FiZap} fontSize="4xl" color="brand.neutral.300" mb={4} />
-                  <Text color="brand.neutral.500">No active recommendations. Generate a plan to see AI insights!</Text>
-                </Box>
-              ) : (
-                <VStack spacing={4} align="stretch">
-                  {activeRecommendations.map((recommendation) => (
-                    <RecommendationCard
-                      key={recommendation.id}
-                      recommendation={recommendation}
-                      onDismiss={handleDismiss}
-                      onActioned={handleMarkActioned}
-                    />
-                  ))}
-                </VStack>
-              )}
-            </TabPanel>
+                {/* AI Recommendations Tab */}
+                <TabPanel>
+                  {activeRecommendations.length === 0 ? (
+                    <Box textAlign="center" py={12}>
+                      <Icon as={FiTrendingUp} fontSize="6xl" color="brand.neutral.300" mb={4} />
+                      <Text color="brand.neutral.500" fontSize="lg" mb={2}>No active recommendations</Text>
+                      <Text color="brand.neutral.400" fontSize="sm">Generate a plan to see AI insights!</Text>
+                    </Box>
+                  ) : (
+                    <VStack spacing={4} align="stretch">
+                      {activeRecommendations.map((recommendation) => (
+                        <RecommendationCard
+                          key={recommendation.id}
+                          recommendation={recommendation}
+                          onDismiss={handleDismiss}
+                          onActioned={handleMarkActioned}
+                        />
+                      ))}
+                    </VStack>
+                  )}
+                </TabPanel>
 
-            {/* Dismissed Recommendations Tab */}
-            <TabPanel>
-              {dismissedRecommendations.length === 0 ? (
-                <Box textAlign="center" py={8}>
-                  <Icon as={FiX} fontSize="4xl" color="brand.neutral.300" mb={4} />
-                  <Text color="brand.neutral.500">No dismissed recommendations.</Text>
-                </Box>
-              ) : (
-                <VStack spacing={4} align="stretch">
-                  {dismissedRecommendations.map((recommendation) => (
-                    <RecommendationCard
-                      key={recommendation.id}
-                      recommendation={recommendation}
-                      onDismiss={handleDismiss}
-                      onActioned={handleMarkActioned}
-                    />
-                  ))}
-                </VStack>
-              )}
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+                {/* Dismissed Recommendations Tab */}
+                <TabPanel>
+                  {dismissedRecommendations.length === 0 ? (
+                    <Box textAlign="center" py={12}>
+                      <Icon as={FiX} fontSize="6xl" color="brand.neutral.300" mb={4} />
+                      <Text color="brand.neutral.500" fontSize="lg">No dismissed recommendations</Text>
+                    </Box>
+                  ) : (
+                    <VStack spacing={4} align="stretch">
+                      {dismissedRecommendations.map((recommendation) => (
+                        <RecommendationCard
+                          key={recommendation.id}
+                          recommendation={recommendation}
+                          onDismiss={handleDismiss}
+                          onActioned={handleMarkActioned}
+                        />
+                      ))}
+                    </VStack>
+                  )}
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+          </CardBody>
+        </Card>
 
         {/* Task Detail Modal */}
         <Modal isOpen={isTaskDetailOpen} onClose={onTaskDetailClose} size="xl">
           <ModalOverlay />
           <ModalContent>
-            <ModalHeader>Task Details</ModalHeader>
+            <ModalHeader color="brand.primary">Task Details</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
               {selectedTask && (
@@ -633,34 +983,81 @@ const RecommendationCard = ({ recommendation, onDismiss, onActioned }: {
     }
   };
 
+  const getPriorityIcon = (priority: string) => {
+    switch (priority) {
+      case 'critical': return FiAlertTriangle;
+      case 'high': return FiTrendingUp;
+      case 'medium': return FiTarget;
+      case 'low': return FiCheckCircle;
+      default: return FiMessageSquare;
+    }
+  };
+
   return (
-    <Card boxShadow="md" border="1px solid" borderColor="brand.neutral.100">
+    <Card 
+      boxShadow="sm" 
+      border="1px solid" 
+      borderColor="brand.neutral.100" 
+      _hover={{ boxShadow: "md", borderColor: "brand.primary" }}
+      transition="all 0.2s"
+    >
       <CardBody>
-        <VStack align="start" spacing={3}>
+        <VStack align="start" spacing={4}>
           <HStack justify="space-between" w="full">
-            <HStack>
-              <Badge colorScheme={getPriorityColor(recommendation.priority)}>
+            <HStack spacing={3}>
+              <Icon 
+                as={getPriorityIcon(recommendation.priority)} 
+                color={`${getPriorityColor(recommendation.priority)}.500`}
+                boxSize={5}
+              />
+              <Badge 
+                colorScheme={getPriorityColor(recommendation.priority)} 
+                variant="solid"
+                px={3}
+                py={1}
+                borderRadius="full"
+              >
                 {recommendation.priority}
               </Badge>
-              <Badge colorScheme="blue" variant="outline">
+              <Badge 
+                colorScheme="brand" 
+                variant="outline"
+                px={3}
+                py={1}
+                borderRadius="full"
+              >
                 {recommendation.type.replace('_', ' ')}
               </Badge>
             </HStack>
             {recommendation.generated_by_agent && (
-              <Text fontSize="sm" color="brand.neutral.600">
-                by {recommendation.generated_by_agent.name}
-              </Text>
+              <HStack>
+                <Avatar size="xs" name={recommendation.generated_by_agent.name} bg="brand.primary" />
+                <Text fontSize="sm" color="brand.neutral.600" fontWeight="medium">
+                  {recommendation.generated_by_agent.name}
+                </Text>
+              </HStack>
             )}
           </HStack>
           
-          <Text>{recommendation.recommendation_text}</Text>
+          <Box>
+            <Text 
+              color="brand.neutral.700" 
+              fontSize="md" 
+              lineHeight="1.6"
+              fontWeight="medium"
+            >
+              {recommendation.recommendation_text}
+            </Text>
+          </Box>
           
-          <HStack spacing={2}>
+          <HStack spacing={3} pt={2}>
             {!recommendation.is_dismissed && (
               <Button
                 size="sm"
                 variant="outline"
+                colorScheme="gray"
                 onClick={() => onDismiss(recommendation.id)}
+                leftIcon={<FiX />}
               >
                 Dismiss
               </Button>
@@ -670,9 +1067,16 @@ const RecommendationCard = ({ recommendation, onDismiss, onActioned }: {
                 size="sm"
                 colorScheme="green"
                 onClick={() => onActioned(recommendation.id)}
+                leftIcon={<FiCheckCircle />}
               >
                 Mark Actioned
               </Button>
+            )}
+            {recommendation.is_actioned && (
+              <Badge colorScheme="green" variant="subtle" px={3} py={1}>
+                <Icon as={FiCheckCircle} mr={1} />
+                Actioned
+              </Badge>
             )}
           </HStack>
         </VStack>

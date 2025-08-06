@@ -25,14 +25,13 @@ import EnhancedBudgetingPage from './pages/EnhancedBudgetingPage';
 import ContactsPage from './pages/ContactsPage';
 import DesignStudioPage from './pages/DesignStudioPage';
 import IntegrationsPage from './pages/IntegrationsPage';
-import LearningPage from './pages/LearningPage';
+import LearningCenterPage from './pages/LearningCenterPage';
 import MarketingTemplatesPage from './pages/MarketingTemplatesPage';
 import ProjectsPage from './pages/ProjectsPage';
 import ProjectDetailPage from './pages/ProjectDetailPage';
 import ReportsPage from './pages/ReportsPage';
 import SettingsPage from './pages/SettingsPage';
 import TutorialDetailPage from './pages/TutorialDetailPage';
-import InfoCenterPage from './pages/InfoCenterPage';
 import AboutPage from './pages/AboutPage';
 import MyClientsPage from './pages/MyClientsPage';
 
@@ -134,9 +133,9 @@ function App() {
                 <IntegrationsPage />
               </ProtectedRoute>
             } />
-            <Route path="/learning" element={
+            <Route path="/learning-center" element={
               <ProtectedRoute>
-                <LearningPage />
+                <LearningCenterPage />
               </ProtectedRoute>
             } />
             <Route path="/marketing-templates" element={
@@ -169,11 +168,7 @@ function App() {
                 <TutorialDetailPage />
               </ProtectedRoute>
             } />
-            <Route path="/info-center" element={
-              <ProtectedRoute>
-                <InfoCenterPage />
-              </ProtectedRoute>
-            } />
+
             <Route path="/my-clients" element={
               <ProtectedRoute>
                 <MyClientsPage />

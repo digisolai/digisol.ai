@@ -59,7 +59,7 @@ const getNavLinks = () => {
     { label: "Automations", icon: FiZap, href: "/automations" },
     { label: "Brand Hub", icon: FiGrid, href: "/brand-hub" },
     { label: "Design Studio", icon: FiImage, href: "/design-studio" },
-    { label: "Templates", icon: FiFileText, href: "/templates" },
+    { label: "Templates", icon: FiFileText, href: "/marketing-templates" },
     { label: "Analytics", icon: FiBarChart2, href: "/analytics" },
     { label: "AI Overview", icon: FiCpu, href: "/ai-overview" },
     { label: "Project Management", icon: FiFolder, href: "/projects" },
@@ -71,8 +71,7 @@ const getNavLinks = () => {
 
   // Add remaining links
   baseLinks.push(
-    { label: "Learning Center", icon: FiBookOpen, href: "/learning" },
-    { label: "Info Center", icon: FiInfo, href: "/info-center" },
+    { label: "Learning & Info Center", icon: FiBookOpen, href: "/learning-center" },
     { label: "About", icon: FiInfo, href: "/about" },
     { label: "Settings", icon: FiSettings, href: "/settings" }
   );

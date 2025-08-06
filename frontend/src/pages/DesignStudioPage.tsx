@@ -29,7 +29,7 @@ import {
 import { Layout } from "../components/Layout";
 import { AIAgentSection } from "../components/AIAgentSection";
 import api from "../services/api";
-import {FiImage, FiType, FiLayout} from "react-icons/fi";
+import {FiImage, FiType, FiLayout, FiShare2, FiUser, FiFileText, FiMonitor} from "react-icons/fi";
 import type { AIProfile } from "../types/ai";
 
 // Import specialized design components

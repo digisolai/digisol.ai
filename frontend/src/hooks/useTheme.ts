@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useState, useCallback} from 'react';
 
 export interface BrandTheme {
   primary_color: string;
@@ -12,53 +12,6 @@ export interface BrandTheme {
 
 export const useTheme = () => {
   const [theme, setTheme] = useState<BrandTheme | null>(null);
-
-  // Load theme from localStorage on mount
-  useEffect(() => {
-    const loadTheme = () => {
-      try {
-        // Try to load complete theme object first
-        const themeData = localStorage.getItem('client_theme_data');
-        if (themeData) {
-          const parsedTheme = JSON.parse(themeData);
-          setTheme(parsedTheme);
-          applyThemeToPage(parsedTheme);
-          return;
-        }
-
-        // Fallback to individual localStorage items for backward compatibility
-        const fallbackTheme: BrandTheme = {
-          primary_color: localStorage.getItem('client_primary_color') || '#1F4287',
-          accent_color: localStorage.getItem('client_accent_color') || '#FFC300',
-          header_font: localStorage.getItem('client_header_font') || 'Lato, sans-serif',
-          body_font: localStorage.getItem('client_body_font') || 'Open Sans, sans-serif',
-          brand_name: localStorage.getItem('client_brand_name') || 'DigiSol.AI',
-          logo_url: localStorage.getItem('client_logo_url') || '',
-          updated_at: new Date().toISOString(),
-        };
-        setTheme(fallbackTheme);
-        applyThemeToPage(fallbackTheme);
-      } catch (error) {
-        console.error('Error loading theme from localStorage:', error);
-      }
-    };
-
-    loadTheme();
-  }, []);
-
-  // Listen for theme updates from other components
-  useEffect(() => {
-    const handleThemeUpdate = (event: CustomEvent<BrandTheme>) => {
-      setTheme(event.detail);
-      applyThemeToPage(event.detail);
-    };
-
-    window.addEventListener('themeUpdated', handleThemeUpdate as EventListener);
-    
-    return () => {
-      window.removeEventListener('themeUpdated', handleThemeUpdate as EventListener);
-    };
-  }, []);
 
   // Function to apply theme to the current page
   const applyThemeToPage = useCallback((themeData: BrandTheme) => {
@@ -91,6 +44,53 @@ export const useTheme = () => {
       console.error('Error applying theme to page:', error);
     }
   }, []);
+
+  // Load theme from localStorage on mount
+  useEffect(() => {
+    const loadTheme = () => {
+      try {
+        // Try to load complete theme object first
+        const themeData = localStorage.getItem('client_theme_data');
+        if (themeData) {
+          const parsedTheme = JSON.parse(themeData);
+          setTheme(parsedTheme);
+          applyThemeToPage(parsedTheme);
+          return;
+        }
+
+        // Fallback to individual localStorage items for backward compatibility
+        const fallbackTheme: BrandTheme = {
+          primary_color: localStorage.getItem('client_primary_color') || '#1F4287',
+          accent_color: localStorage.getItem('client_accent_color') || '#FFC300',
+          header_font: localStorage.getItem('client_header_font') || 'Lato, sans-serif',
+          body_font: localStorage.getItem('client_body_font') || 'Open Sans, sans-serif',
+          brand_name: localStorage.getItem('client_brand_name') || 'DigiSol.AI',
+          logo_url: localStorage.getItem('client_logo_url') || '',
+          updated_at: new Date().toISOString(),
+        };
+        setTheme(fallbackTheme);
+        applyThemeToPage(fallbackTheme);
+      } catch (error) {
+        console.error('Error loading theme from localStorage:', error);
+      }
+    };
+
+    loadTheme();
+  }, [applyThemeToPage]);
+
+  // Listen for theme updates from other components
+  useEffect(() => {
+    const handleThemeUpdate = (event: CustomEvent<BrandTheme>) => {
+      setTheme(event.detail);
+      applyThemeToPage(event.detail);
+    };
+
+    window.addEventListener('themeUpdated', handleThemeUpdate as EventListener);
+    
+    return () => {
+      window.removeEventListener('themeUpdated', handleThemeUpdate as EventListener);
+    };
+  }, [applyThemeToPage]);
 
   // Function to manually update theme
   const updateTheme = useCallback((newTheme: Partial<BrandTheme>) => {
