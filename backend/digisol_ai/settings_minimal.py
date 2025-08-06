@@ -31,14 +31,13 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     
-    # Custom apps
-    'core.apps.CoreConfig',
-    'accounts.apps.AccountsConfig',
+    # Minimal auth app only
+    'auth_minimal.apps.AuthMinimalConfig',
 ]
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -48,7 +47,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'digisol_ai.urls'
+ROOT_URLCONF = 'digisol_ai.urls_minimal'
 
 TEMPLATES = [
     {
@@ -101,7 +100,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
@@ -120,12 +119,11 @@ REST_FRAMEWORK = {
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
-# Custom user model
-AUTH_USER_MODEL = 'accounts.CustomUser'
+# Use Django's default User model for minimal setup
+# AUTH_USER_MODEL = 'accounts.CustomUser'
 
-# Authentication backend
+# Use Django's default authentication backend
 AUTHENTICATION_BACKENDS = [
-    'accounts.authentication.EmailOrUsernameModelBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
 
@@ -150,6 +148,10 @@ SIMPLE_JWT = {
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
+
+# External API Keys (required for ai_services)
+GOOGLE_GEMINI_API_KEY = os.environ.get('GOOGLE_GEMINI_API_KEY', '')
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
 
 # Logging
 LOGGING = {

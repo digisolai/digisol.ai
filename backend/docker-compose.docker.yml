@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8001:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=digisol_ai.settings_docker
+    env_file:
+      - env.docker
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./logs:/app/logs
+      - ./media:/app/media
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=digisol_ai_prod
+      - POSTGRES_USER=digisol_user
+      - POSTGRES_PASSWORD=your-secure-db-password-here
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+
+  celery:
+    build: .
+    command: celery -A digisol_ai worker --loglevel=info
+    environment:
+      - DJANGO_SETTINGS_MODULE=digisol_ai.settings_docker
+    env_file:
+      - env.docker
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+  celery-beat:
+    build: .
+    command: celery -A digisol_ai beat --loglevel=info
+    environment:
+      - DJANGO_SETTINGS_MODULE=digisol_ai.settings_docker
+    env_file:
+      - env.docker
+    depends_on:
+      - db
+      - redis
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:

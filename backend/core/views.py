@@ -28,9 +28,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import get_user_model
+from django.db import connection
+import json
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth.decorators import login_required
-from django.db import connection
 from django.core.cache import cache
 import redis
 import os
@@ -104,6 +106,67 @@ def health_check(request):
     status_code = 200 if health_status['status'] == 'healthy' else 503
     
     return JsonResponse(health_status, status=status_code)
+
+@csrf_exempt
+def setup_production(request):
+    """Temporary endpoint to setup production database and user"""
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            email = data.get('email')
+            password = data.get('password')
+            
+            if not email or not password:
+                return JsonResponse({'error': 'Email and password required'}, status=400)
+            
+            User = get_user_model()
+            
+            # Check if user exists
+            if User.objects.filter(email=email).exists():
+                return JsonResponse({'message': 'User already exists'}, status=200)
+            
+            # Create user
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password,
+                first_name='Cam',
+                last_name='Brown',
+                is_staff=True,
+                is_superuser=True
+            )
+            
+            # Fix database schema if needed
+            with connection.cursor() as cursor:
+                sql_commands = [
+                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(100);",
+                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS bio TEXT;",
+                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS phone_number VARCHAR(20);",
+                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();",
+                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW();",
+                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS is_tenant_admin BOOLEAN DEFAULT FALSE;",
+                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'viewer';",
+                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS department VARCHAR(100);",
+                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS is_hr_admin BOOLEAN DEFAULT FALSE;",
+                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS job_title VARCHAR(255);"
+                ]
+                
+                for cmd in sql_commands:
+                    try:
+                        cursor.execute(cmd)
+                    except Exception as e:
+                        print(f"SQL command failed: {cmd} - {e}")
+            
+            return JsonResponse({
+                'message': 'User created successfully',
+                'user_id': user.id,
+                'email': user.email
+            }, status=201)
+            
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    
+    return JsonResponse({'error': 'POST method required'}, status=405)
 
 
 class TenantViewSet(viewsets.ModelViewSet):
