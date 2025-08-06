@@ -1,7 +1,7 @@
 import axios from "axios";
 
 // Use direct backend URL for now
-const baseURL = import.meta.env.VITE_BACKEND_URL || "https://digisol-backend.onrender.com";
+const baseURL = import.meta.env.VITE_BACKEND_URL || "https://digisol-backend.onrender.com/api";
 
 const api = axios.create({
   baseURL,
