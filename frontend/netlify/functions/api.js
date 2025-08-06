@@ -1,16 +1,36 @@
 const axios = require('axios');
 
 exports.handler = async (event, context) => {
+  // Handle CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Credentials': 'true'
+      }
+    };
+  }
+
   // Get the path from the request
   const path = event.path.replace('/.netlify/functions/api', '');
   
   // Backend URL - you can change this to your deployed backend
-  const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8000';
+  const BACKEND_URL = process.env.BACKEND_URL || 'https://digisol-backend.onrender.com';
+  
+  console.log('Netlify Function called:', {
+    path,
+    method: event.httpMethod,
+    BACKEND_URL,
+    fullUrl: `${BACKEND_URL}${path}`
+  });
   
   try {
     const response = await axios({
       method: event.httpMethod.toLowerCase(),
-      url: `${BACKEND_URL}/api${path}`,
+      url: `${BACKEND_URL}${path}`,
       data: event.body ? JSON.parse(event.body) : undefined,
       headers: {
         'Content-Type': 'application/json',
@@ -25,7 +45,7 @@ exports.handler = async (event, context) => {
       body: JSON.stringify(response.data),
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'https://www.digisol.ca',
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Credentials': 'true'
@@ -43,7 +63,7 @@ exports.handler = async (event, context) => {
       }),
       headers: {
         'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': 'https://www.digisol.ca',
+        'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
         'Access-Control-Allow-Credentials': 'true'
