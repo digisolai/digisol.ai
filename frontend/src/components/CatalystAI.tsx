@@ -51,7 +51,7 @@ interface CatalystRecommendation {
   impact_score: number;
   confidence_score: number;
   action_items: string[];
-  estimated_improvement: unknown;
+  estimated_improvement: Record<string, any>;
   priority: string;
 }
 

@@ -15,7 +15,7 @@ import {
   Heading,
   HStack,
 } from '@chakra-ui/react';
-import {FiImage} from 'react-icons/fi';
+import {FiImage, FiUpload} from 'react-icons/fi';
 // import { useAuth } from '../../hooks/useAuth';
 import api from '../../services/api';
 

@@ -7,6 +7,7 @@ export interface User {
   tenant_id: string; // Assuming tenant is a string ID
   is_tenant_admin: boolean;
   is_hr_admin: boolean;
+  is_superuser?: boolean; // Add superuser field
   role: string;
   // Subscription and usage tracking fields
   has_corporate_suite: boolean;

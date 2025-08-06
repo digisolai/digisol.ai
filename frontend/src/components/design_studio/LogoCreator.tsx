@@ -18,7 +18,7 @@ import {
   SimpleGrid,
 
 } from '@chakra-ui/react';
-import {FiType} from 'react-icons/fi';
+import {FiType, FiUpload} from 'react-icons/fi';
 // import { useAuth } from '../../hooks/useAuth';
 import api from '../../services/api';
 

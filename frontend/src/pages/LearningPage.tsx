@@ -23,7 +23,7 @@ import {
   StatNumber,
   StatGroup,
 } from "@chakra-ui/react";
-import {FiBook, FiPlay, FiCheck} from "react-icons/fi";
+import {FiBook, FiPlay, FiCheck, FiClock} from "react-icons/fi";
 import { Layout } from "../components/Layout";
 import { AIAgentSection } from "../components/AIAgentSection";
 import api from "../services/api";

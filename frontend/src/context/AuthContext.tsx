@@ -19,6 +19,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         tenant_id: response.data.tenant,
         is_tenant_admin: response.data.is_tenant_admin,
         is_hr_admin: response.data.is_hr_admin || false,
+        is_superuser: response.data.is_superuser || false,
         role: response.data.role,
         // Subscription and usage tracking fields
         has_corporate_suite: response.data.has_corporate_suite || false,
@@ -89,8 +90,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Auto-authenticate on component mount
   useEffect(() => {
     const loadUser = async () => {
-      await checkAndRefreshToken();
-      setLoading(false);
+      try {
+        await checkAndRefreshToken();
+      } catch (error) {
+        console.error("Auth check failed:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     loadUser();
   }, [checkAndRefreshToken]);
@@ -146,9 +152,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     register,
   }), [user, isAuthenticated, loading, login, logout, register]);
 
+  console.log("AuthProvider rendering - loading:", loading, "isAuthenticated:", isAuthenticated);
+  
   return (
     <AuthContext.Provider value={contextValue}>
-      {!loading ? children : null}
+      {children}
     </AuthContext.Provider>
   );
 };

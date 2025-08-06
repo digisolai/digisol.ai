@@ -15,6 +15,8 @@ import {
   Stat,
   StatLabel,
   StatNumber,
+  StatHelpText,
+  StatArrow,
   Progress,
   List,
   ListItem,
@@ -130,7 +132,6 @@ import {
   useClipboard,
   useControllableState,
   useDisclosure as useChakraDisclosure,
-  useFocusEffect,
   useInterval,
   useLatestRef,
   useMergeRefs,
@@ -141,7 +142,6 @@ import {
   useTimeout,
   useToken,
   useUpdateEffect,
-  useWhyDidYouUpdate,
 } from '@chakra-ui/react';
 import {
   FiPlus,
@@ -197,6 +197,7 @@ import {
   FiHome,
   FiActivity,
   FiDatabase,
+  FiDollarSign,
 } from 'react-icons/fi';
 import { Layout } from '../components/Layout';
 

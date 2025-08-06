@@ -23,6 +23,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from "@chakra-ui/react";
+import { FiEye } from "react-icons/fi";
 import { Layout } from "../components/Layout";
 import api from "../services/api";
 

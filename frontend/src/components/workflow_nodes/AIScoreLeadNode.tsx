@@ -29,7 +29,7 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
 } from '@chakra-ui/react';
-import {FiCpu} from 'react-icons/fi';
+import {FiCpu, FiSettings, FiStar} from 'react-icons/fi';
 
 interface AIScoreLeadNodeData {
   label: string;

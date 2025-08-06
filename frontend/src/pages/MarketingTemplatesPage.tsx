@@ -44,7 +44,7 @@ import {
   StatNumber,
   StatGroup,
 } from '@chakra-ui/react';
-import {FiPlus} from 'react-icons/fi';
+import {FiPlus, FiCopy, FiFileText, FiEdit, FiTrash2, FiEye, FiDownload, FiShare2} from 'react-icons/fi';
 import { Layout } from '../components/Layout';
 import { PageLayout, SectionCard, SideCard } from '../components/PageLayout';
 import { AIAgentSection } from '../components/AIAgentSection';

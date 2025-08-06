@@ -45,7 +45,7 @@ import {
   // Tooltip,
   useToast,
 } from '@chakra-ui/react';
-import {FiPlus} from 'react-icons/fi';
+import {FiPlus, FiDollarSign, FiEdit} from 'react-icons/fi';
 import { Layout } from '../components/Layout';
 import { AIAgentSection } from '../components/AIAgentSection';
 import api from '../services/api';

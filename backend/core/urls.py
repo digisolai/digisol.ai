@@ -1,27 +1,22 @@
 # backend/core/urls.py
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import (
-    TenantViewSet, ContactViewSet, CampaignViewSet,
-    EmailTemplateViewSet, AutomationWorkflowViewSet, BrandProfileViewSet,
-    AutomationExecutionViewSet, BrandAssetViewSet, health_check, simple_health_check
-)
+from . import views
 
-# Create router and register viewsets
 router = DefaultRouter()
-router.register(r'tenants', TenantViewSet, basename='tenant')
-router.register(r'contacts', ContactViewSet, basename='contact') # This defines /contacts/
-router.register(r'campaigns', CampaignViewSet, basename='campaign')
-router.register(r'email-templates', EmailTemplateViewSet, basename='email-template')
-router.register(r'automation-workflows', AutomationWorkflowViewSet, basename='automation-workflow')
-router.register(r'automation-executions', AutomationExecutionViewSet, basename='automation-execution')
-router.register(r'brand-profiles', BrandProfileViewSet, basename='brand-profile')
-router.register(r'brand-assets', BrandAssetViewSet, basename='brand-asset')
-
-app_name = 'core'
+router.register(r'tenants', views.TenantViewSet)
+router.register(r'brand-profiles', views.BrandProfileViewSet)
+router.register(r'contacts', views.ContactViewSet)
+router.register(r'campaigns', views.CampaignViewSet)
+router.register(r'automation-workflows', views.AutomationWorkflowViewSet)
+router.register(r'automation-executions', views.AutomationExecutionViewSet)
+router.register(r'brand-assets', views.BrandAssetViewSet)
+router.register(r'client-portals', views.AgencyClientPortalViewSet, basename='client-portal')
+router.register(r'client-users', views.AgencyClientUserViewSet, basename='client-user')
+router.register(r'client-activities', views.AgencyClientActivityViewSet, basename='client-activity')
+router.register(r'client-billing', views.AgencyClientBillingViewSet, basename='client-billing')
 
 urlpatterns = [
-    # CRITICAL CHANGE: Remove 'api/' prefix here. It's already handled by digisol_ai/urls.py
-    path('', include(router.urls)), # <--- CHANGED FROM 'api/' to ''
-    path('health/', simple_health_check, name='health_check'),
+    path('', include(router.urls)),
+    path('health/', views.health_check, name='health_check'),
 ]

@@ -1,18 +1,23 @@
 from rest_framework import viewsets, permissions, status, serializers
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from datetime import timedelta
+import uuid
+import time
 from .models import (
     Tenant, Contact, Campaign, EmailTemplate, 
-    AutomationWorkflow, BrandProfile, AutomationExecution, BrandAsset
+    AutomationWorkflow, BrandProfile, AutomationExecution, BrandAsset,
+    AgencyClientPortal, AgencyClientUser, AgencyClientActivity, AgencyClientBilling
 )
 from .serializers import (
     TenantSerializer, ContactSerializer, CampaignSerializer,
     EmailTemplateSerializer, AutomationWorkflowSerializer, BrandProfileSerializer,
     AutomationExecutionSerializer, BrandAssetSerializer, BrandAssetCreateSerializer,
-    BrandAssetUpdateSerializer
+    BrandAssetUpdateSerializer, AgencyClientPortalSerializer, AgencyClientUserSerializer,
+    AgencyClientActivitySerializer, AgencyClientBillingSerializer
 )
 from .tasks import start_workflow_execution, trigger_workflow_by_event
 from ai_services.models import AIProfile, AIRecommendation
@@ -23,6 +28,13 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_http_methods
+from django.contrib.auth.decorators import login_required
+from django.db import connection
+from django.core.cache import cache
+import redis
+import os
+from datetime import datetime
 
 
 @api_view(['GET'])
@@ -35,13 +47,61 @@ def health_check(request):
     })
 
 @csrf_exempt
-def simple_health_check(request):
-    """Simple health check without authentication"""
-    return JsonResponse({
+@require_http_methods(["GET"])
+def health_check(request):
+    """
+    Health check endpoint for monitoring application status
+    """
+    health_status = {
         'status': 'healthy',
-        'message': 'DigiSol.AI backend is running',
-        'timestamp': timezone.now().isoformat()
-    })
+        'timestamp': datetime.utcnow().isoformat(),
+        'version': '1.0.0',
+        'services': {}
+    }
+    
+    # Check database connection
+    try:
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT 1")
+        health_status['services']['database'] = 'healthy'
+    except Exception as e:
+        health_status['services']['database'] = f'unhealthy: {str(e)}'
+        health_status['status'] = 'unhealthy'
+    
+    # Check Redis connection
+    try:
+        redis_url = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+        r = redis.from_url(redis_url)
+        r.ping()
+        health_status['services']['redis'] = 'healthy'
+    except Exception as e:
+        health_status['services']['redis'] = f'unhealthy: {str(e)}'
+        health_status['status'] = 'unhealthy'
+    
+    # Check cache
+    try:
+        cache.set('health_check', 'ok', 10)
+        cache_result = cache.get('health_check')
+        if cache_result == 'ok':
+            health_status['services']['cache'] = 'healthy'
+        else:
+            health_status['services']['cache'] = 'unhealthy: cache not working'
+            health_status['status'] = 'unhealthy'
+    except Exception as e:
+        health_status['services']['cache'] = f'unhealthy: {str(e)}'
+        health_status['status'] = 'unhealthy'
+    
+    # Check environment
+    health_status['services']['environment'] = {
+        'debug': os.environ.get('DEBUG', 'False'),
+        'allowed_hosts': os.environ.get('ALLOWED_HOSTS', ''),
+        'database_engine': os.environ.get('DATABASE_ENGINE', 'sqlite3'),
+    }
+    
+    # Return appropriate status code
+    status_code = 200 if health_status['status'] == 'healthy' else 503
+    
+    return JsonResponse(health_status, status=status_code)
 
 
 class TenantViewSet(viewsets.ModelViewSet):
@@ -789,3 +849,162 @@ class BrandAssetViewSet(viewsets.ModelViewSet):
         asset.remove_tag(tag)
         serializer = self.get_serializer(asset)
         return Response(serializer.data)
+
+# Agency Client Portal Views
+class AgencyClientPortalViewSet(viewsets.ModelViewSet):
+    """ViewSet for managing agency client portals."""
+    serializer_class = AgencyClientPortalSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        """Filter client portals by the current user's tenant."""
+        if hasattr(self.request.user, 'tenant') and self.request.user.tenant:
+            return AgencyClientPortal.objects.filter(parent_tenant=self.request.user.tenant)
+        return AgencyClientPortal.objects.none()
+    
+    def perform_create(self, serializer):
+        """Set the parent tenant when creating a client portal."""
+        if hasattr(self.request.user, 'tenant') and self.request.user.tenant:
+            serializer.save(parent_tenant=self.request.user.tenant)
+    
+    @action(detail=True, methods=['get'])
+    def analytics(self, request, pk=None):
+        """Get analytics for a specific client portal."""
+        client_portal = self.get_object()
+        
+        # Get usage statistics
+        usage_stats = {
+            'contacts_used': client_portal.contacts_used,
+            'contacts_limit': client_portal.contacts_limit,
+            'campaigns_used': client_portal.campaigns_used,
+            'campaigns_limit': client_portal.campaigns_limit,
+            'automations_used': client_portal.automations_used,
+            'automations_limit': client_portal.automations_limit,
+            'usage_percentages': {
+                'contacts': client_portal.get_usage_percentage('contacts'),
+                'campaigns': client_portal.get_usage_percentage('campaigns'),
+                'automations': client_portal.get_usage_percentage('automations')
+            }
+        }
+        
+        # Get recent activities
+        recent_activities = client_portal.activities.all()[:10]
+        activities_data = AgencyClientActivitySerializer(recent_activities, many=True).data
+        
+        # Get billing summary
+        billing_summary = {
+            'total_invoices': client_portal.billing_records.count(),
+            'paid_invoices': client_portal.billing_records.filter(status='paid').count(),
+            'pending_invoices': client_portal.billing_records.filter(status='sent').count(),
+            'overdue_invoices': client_portal.billing_records.filter(status='overdue').count(),
+            'total_revenue': sum(bill.total_amount for bill in client_portal.billing_records.filter(status='paid'))
+        }
+        
+        return Response({
+            'usage_stats': usage_stats,
+            'recent_activities': activities_data,
+            'billing_summary': billing_summary
+        })
+    
+    @action(detail=True, methods=['post'])
+    def generate_invoice(self, request, pk=None):
+        """Generate a new invoice for the client portal."""
+        client_portal = self.get_object()
+        
+        # Generate invoice number
+        invoice_number = f"INV-{client_portal.id[:8].upper()}-{int(time.time())}"
+        
+        # Calculate billing period
+        today = timezone.now().date()
+        if client_portal.billing_cycle == 'monthly':
+            period_start = today.replace(day=1)
+            period_end = (period_start + timedelta(days=32)).replace(day=1) - timedelta(days=1)
+        elif client_portal.billing_cycle == 'quarterly':
+            quarter = (today.month - 1) // 3
+            period_start = today.replace(month=quarter * 3 + 1, day=1)
+            period_end = (period_start + timedelta(days=93)).replace(day=1) - timedelta(days=1)
+        else:  # annually
+            period_start = today.replace(month=1, day=1)
+            period_end = today.replace(month=12, day=31)
+        
+        # Calculate overage charges
+        overage_amount = 0
+        if client_portal.contacts_used > client_portal.contacts_limit:
+            overage_amount += (client_portal.contacts_used - client_portal.contacts_limit) * 0.01  # $0.01 per contact overage
+        
+        # Create billing record
+        billing = AgencyClientBilling.objects.create(
+            client_portal=client_portal,
+            invoice_number=invoice_number,
+            billing_period_start=period_start,
+            billing_period_end=period_end,
+            base_amount=client_portal.monthly_fee,
+            overage_amount=overage_amount,
+            setup_fee=client_portal.setup_fee if client_portal.billing_records.count() == 0 else 0,
+            status='draft'
+        )
+        
+        return Response(AgencyClientBillingSerializer(billing).data)
+
+class AgencyClientUserViewSet(viewsets.ModelViewSet):
+    """ViewSet for managing agency client users."""
+    serializer_class = AgencyClientUserSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        """Filter client users by the current user's tenant's client portals."""
+        if hasattr(self.request.user, 'tenant') and self.request.user.tenant:
+            client_portals = AgencyClientPortal.objects.filter(parent_tenant=self.request.user.tenant)
+            return AgencyClientUser.objects.filter(client_portal__in=client_portals)
+        return AgencyClientUser.objects.none()
+    
+    @action(detail=True, methods=['post'])
+    def send_invitation(self, request, pk=None):
+        """Send invitation email to client user."""
+        client_user = self.get_object()
+        
+        # Generate invitation token
+        token = str(uuid.uuid4())
+        client_user.password_reset_token = token
+        client_user.password_reset_expires = timezone.now() + timedelta(days=7)
+        client_user.save()
+        
+        # TODO: Send invitation email with token
+        # This would integrate with your email service
+        
+        return Response({'message': 'Invitation sent successfully'})
+
+class AgencyClientActivityViewSet(viewsets.ReadOnlyModelViewSet):
+    """ViewSet for viewing agency client activities."""
+    serializer_class = AgencyClientActivitySerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        """Filter activities by the current user's tenant's client portals."""
+        if hasattr(self.request.user, 'tenant') and self.request.user.tenant:
+            client_portals = AgencyClientPortal.objects.filter(parent_tenant=self.request.user.tenant)
+            return AgencyClientActivity.objects.filter(client_portal__in=client_portals)
+        return AgencyClientActivity.objects.none()
+
+class AgencyClientBillingViewSet(viewsets.ModelViewSet):
+    """ViewSet for managing agency client billing."""
+    serializer_class = AgencyClientBillingSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get_queryset(self):
+        """Filter billing records by the current user's tenant's client portals."""
+        if hasattr(self.request.user, 'tenant') and self.request.user.tenant:
+            client_portals = AgencyClientPortal.objects.filter(parent_tenant=self.request.user.tenant)
+            return AgencyClientBilling.objects.filter(client_portal__in=client_portals)
+        return AgencyClientBilling.objects.none()
+    
+    @action(detail=True, methods=['post'])
+    def mark_as_paid(self, request, pk=None):
+        """Mark an invoice as paid."""
+        billing = self.get_object()
+        billing.status = 'paid'
+        billing.payment_date = timezone.now()
+        billing.payment_method = request.data.get('payment_method', 'manual')
+        billing.save()
+        
+        return Response(AgencyClientBillingSerializer(billing).data)

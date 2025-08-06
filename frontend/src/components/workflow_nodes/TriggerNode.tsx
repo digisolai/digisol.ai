@@ -8,6 +8,7 @@ import {
   HStack,
   Badge,
 } from '@chakra-ui/react';
+import { FiZap } from 'react-icons/fi';
 
 interface TriggerNodeData {
   label: string;

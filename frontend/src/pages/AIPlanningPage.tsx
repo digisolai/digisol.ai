@@ -40,7 +40,7 @@ import {
 import { Layout } from "../components/Layout";
 import { AIAgentSection } from "../components/AIAgentSection";
 import api from "../services/api";
-import {FiCpu} from "react-icons/fi";
+import {FiCpu, FiEye} from "react-icons/fi";
 
 interface AIProfile {
   id: string;

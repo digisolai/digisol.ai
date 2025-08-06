@@ -24,7 +24,7 @@ import {
   ModalBody,
   ModalCloseButton,
 } from '@chakra-ui/react';
-import {FiCpu} from 'react-icons/fi';
+import {FiCpu, FiSettings} from 'react-icons/fi';
 
 interface AIGenerateContentNodeData {
   label: string;

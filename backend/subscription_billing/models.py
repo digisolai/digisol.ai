@@ -11,16 +11,42 @@ class SubscriptionPlan(models.Model):
     stripe_annual_price_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     description = models.TextField(blank=True, null=True)
     
+    # New Token-Based System
+    monthly_tokens = models.IntegerField(default=0, help_text="Number of tokens included per month")
+    additional_token_pack_size = models.IntegerField(default=0, help_text="Size of additional token packs")
+    additional_token_pack_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text="Cost of additional token pack")
+    
     # Feature Limits/Allocations:
     contact_limit = models.IntegerField(default=0) # -1 for unlimited
     email_send_limit = models.IntegerField(default=0)
+    automation_workflow_limit = models.IntegerField(default=0, help_text="Number of active automation workflows allowed")
+    integration_limit = models.IntegerField(default=0, help_text="Number of social media integrations allowed")
+    
+    # Legacy AI Credits (keeping for backward compatibility)
     ai_text_credits_per_month = models.IntegerField(default=0)
     ai_image_credits_per_month = models.IntegerField(default=0)
     ai_planning_requests_per_month = models.IntegerField(default=0)
+    
     user_seats = models.IntegerField(default=1)
     support_level = models.CharField(max_length=50, choices=(('standard', 'Standard'), ('priority', 'Priority')), default='standard')
     
-
+    # Plan Features
+    includes_design_studio = models.BooleanField(default=False, help_text="Access to full design studio features")
+    includes_advanced_analytics = models.BooleanField(default=False, help_text="Access to advanced analytics and predictive insights")
+    includes_project_management = models.BooleanField(default=False, help_text="Access to project management tools")
+    includes_budgeting = models.BooleanField(default=False, help_text="Access to budgeting and financial tools")
+    includes_learning_center = models.BooleanField(default=False, help_text="Access to personalized learning paths")
+    includes_dedicated_support = models.BooleanField(default=False, help_text="Dedicated account manager and priority support")
+    includes_white_label = models.BooleanField(default=False, help_text="White-label solutions available")
+    includes_custom_integrations = models.BooleanField(default=False, help_text="Custom API development and integration support")
+    
+    # Agency/Client Portal Features
+    includes_client_portals = models.BooleanField(default=False, help_text="Access to client portal management features")
+    client_portals_limit = models.IntegerField(default=0, help_text="Number of client portals allowed")
+    includes_client_billing = models.BooleanField(default=False, help_text="Access to client billing and invoicing")
+    includes_client_analytics = models.BooleanField(default=False, help_text="Access to client-specific analytics")
+    includes_white_label_portals = models.BooleanField(default=False, help_text="White-label client portals with custom branding")
+    includes_client_support = models.BooleanField(default=False, help_text="Dedicated support for client portal management")
 
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

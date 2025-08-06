@@ -46,6 +46,7 @@ import {
   FiUser, // FiUser icon for user menu
 } from "react-icons/fi";
 import { Logo } from "./Logo"; // Corrected relative path from Layout to Logo
+import SubscriptionStatus from "./SubscriptionStatus"; // Import the subscription status component
 
 import '../styles/theme.css';
 
@@ -71,6 +72,7 @@ const getNavLinks = () => {
   // Add remaining links
   baseLinks.push(
     { label: "Learning Center", icon: FiBookOpen, href: "/learning" },
+    { label: "Info Center", icon: FiInfo, href: "/info-center" },
     { label: "About", icon: FiInfo, href: "/about" },
     { label: "Settings", icon: FiSettings, href: "/settings" }
   );
@@ -78,13 +80,27 @@ const getNavLinks = () => {
   return baseLinks;
 };
 
-// Placeholder for user role logic (adjust as needed for real data)
-const isAgencyAdmin = true; // Replace with real logic from AuthContext
+// Import AuthContext to check user subscription
+import { useAuth } from '../hooks/useAuth';
+
+// Helper function to check if user has client portal access
+const useClientPortalAccess = () => {
+  const { user } = useAuth();
+  
+  // Superusers always have access
+  if (user?.is_superuser) return true;
+  
+  // Check if user has a subscription with client portal features
+  // This would need to be implemented based on your subscription logic
+  // For now, return true for testing
+  return true;
+};
 
 // Layout component definition
 export const Layout = ({ children }: { children: ReactNode }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const location = useLocation(); // Get current location
+  const { user } = useAuth(); // Get user from auth context
 
   // Helper function to determine if a link is active
   const isLinkActive = (href: string) => {
@@ -133,7 +149,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
            {link.label}
          </NavItem>
        ))}
-       {isAgencyAdmin && (
+       {(user?.is_superuser || user?.is_tenant_admin) && (
          <NavItem
            icon={FiBriefcase}
            href="/my-clients"
@@ -144,6 +160,11 @@ export const Layout = ({ children }: { children: ReactNode }) => {
        )}
        
        <Spacer /> {/* Pushes content to the top */}
+       
+       {/* Subscription Status - Only show on desktop to save mobile space */}
+       <Box display={{ base: "none", md: "block" }} px={3} py={4}>
+         <SubscriptionStatus />
+       </Box>
        
                 {/* Sign Out at the bottom */}
          <Box mt="auto" pt={4} borderTop="1px solid" borderColor="rgba(255,255,255,0.1)">
@@ -206,6 +227,19 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
           {/* Right side - User actions */}
           <HStack spacing={4}>
+            {/* Subscription Status Indicator - Mobile only */}
+            <Box display={{ base: "block", md: "none" }}>
+              <Button
+                variant="ghost"
+                size="sm"
+                color="brand.accent"
+                _hover={{ bg: "gray.100" }}
+                onClick={() => window.location.href = '/billing'}
+              >
+                <FiCreditCard />
+              </Button>
+            </Box>
+            
             {/* User Menu */}
             <Menu>
               <MenuButton
@@ -216,12 +250,21 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                 _hover={{ bg: "gray.100" }}
                 leftIcon={<FiUser />}
               >
-                John Doe
+                {user?.name || user?.email || 'User'}
               </MenuButton>
               <MenuList>
-                <MenuItem icon={<FiSettings />}>Settings</MenuItem>
-                <MenuItem icon={<FiUser />}>Profile</MenuItem>
-                <MenuItem icon={<FiLogOut />} color="red.500">Sign Out</MenuItem>
+                <MenuItem icon={<FiSettings />} onClick={() => window.location.href = '/settings'}>
+                  Settings
+                </MenuItem>
+                <MenuItem icon={<FiUser />} onClick={() => window.location.href = '/profile'}>
+                  Profile
+                </MenuItem>
+                <MenuItem icon={<FiCreditCard />} onClick={() => window.location.href = '/billing'}>
+                  Billing
+                </MenuItem>
+                <MenuItem icon={<FiLogOut />} color="red.500">
+                  Sign Out
+                </MenuItem>
               </MenuList>
             </Menu>
           </HStack>

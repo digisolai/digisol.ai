@@ -20,6 +20,12 @@ class Tenant(models.Model):
     active_subscription = models.OneToOneField('subscription_billing.Subscription', null=True, blank=True, related_name='tenant_current_subscription', on_delete=models.SET_NULL)
     contacts_used_current_period = models.IntegerField(default=0)
     emails_sent_current_period = models.IntegerField(default=0)
+    
+    # New Token-Based System
+    tokens_used_current_period = models.IntegerField(default=0, help_text="Tokens used in the current billing period")
+    tokens_purchased_additional = models.IntegerField(default=0, help_text="Additional tokens purchased beyond plan allocation")
+    
+    # Legacy AI Credits (keeping for backward compatibility)
     ai_text_credits_used_current_period = models.IntegerField(default=0)
     ai_image_credits_used_current_period = models.IntegerField(default=0)
     ai_planning_requests_used_current_period = models.IntegerField(default=0)
@@ -111,6 +117,63 @@ class Tenant(models.Model):
         if plan.ai_planning_requests_per_month == -1:  # Unlimited
             return -1
         return max(0, plan.ai_planning_requests_per_month - self.ai_planning_requests_used_current_period)
+
+    # New Token-Based System Methods
+    def can_use_tokens(self, token_count):
+        """Check if tenant can use specified number of tokens."""
+        if not self.active_subscription or not self.active_subscription.plan:
+            return False
+        plan = self.active_subscription.plan
+        if plan.monthly_tokens == -1:  # Unlimited
+            return True
+        total_available = plan.monthly_tokens + self.tokens_purchased_additional
+        return self.tokens_used_current_period + token_count <= total_available
+
+    def get_remaining_tokens(self):
+        """Get remaining tokens available to the tenant."""
+        if not self.active_subscription or not self.active_subscription.plan:
+            return 0
+        plan = self.active_subscription.plan
+        if plan.monthly_tokens == -1:  # Unlimited
+            return -1
+        total_available = plan.monthly_tokens + self.tokens_purchased_additional
+        return max(0, total_available - self.tokens_used_current_period)
+
+    def use_tokens(self, token_count):
+        """Consume tokens for the tenant."""
+        if self.can_use_tokens(token_count):
+            self.tokens_used_current_period += token_count
+            self.save()
+            return True
+        return False
+
+    def purchase_additional_tokens(self, token_count):
+        """Purchase additional tokens beyond plan allocation."""
+        self.tokens_purchased_additional += token_count
+        self.save()
+        return True
+
+    def can_create_automation_workflow(self):
+        """Check if tenant can create more automation workflows."""
+        if not self.active_subscription or not self.active_subscription.plan:
+            return False
+        plan = self.active_subscription.plan
+        if plan.automation_workflow_limit == -1:  # Unlimited
+            return True
+        # This would need to be implemented with actual workflow counting
+        # For now, return True if the plan allows it
+        return plan.automation_workflow_limit > 0
+
+    def can_add_integration(self):
+        """Check if tenant can add more integrations."""
+        if not self.active_subscription or not self.active_subscription.plan:
+            return False
+        plan = self.active_subscription.plan
+        if plan.integration_limit == -1:  # Unlimited
+            return True
+        # This would need to be implemented with actual integration counting
+        # For now, return True if the plan allows it
+        return plan.integration_limit > 0
 
 
 class Contact(models.Model):
@@ -635,3 +698,276 @@ class BrandAsset(models.Model):
         if tag in self.tag_list:
             self.tags.remove(tag)
             self.save(update_fields=['tags', 'updated_at'])
+
+class AgencyClientPortal(models.Model):
+    """
+    Agency Client Portal model for managing client relationships and access.
+    Each client portal belongs to a parent tenant (agency/marketer).
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
+    # Parent tenant (the agency/marketer)
+    parent_tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='agency_client_portals')
+    
+    # Client information
+    client_name = models.CharField(max_length=255)
+    client_email = models.EmailField()
+    client_phone = models.CharField(max_length=20, blank=True, null=True)
+    client_company = models.CharField(max_length=255, blank=True, null=True)
+    client_website = models.URLField(blank=True, null=True)
+    
+    # Client portal settings
+    is_active = models.BooleanField(default=True)
+    access_level = models.CharField(
+        max_length=20,
+        choices=[
+            ('basic', 'Basic Access'),
+            ('standard', 'Standard Access'),
+            ('premium', 'Premium Access'),
+            ('enterprise', 'Enterprise Access')
+        ],
+        default='standard'
+    )
+    
+    # Portal customization
+    custom_branding = models.BooleanField(default=False)
+    custom_domain = models.CharField(max_length=255, blank=True, null=True)
+    portal_theme = models.JSONField(default=dict, blank=True)
+    
+    # Features enabled for this client
+    features_enabled = models.JSONField(default=dict, blank=True, help_text="Dictionary of enabled features")
+    
+    # Billing and subscription
+    billing_cycle = models.CharField(
+        max_length=20,
+        choices=[
+            ('monthly', 'Monthly'),
+            ('quarterly', 'Quarterly'),
+            ('annually', 'Annually'),
+            ('custom', 'Custom')
+        ],
+        default='monthly'
+    )
+    monthly_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    setup_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    
+    # Usage tracking
+    contacts_limit = models.IntegerField(default=1000)
+    contacts_used = models.IntegerField(default=0)
+    campaigns_limit = models.IntegerField(default=10)
+    campaigns_used = models.IntegerField(default=0)
+    automations_limit = models.IntegerField(default=5)
+    automations_used = models.IntegerField(default=0)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    objects = TenantAwareManager()
+    
+    class Meta:
+        db_table = 'agency_client_portals'
+        verbose_name = 'Agency Client Portal'
+        verbose_name_plural = 'Agency Client Portals'
+        unique_together = ['client_email', 'parent_tenant']
+    
+    def __str__(self):
+        return f"{self.client_name} - {self.parent_tenant.name}"
+    
+    @property
+    def is_over_limit(self):
+        """Check if client is over any usage limits."""
+        return (
+            self.contacts_used > self.contacts_limit or
+            self.campaigns_used > self.campaigns_limit or
+            self.automations_used > self.automations_limit
+        )
+    
+    def get_usage_percentage(self, resource_type):
+        """Get usage percentage for a specific resource."""
+        limits = {
+            'contacts': self.contacts_limit,
+            'campaigns': self.campaigns_limit,
+            'automations': self.automations_limit
+        }
+        used = {
+            'contacts': self.contacts_used,
+            'campaigns': self.campaigns_used,
+            'automations': self.automations_used
+        }
+        
+        if limits.get(resource_type, 0) == 0:
+            return 0
+        return (used.get(resource_type, 0) / limits.get(resource_type, 1)) * 100
+
+class AgencyClientUser(models.Model):
+    """
+    Agency Client User model for managing individual user access to client portals.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
+    # Client portal this user belongs to
+    client_portal = models.ForeignKey(AgencyClientPortal, on_delete=models.CASCADE, related_name='client_users')
+    
+    # User information
+    first_name = models.CharField(max_length=100)
+    last_name = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    
+    # Access control
+    is_active = models.BooleanField(default=True)
+    role = models.CharField(
+        max_length=20,
+        choices=[
+            ('admin', 'Administrator'),
+            ('manager', 'Manager'),
+            ('viewer', 'Viewer'),
+            ('editor', 'Editor')
+        ],
+        default='viewer'
+    )
+    
+    # Portal access settings
+    can_view_analytics = models.BooleanField(default=True)
+    can_manage_campaigns = models.BooleanField(default=False)
+    can_manage_contacts = models.BooleanField(default=False)
+    can_manage_automations = models.BooleanField(default=False)
+    can_export_data = models.BooleanField(default=False)
+    
+    # Authentication
+    password_hash = models.CharField(max_length=255, blank=True, null=True)
+    last_login = models.DateTimeField(blank=True, null=True)
+    password_reset_token = models.CharField(max_length=255, blank=True, null=True)
+    password_reset_expires = models.DateTimeField(blank=True, null=True)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    objects = models.Manager()  # Not tenant-filtered as it's for client users
+    
+    class Meta:
+        db_table = 'agency_client_users'
+        verbose_name = 'Agency Client User'
+        verbose_name_plural = 'Agency Client Users'
+    
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} - {self.client_portal.client_name}"
+    
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+class AgencyClientActivity(models.Model):
+    """
+    Agency Client Activity model for tracking client portal usage and interactions.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
+    # Client portal
+    client_portal = models.ForeignKey(AgencyClientPortal, on_delete=models.CASCADE, related_name='activities')
+    
+    # User who performed the action (if applicable)
+    client_user = models.ForeignKey(AgencyClientUser, on_delete=models.SET_NULL, null=True, blank=True)
+    
+    # Activity details
+    activity_type = models.CharField(
+        max_length=50,
+        choices=[
+            ('login', 'User Login'),
+            ('campaign_created', 'Campaign Created'),
+            ('campaign_updated', 'Campaign Updated'),
+            ('contact_added', 'Contact Added'),
+            ('automation_created', 'Automation Created'),
+            ('report_generated', 'Report Generated'),
+            ('data_exported', 'Data Exported'),
+            ('settings_updated', 'Settings Updated'),
+            ('billing_updated', 'Billing Updated'),
+            ('support_requested', 'Support Requested')
+        ]
+    )
+    
+    description = models.TextField()
+    metadata = models.JSONField(default=dict, blank=True)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    objects = TenantAwareManager()
+    
+    class Meta:
+        db_table = 'agency_client_activities'
+        verbose_name = 'Agency Client Activity'
+        verbose_name_plural = 'Agency Client Activities'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"{self.activity_type} - {self.client_portal.client_name} - {self.created_at}"
+
+class AgencyClientBilling(models.Model):
+    """
+    Agency Client Billing model for tracking client payments and invoices.
+    """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
+    # Client portal
+    client_portal = models.ForeignKey(AgencyClientPortal, on_delete=models.CASCADE, related_name='billing_records')
+    
+    # Billing details
+    invoice_number = models.CharField(max_length=50, unique=True)
+    billing_period_start = models.DateField()
+    billing_period_end = models.DateField()
+    
+    # Amounts
+    base_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    overage_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    setup_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    discount_amount = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    # Status
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('draft', 'Draft'),
+            ('sent', 'Sent'),
+            ('paid', 'Paid'),
+            ('overdue', 'Overdue'),
+            ('cancelled', 'Cancelled')
+        ],
+        default='draft'
+    )
+    
+    # Payment details
+    payment_method = models.CharField(max_length=50, blank=True, null=True)
+    payment_date = models.DateTimeField(blank=True, null=True)
+    stripe_invoice_id = models.CharField(max_length=255, blank=True, null=True)
+    
+    # Notes
+    notes = models.TextField(blank=True, null=True)
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    objects = TenantAwareManager()
+    
+    class Meta:
+        db_table = 'agency_client_billing'
+        verbose_name = 'Agency Client Billing'
+        verbose_name_plural = 'Agency Client Billing'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f"Invoice {self.invoice_number} - {self.client_portal.client_name}"
+    
+    def save(self, *args, **kwargs):
+        # Auto-calculate total amount
+        self.total_amount = (
+            self.base_amount + 
+            self.overage_amount + 
+            self.setup_fee - 
+            self.discount_amount
+        )
+        super().save(*args, **kwargs)

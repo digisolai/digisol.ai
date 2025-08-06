@@ -7,11 +7,34 @@ from .models import (
 
 @admin.register(Tenant)
 class TenantAdmin(admin.ModelAdmin):
-    list_display = ['name', 'subdomain', 'is_active', 'active_subscription', 'contacts_used_current_period', 'emails_sent_current_period', 'created_at']
+    list_display = ['name', 'subdomain', 'is_active', 'active_subscription', 'tokens_used_current_period', 'contacts_used_current_period', 'emails_sent_current_period', 'created_at']
     list_filter = ['is_active', 'created_at']
     search_fields = ['name', 'subdomain']
     readonly_fields = ['id', 'created_at', 'updated_at']
     ordering = ['name']
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('name', 'subdomain', 'is_active', 'active_subscription')
+        }),
+        ('Usage Tracking', {
+            'fields': (
+                'tokens_used_current_period', 'tokens_purchased_additional',
+                'contacts_used_current_period', 'emails_sent_current_period'
+            )
+        }),
+        ('Legacy AI Credits', {
+            'fields': (
+                'ai_text_credits_used_current_period', 'ai_image_credits_used_current_period',
+                'ai_planning_requests_used_current_period'
+            ),
+            'classes': ('collapse',)
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        })
+    )
 
 
 @admin.register(Contact)

@@ -16,11 +16,13 @@ import {
 
   VStack,
   Spinner,
+  Box,
 
 } from "@chakra-ui/react";
 import { Layout } from "../components/Layout";
 import { PageLayout, SectionCard, SideCard } from "../components/PageLayout";
 import { useAuth } from "../hooks/useAuth";
+import FeatureAvailability from "../components/FeatureAvailability";
 
 interface DashboardSummary {
   active_campaigns: number;
@@ -185,6 +187,11 @@ export default function DashboardPage() {
                 )}
               </VStack>
             </SideCard>
+
+            {/* Feature Availability */}
+            <Box mt={6}>
+              <FeatureAvailability />
+            </Box>
           </>
         }
         showLeftColumn={false}

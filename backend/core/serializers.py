@@ -6,6 +6,7 @@ from .models import (
 )
 from accounts.models import CustomUser
 from analytics.models import Event
+from .models import AgencyClientPortal, AgencyClientUser, AgencyClientActivity, AgencyClientBilling
 
 
 class TenantSerializer(serializers.ModelSerializer):
@@ -820,3 +821,84 @@ class BrandAssetUpdateSerializer(serializers.ModelSerializer):
         # Remove duplicates and empty strings
         cleaned_tags = list(set([tag.strip() for tag in value if tag.strip()]))
         return cleaned_tags 
+
+
+class AgencyClientPortalSerializer(serializers.ModelSerializer):
+    """Serializer for AgencyClientPortal model."""
+    parent_tenant_name = serializers.CharField(source='parent_tenant.name', read_only=True)
+    usage_percentage = serializers.SerializerMethodField()
+    is_over_limit = serializers.BooleanField(read_only=True)
+    total_users = serializers.SerializerMethodField()
+    recent_activities = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = AgencyClientPortal
+        fields = [
+            'id', 'parent_tenant', 'parent_tenant_name', 'client_name', 'client_email',
+            'client_phone', 'client_company', 'client_website', 'is_active', 'access_level',
+            'custom_branding', 'custom_domain', 'portal_theme', 'features_enabled',
+            'billing_cycle', 'monthly_fee', 'setup_fee', 'contacts_limit', 'contacts_used',
+            'campaigns_limit', 'campaigns_used', 'automations_limit', 'automations_used',
+            'usage_percentage', 'is_over_limit', 'total_users', 'recent_activities',
+            'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+    
+    def get_usage_percentage(self, obj):
+        return {
+            'contacts': obj.get_usage_percentage('contacts'),
+            'campaigns': obj.get_usage_percentage('campaigns'),
+            'automations': obj.get_usage_percentage('automations')
+        }
+    
+    def get_total_users(self, obj):
+        return obj.client_users.filter(is_active=True).count()
+    
+    def get_recent_activities(self, obj):
+        activities = obj.activities.all()[:5]  # Last 5 activities
+        return AgencyClientActivitySerializer(activities, many=True).data
+
+class AgencyClientUserSerializer(serializers.ModelSerializer):
+    """Serializer for AgencyClientUser model."""
+    client_portal_name = serializers.CharField(source='client_portal.client_name', read_only=True)
+    full_name = serializers.CharField(read_only=True)
+    
+    class Meta:
+        model = AgencyClientUser
+        fields = [
+            'id', 'client_portal', 'client_portal_name', 'first_name', 'last_name',
+            'full_name', 'email', 'phone', 'is_active', 'role', 'can_view_analytics',
+            'can_manage_campaigns', 'can_manage_contacts', 'can_manage_automations',
+            'can_export_data', 'last_login', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'created_at', 'updated_at']
+        extra_kwargs = {
+            'password_hash': {'write_only': True}
+        }
+
+class AgencyClientActivitySerializer(serializers.ModelSerializer):
+    """Serializer for AgencyClientActivity model."""
+    client_portal_name = serializers.CharField(source='client_portal.client_name', read_only=True)
+    client_user_name = serializers.CharField(source='client_user.full_name', read_only=True)
+    
+    class Meta:
+        model = AgencyClientActivity
+        fields = [
+            'id', 'client_portal', 'client_portal_name', 'client_user', 'client_user_name',
+            'activity_type', 'description', 'metadata', 'created_at'
+        ]
+        read_only_fields = ['id', 'created_at']
+
+class AgencyClientBillingSerializer(serializers.ModelSerializer):
+    """Serializer for AgencyClientBilling model."""
+    client_portal_name = serializers.CharField(source='client_portal.client_name', read_only=True)
+    
+    class Meta:
+        model = AgencyClientBilling
+        fields = [
+            'id', 'client_portal', 'client_portal_name', 'invoice_number',
+            'billing_period_start', 'billing_period_end', 'base_amount', 'overage_amount',
+            'setup_fee', 'discount_amount', 'total_amount', 'status', 'payment_method',
+            'payment_date', 'stripe_invoice_id', 'notes', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['id', 'total_amount', 'created_at', 'updated_at'] 

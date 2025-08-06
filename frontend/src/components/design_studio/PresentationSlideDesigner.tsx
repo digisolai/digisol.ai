@@ -16,8 +16,8 @@ import {
   Heading,
   HStack,
   SimpleGrid,
-
 } from '@chakra-ui/react';
+import { FiUpload } from 'react-icons/fi';
 // import { useAuth } from '../../hooks/useAuth';
 import api from '../../services/api';
 

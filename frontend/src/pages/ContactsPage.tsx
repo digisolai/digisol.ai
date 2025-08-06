@@ -36,7 +36,7 @@ import {
   Checkbox,
   Divider,
 } from "@chakra-ui/react";
-import {FiPlus, FiXCircle} from "react-icons/fi";
+import {FiPlus, FiXCircle, FiUsers, FiSave, FiDownload, FiEdit, FiInfo, FiZap, FiTrash2} from "react-icons/fi";
 import { Layout } from "../components/Layout";
 import { AIAgentSection } from "../components/AIAgentSection";
 import TagInput from "../components/TagInput"; // Assuming this component exists
