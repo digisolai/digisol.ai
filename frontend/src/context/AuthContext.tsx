@@ -102,16 +102,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [checkAndRefreshToken]);
 
   const login = useCallback(async (email: string, password: string) => {
+    console.log('AuthContext: Login attempt for', email); // Debug log
     try {
+      console.log('AuthContext: Making API request to /accounts/token/'); // Debug log
       const response = await api.post('/accounts/token/', { email, password });
+      console.log('AuthContext: Login API response received'); // Debug log
       const { access, refresh } = response.data;
+      console.log('AuthContext: Storing tokens in localStorage'); // Debug log
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
       api.defaults.headers.common['Authorization'] = `Bearer ${access}`;
+      console.log('AuthContext: Fetching user profile...'); // Debug log
       await fetchUserProfile();
+      console.log('AuthContext: Login process completed successfully'); // Debug log
       return response.data; // Return data so calling component can navigate
     } catch (error: unknown) {
-      console.error("Login failed:", error instanceof Error ? error.message : 'Unknown error');
+      console.error("AuthContext: Login failed:", error instanceof Error ? error.message : 'Unknown error');
+      console.error("AuthContext: Full error object:", error); // Debug log
       throw error;
     }
   }, [fetchUserProfile]);
