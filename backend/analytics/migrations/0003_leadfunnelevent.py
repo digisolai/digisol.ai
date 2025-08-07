@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('analytics', '0003_alter_event_event_type'),
+        ('analytics', '0002_alter_event_event_type'),
         ('campaigns', '0003_marketingcampaign_is_template'),
         ('core', '0017_contact_assigned_to_department_and_more'),
     ]

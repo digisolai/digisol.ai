@@ -9,7 +9,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('analytics', '0004_leadfunnelevent'),
+        ('analytics', '0003_leadfunnelevent'),
         ('core', '0018_enhance_brand_profile_comprehensive_branding'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]

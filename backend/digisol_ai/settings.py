@@ -14,15 +14,21 @@ import os
 from pathlib import Path
 from datetime import timedelta
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 # Load environment variables from .env file
 try:
     from dotenv import load_dotenv
-    load_dotenv()
+    # Try to load local environment file first, then fall back to .env
+    if os.path.exists(BASE_DIR / 'env.local'):
+        load_dotenv(BASE_DIR / 'env.local')
+        print("🔧 Loaded local environment from env.local")
+    else:
+        load_dotenv()
+        print("🔧 Loaded default environment")
 except ImportError:
     pass  # python-dotenv not installed, continue without it
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -110,8 +116,15 @@ WSGI_APPLICATION = 'digisol_ai.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': os.environ.get('DATABASE_ENGINE', 'django.db.backends.sqlite3'),
+        'NAME': os.environ.get('DB_NAME', BASE_DIR / 'db.sqlite3'),
+        'USER': os.environ.get('DB_USER', ''),
+        'PASSWORD': os.environ.get('DB_PASSWORD', ''),
+        'HOST': os.environ.get('DB_HOST', ''),
+        'PORT': os.environ.get('DB_PORT', ''),
+        'OPTIONS': {
+            'sslmode': os.environ.get('DB_SSL_MODE', 'prefer'),
+        } if os.environ.get('DATABASE_ENGINE') == 'django.db.backends.postgresql' else {},
     }
 }
 
@@ -150,7 +163,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# Frontend static files
+FRONTEND_BUILD_DIR = BASE_DIR.parent / 'frontend' / 'dist'
+STATICFILES_DIRS = [
+    FRONTEND_BUILD_DIR,
+]
 
 # Media files (User uploaded content)
 MEDIA_URL = '/media/'

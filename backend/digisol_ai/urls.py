@@ -3,10 +3,14 @@
 URL configuration for digisol_ai project.
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.conf import settings
+from django.conf.urls.static import static
+from django.views.generic import TemplateView
+from django.views.static import serve
 
 # The include_docs_urls import is not typically used here if you're using DRF's default router for documentation
 # from rest_framework.documentation import include_docs_urls
@@ -31,8 +35,11 @@ def root_handler(request):
         'timestamp': timezone.now().isoformat()
     })
 
+def serve_frontend(request, path=''):
+    """Serve the React frontend for any non-API routes"""
+    return serve(request, 'index.html', settings.FRONTEND_BUILD_DIR)
+
 urlpatterns = [
-    path('', root_handler, name='root'),  # Handle root URL
     path('health/', health_check, name='health_check'),
     path('admin/', admin.site.urls),
 
@@ -49,4 +56,11 @@ urlpatterns = [
     path('api/budgeting/', include('budgeting.urls')),
     path('api/analytics/', include('analytics.urls')),
     path('api/integrations/', include('integrations.urls')),
+    
+    # Serve static files
+    *static(settings.STATIC_URL, document_root=settings.STATIC_ROOT),
+    *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
+    
+    # Catch-all for React Router - must be last
+    re_path(r'^(?P<path>.*)$', serve_frontend, name='frontend'),
 ]
