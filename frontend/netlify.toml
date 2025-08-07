@@ -7,7 +7,7 @@
   NODE_VERSION = "20.11.1"
 
 [[plugins]]
-package = "@netlify/plugin-vite"
+package = "@netlify/vite-plugin"
 
 [[redirects]]
   from = "/*"
