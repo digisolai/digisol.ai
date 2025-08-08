@@ -1,1 +1,1 @@
-# Management commands for AI services 
+# Django management commands 

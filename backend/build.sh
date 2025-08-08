@@ -6,10 +6,10 @@ set -o errexit
 pip install -r requirements_render.txt
 
 # Collect static files
-python manage.py collectstatic --noinput
+python manage.py collectstatic --noinput --settings=digisol_ai.settings_render
 
 # Run database migrations
-python manage.py migrate --settings=digisol_ai.settings_production
+python manage.py migrate --settings=digisol_ai.settings_render
 
 # Create superuser if needed (optional)
-# python manage.py createsuperuser --noinput --settings=digisol_ai.settings_production 
+# python manage.py createsuperuser --noinput --settings=digisol_ai.settings_render 

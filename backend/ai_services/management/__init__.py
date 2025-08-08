@@ -1,1 +1,1 @@
-# Management package for AI services 
+# Management commands for ai_services app 

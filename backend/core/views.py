@@ -50,6 +50,17 @@ def health_check(request):
         'message': 'DigiSol AI Backend is running'
     }, status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def health_check(request):
+    """
+    Health check endpoint for deployment verification.
+    """
+    return Response({
+        'status': 'healthy',
+        'message': 'DigiSol.AI Backend is running',
+        'timestamp': timezone.now().isoformat()
+    }, status=status.HTTP_200_OK)
+
 @csrf_exempt
 @require_http_methods(["GET"])
 def health_check(request):

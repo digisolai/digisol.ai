@@ -64,7 +64,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
             BrandProfile.objects.create(
                 tenant=tenant,
                 primary_color="#1F4287",  # Default primary color
-                secondary_color="#FFC300",   # Default accent color
+                secondary_color="#FFC300",   # Default secondary color
                 font_family="Inter", # Default font
                 tone_of_voice_description="Professional, yet approachable. We communicate clearly and concisely." # Default tone
             )
