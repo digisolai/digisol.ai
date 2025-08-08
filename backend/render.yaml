@@ -2,9 +2,10 @@ services:
   - type: web
     name: digisol-backend
     env: python
-    plan: free
+    plan: professional
     buildCommand: pip install -r requirements_render.txt
-    startCommand: gunicorn digisol_ai.wsgi:application --bind 0.0.0.0:$PORT --env DJANGO_SETTINGS_MODULE=digisol_ai.settings_render
+    startCommand: gunicorn digisol_ai.wsgi:application --bind 0.0.0.0:$PORT --env DJANGO_SETTINGS_MODULE=digisol_ai.settings_render --workers 2 --timeout 120 --max-requests 1000 --max-requests-jitter 100
+    healthCheckPath: /health/
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
@@ -22,3 +23,5 @@ services:
         value: django.core.mail.backends.console.EmailBackend
       - key: DEFAULT_FROM_EMAIL
         value: noreply@digisolai.ca
+      - key: RENDER
+        value: true

@@ -166,12 +166,12 @@ export default function DashboardPage() {
               <SectionCard title="Quick Actions">
                 <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
                                      <Button 
-                     bg="brand.primary" 
-                     color="white" 
+                     bg="#1e3a8a" 
+                     color="#fbbf24" 
                      fontWeight="bold" 
                      as={Link}
                      to="/campaigns" 
-                     _hover={{ bg: "brand.600" }}
+                     _hover={{ bg: "#1e40af" }}
                      size="lg"
                      leftIcon={<FiPlus />}
                      rightIcon={<FiArrowRight />}
@@ -179,12 +179,12 @@ export default function DashboardPage() {
                      New Campaign
                    </Button>
                    <Button 
-                     bg="brand.primary" 
-                     color="white" 
+                     bg="#1e3a8a" 
+                     color="#fbbf24" 
                      fontWeight="bold" 
                      as={Link}
                      to="/contacts" 
-                     _hover={{ bg: "brand.600" }}
+                     _hover={{ bg: "#1e40af" }}
                      size="lg"
                      leftIcon={<FiPlus />}
                      rightIcon={<FiArrowRight />}
@@ -192,12 +192,12 @@ export default function DashboardPage() {
                      Add Contacts
                    </Button>
                    <Button 
-                     bg="brand.primary" 
-                     color="white" 
+                     bg="#1e3a8a" 
+                     color="#fbbf24" 
                      fontWeight="bold" 
                      as={Link}
                      to="/reports" 
-                     _hover={{ bg: "brand.600" }}
+                     _hover={{ bg: "#1e40af" }}
                      size="lg"
                      leftIcon={<FiBarChart2 />}
                      rightIcon={<FiArrowRight />}
