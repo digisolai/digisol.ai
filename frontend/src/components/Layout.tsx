@@ -176,6 +176,11 @@ export const Layout = ({ children }: { children: ReactNode }) => {
              px={3}
              _hover={{ bg: "rgba(255,255,255,0.1)" }}
              leftIcon={<FiLogOut />}
+             onClick={() => {
+               localStorage.removeItem('access_token');
+               localStorage.removeItem('refresh_token');
+               window.location.href = '/login';
+             }}
            >
              Sign Out
            </Button>
@@ -252,16 +257,24 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                 {user?.name || user?.email || 'User'}
               </MenuButton>
               <MenuList>
-                <MenuItem icon={<FiSettings />} onClick={() => window.location.href = '/settings'}>
+                <MenuItem icon={<FiSettings />} as={RouterLink} to="/settings">
                   Settings
                 </MenuItem>
-                <MenuItem icon={<FiUser />} onClick={() => window.location.href = '/profile'}>
+                <MenuItem icon={<FiUser />} as={RouterLink} to="/profile">
                   Profile
                 </MenuItem>
-                <MenuItem icon={<FiCreditCard />} onClick={() => window.location.href = '/billing'}>
+                <MenuItem icon={<FiCreditCard />} as={RouterLink} to="/billing">
                   Billing
                 </MenuItem>
-                <MenuItem icon={<FiLogOut />} color="red.500">
+                <MenuItem 
+                  icon={<FiLogOut />} 
+                  color="red.500"
+                  onClick={() => {
+                    localStorage.removeItem('access_token');
+                    localStorage.removeItem('refresh_token');
+                    window.location.href = '/login';
+                  }}
+                >
                   Sign Out
                 </MenuItem>
               </MenuList>
