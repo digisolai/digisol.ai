@@ -157,22 +157,23 @@ export const AIAgentCard: React.FC<AIAgentCardProps> = ({
             <HStack spacing={3}>
               <Box
                 p={2}
-                bg={useColorModeValue('blue.50', 'blue.900')}
+                bg="brand.50"
                 borderRadius="full"
               >
-                <Icon as={IconComponent} boxSize={5} color="blue.500" />
+                <Icon as={IconComponent} boxSize={5} color="brand.primary" />
               </Box>
               <VStack align="start" spacing={0}>
                 <Text fontWeight="bold" fontSize="lg">
                   {agent.name}
                 </Text>
-                <Badge colorScheme="blue" variant="subtle">
+                <Badge bg="brand.accent" color="brand.primary" variant="subtle">
                   {getSpecializationLabel(agent.specialization)}
                 </Badge>
               </VStack>
             </HStack>
             <Badge
-              colorScheme={agent.is_active ? 'green' : 'gray'}
+              bg={agent.is_active ? 'brand.accent' : 'gray.300'}
+              color={agent.is_active ? 'brand.primary' : 'gray.600'}
               variant="subtle"
             >
               {agent.is_active ? 'Active' : 'Inactive'}
@@ -187,16 +188,17 @@ export const AIAgentCard: React.FC<AIAgentCardProps> = ({
           <HStack spacing={2} w="full">
             <Button
               size="sm"
-              colorScheme="blue"
+              bg="brand.primary"
+              color="white"
               variant="outline"
               onClick={onOpen}
               flex={1}
-              _hover={{ bg: 'blue.50' }}
+              _hover={{ bg: 'brand.600' }}
             >
               Ask Question
             </Button>
             <Tooltip label="View detailed profile">
-              <Button size="sm" variant="ghost">
+              <Button size="sm" variant="ghost" color="brand.primary">
                 <Icon as={FiCpu} />
               </Button>
             </Tooltip>
@@ -224,7 +226,7 @@ export const AIAgentCard: React.FC<AIAgentCardProps> = ({
                 <Button onClick={onClose} variant="ghost">
                   Cancel
                 </Button>
-                <Button colorScheme="blue" onClick={handleAskQuestion} flex={1}>
+                <Button bg="brand.primary" color="white" onClick={handleAskQuestion} flex={1} _hover={{ bg: 'brand.600' }}>
                   Ask {agent.name}
                 </Button>
               </HStack>

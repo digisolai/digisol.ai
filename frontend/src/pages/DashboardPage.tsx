@@ -165,45 +165,45 @@ export default function DashboardPage() {
               {/* Quick Actions */}
               <SectionCard title="Quick Actions">
                 <SimpleGrid columns={{ base: 1, md: 3 }} spacing={4}>
-                  <Button 
-                    bg="brand.primary" 
-                    color="white" 
-                    fontWeight="bold" 
-                    as={Link}
-                    to="/campaigns" 
-                    _hover={{ bg: "#1a365d" }}
-                    size="lg"
-                    leftIcon={<FiPlus />}
-                    rightIcon={<FiArrowRight />}
-                  >
-                    New Campaign
-                  </Button>
-                  <Button 
-                    bg="brand.primary" 
-                    color="white" 
-                    fontWeight="bold" 
-                    as={Link}
-                    to="/contacts" 
-                    _hover={{ bg: "#1a365d" }}
-                    size="lg"
-                    leftIcon={<FiPlus />}
-                    rightIcon={<FiArrowRight />}
-                  >
-                    Add Contacts
-                  </Button>
-                  <Button 
-                    bg="brand.primary" 
-                    color="white" 
-                    fontWeight="bold" 
-                    as={Link}
-                    to="/reports" 
-                    _hover={{ bg: "#1a365d" }}
-                    size="lg"
-                    leftIcon={<FiBarChart2 />}
-                    rightIcon={<FiArrowRight />}
-                  >
-                    View Reports
-                  </Button>
+                                     <Button 
+                     bg="brand.primary" 
+                     color="white" 
+                     fontWeight="bold" 
+                     as={Link}
+                     to="/campaigns" 
+                     _hover={{ bg: "brand.600" }}
+                     size="lg"
+                     leftIcon={<FiPlus />}
+                     rightIcon={<FiArrowRight />}
+                   >
+                     New Campaign
+                   </Button>
+                   <Button 
+                     bg="brand.primary" 
+                     color="white" 
+                     fontWeight="bold" 
+                     as={Link}
+                     to="/contacts" 
+                     _hover={{ bg: "brand.600" }}
+                     size="lg"
+                     leftIcon={<FiPlus />}
+                     rightIcon={<FiArrowRight />}
+                   >
+                     Add Contacts
+                   </Button>
+                   <Button 
+                     bg="brand.primary" 
+                     color="white" 
+                     fontWeight="bold" 
+                     as={Link}
+                     to="/reports" 
+                     _hover={{ bg: "brand.600" }}
+                     size="lg"
+                     leftIcon={<FiBarChart2 />}
+                     rightIcon={<FiArrowRight />}
+                   >
+                     View Reports
+                   </Button>
                 </SimpleGrid>
               </SectionCard>
             </VStack>
@@ -233,45 +233,45 @@ export default function DashboardPage() {
                     All features are available for exploration. Upgrade for higher limits.
                   </Text>
                   
-                  <SimpleGrid columns={2} spacing={2}>
-                    {features.map((feature) => (
-                      <HStack 
-                        key={feature.name}
-                        p={2}
-                        bg="green.50"
-                        borderRadius="md"
-                        border="1px solid"
-                        borderColor="green.200"
-                        spacing={2}
-                      >
-                        <Icon 
-                          as={feature.icon} 
-                          color="green.500" 
-                          boxSize={4} 
-                        />
-                        <Text fontSize="xs" fontWeight="medium" color="green.700">
-                          {feature.name}
-                        </Text>
-                        <Badge colorScheme="green" size="xs">
-                          ✓
-                        </Badge>
-                      </HStack>
-                    ))}
-                  </SimpleGrid>
+                                     <SimpleGrid columns={2} spacing={2}>
+                     {features.map((feature) => (
+                       <HStack 
+                         key={feature.name}
+                         p={2}
+                         bg="brand.50"
+                         borderRadius="md"
+                         border="1px solid"
+                         borderColor="brand.200"
+                         spacing={2}
+                       >
+                         <Icon 
+                           as={feature.icon} 
+                           color="brand.primary" 
+                           boxSize={4} 
+                         />
+                         <Text fontSize="xs" fontWeight="medium" color="brand.primary">
+                           {feature.name}
+                         </Text>
+                         <Badge bg="brand.accent" color="brand.primary" size="xs">
+                           ✓
+                         </Badge>
+                       </HStack>
+                     ))}
+                   </SimpleGrid>
                   
                   <Divider />
                   
-                  <Box p={3} bg="blue.50" borderRadius="md" border="1px solid" borderColor="blue.200">
-                    <HStack spacing={2} mb={1}>
-                      <Icon as={FiInfo} color="blue.500" boxSize={4} />
-                      <Text fontSize="sm" fontWeight="bold" color="blue.700">
-                        Upgrade Available
-                      </Text>
-                    </HStack>
-                    <Text fontSize="xs" color="blue.600">
-                      Remove limits and get priority support with paid plans.
-                    </Text>
-                  </Box>
+                                     <Box p={3} bg="brand.50" borderRadius="md" border="1px solid" borderColor="brand.accent">
+                     <HStack spacing={2} mb={1}>
+                       <Icon as={FiInfo} color="brand.accent" boxSize={4} />
+                       <Text fontSize="sm" fontWeight="bold" color="brand.primary">
+                         Upgrade Available
+                       </Text>
+                     </HStack>
+                     <Text fontSize="xs" color="brand.primary">
+                       Remove limits and get priority support with paid plans.
+                     </Text>
+                   </Box>
                 </VStack>
               </SideCard>
             </VStack>

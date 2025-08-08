@@ -540,7 +540,7 @@ export default function AIOverviewPage() {
                   <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
                     <Stat>
                       <StatLabel>Overall Health</StatLabel>
-                      <StatNumber color={ecosystemHealth.system_status === 'optimal' ? 'green.500' : 'orange.500'}>
+                      <StatNumber color={ecosystemHealth.system_status === 'optimal' ? 'brand.accent' : 'orange.500'}>
                         {ecosystemHealth.overall_score}%
                       </StatNumber>
                       <StatHelpText>
@@ -682,7 +682,7 @@ export default function AIOverviewPage() {
               {aiProfiles.map((agent) => {
                 const AgentIcon = getAgentIcon(agent.name);
                 const status = agent.is_active ? "Active" : "Inactive";
-                const statusColor = agent.is_active ? "green" : "gray";
+                const statusColor = agent.is_active ? "brand.accent" : "gray";
                 
                 return (
                   <Card key={agent.id} size="sm" _hover={{ transform: "translateY(-2px)", boxShadow: "lg" }} transition="all 0.2s">
@@ -711,7 +711,7 @@ export default function AIOverviewPage() {
                           <Text fontSize="xs" color="brand.neutral.500">
                             Model: {agent.api_model_name}
                           </Text>
-                          <Badge colorScheme="blue" variant="outline" fontSize="xs">
+                          <Badge bg="brand.accent" color="brand.primary" variant="outline" fontSize="xs">
                             {agent.is_global ? "Global" : "Tenant"}
                           </Badge>
                         </HStack>

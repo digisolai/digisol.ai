@@ -29,6 +29,31 @@ const colors = {
       500: "#333333",
     },
   },
+  // Override default Chakra colors to use brand colors
+  blue: {
+    50: "#E6F0FF",
+    100: "#B3D1FF",
+    200: "#80B3FF",
+    300: "#4D94FF",
+    400: "#1A75FF",
+    500: "#1F4287", // Use brand primary
+    600: "#1A3A7A",
+    700: "#15326D",
+    800: "#102A60",
+    900: "#0B2253",
+  },
+  green: {
+    50: "#FFF8E6",
+    100: "#FFE8B3",
+    200: "#FFD880",
+    300: "#FFC84D",
+    400: "#FFB81A",
+    500: "#FFC300", // Use brand accent
+    600: "#E6B000",
+    700: "#CC9D00",
+    800: "#B38A00",
+    900: "#997700",
+  },
 };
 
 const fonts = {
