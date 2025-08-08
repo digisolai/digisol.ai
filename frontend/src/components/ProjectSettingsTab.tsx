@@ -240,7 +240,7 @@ const ProjectSettingsTab: React.FC<ProjectSettingsTabProps> = ({ project, onProj
                           <option value="custom">Custom</option>
                         </Select>
                       ) : (
-                        <Badge colorScheme="blue" variant="subtle">
+                        <Badge colorScheme="brand" variant="subtle">
                           {project.project_type.replace('_', ' ').toUpperCase()}
                         </Badge>
                       )}

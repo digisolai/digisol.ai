@@ -400,7 +400,7 @@ const ResourceManagementTab: React.FC<ResourceManagementTabProps> = ({ project }
                       </Text>
                       <HStack spacing={2} flexWrap="wrap">
                         {member.skills.map((skill) => (
-                          <Badge key={skill} colorScheme="blue" variant="subtle">
+                          <Badge key={skill} colorScheme="brand" variant="subtle">
                             {skill}
                           </Badge>
                         ))}
@@ -476,7 +476,7 @@ const ResourceManagementTab: React.FC<ResourceManagementTabProps> = ({ project }
                   <Text fontWeight="medium" mb={2}>Skills:</Text>
                   <HStack spacing={2} flexWrap="wrap">
                     {selectedMember.skills.map((skill) => (
-                      <Badge key={skill} colorScheme="blue">
+                      <Badge key={skill} colorScheme="brand">
                         {skill}
                       </Badge>
                     ))}

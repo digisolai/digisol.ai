@@ -128,7 +128,7 @@ export default function AIAgentsPage() {
               <Text fontSize="sm">{error}</Text>
               <Button 
                 size="sm" 
-                colorScheme="blue" 
+                variant="brandSolid" 
                 mt={2}
                 onClick={() => fetchAgents()}
               >
@@ -156,19 +156,19 @@ export default function AIAgentsPage() {
               </Card>
               <Card boxShadow="md" bg="white">
                 <CardBody textAlign="center">
-                  <Text fontSize="2xl" fontWeight="bold" color="green.500">{stats.active}</Text>
+                  <Text fontSize="2xl" fontWeight="bold" color="brand.accent">{stats.active}</Text>
                   <Text fontSize="sm" color="brand.neutral.600">Active Agents</Text>
                 </CardBody>
               </Card>
               <Card boxShadow="md" bg="white">
                 <CardBody textAlign="center">
-                  <Text fontSize="2xl" fontWeight="bold" color="blue.500">{stats.global}</Text>
+                  <Text fontSize="2xl" fontWeight="bold" color="brand.primary">{stats.global}</Text>
                   <Text fontSize="sm" color="brand.neutral.600">Global Agents</Text>
                 </CardBody>
               </Card>
               <Card boxShadow="md" bg="white">
                 <CardBody textAlign="center">
-                  <Text fontSize="2xl" fontWeight="bold" color="purple.500">{stats.tenant}</Text>
+                  <Text fontSize="2xl" fontWeight="bold" color="brand.primary">{stats.tenant}</Text>
                   <Text fontSize="sm" color="brand.neutral.600">Tenant Agents</Text>
                 </CardBody>
               </Card>
@@ -203,7 +203,7 @@ export default function AIAgentsPage() {
                     </Text>
                     
                     <HStack justify="space-between">
-                      <Badge colorScheme="blue" variant="outline" fontSize="xs">
+                      <Badge colorScheme="brand" variant="outline" fontSize="xs">
                         {profile.is_global ? "Global" : "Tenant"}
                       </Badge>
                       <Text fontSize="xs" color="brand.neutral.500">
@@ -215,7 +215,7 @@ export default function AIAgentsPage() {
                       <Text fontSize="xs" color="brand.neutral.500" fontWeight="medium" mb={1}>
                         Specialization:
                       </Text>
-                      <Badge colorScheme="purple" variant="subtle" fontSize="xs">
+                      <Badge colorScheme="brand" variant="subtle" fontSize="xs">
                         {getSpecializationLabel(profile.specialization)}
                       </Badge>
                     </Box>

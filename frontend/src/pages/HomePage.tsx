@@ -1033,31 +1033,29 @@ export default function HomePage() {
                 </CardHeader>
                 <CardBody>
                   <VStack spacing={4} align="stretch">
-                    <Box p={4} bg="blue.50" borderRadius="md">
+                    <Box p={4} bg="brand.50" borderRadius="md">
                       <HStack justify="space-between">
                         <Text fontWeight="bold">Ignite Plan Clients</Text>
-                        <Text fontWeight="bold" color="#1F4287">$79/month</Text>
+                        <Text fontWeight="bold" color="brand.primary">$79/month</Text>
                       </HStack>
                       <Text fontSize="sm" color="gray.600">per client (vs. $129 regular)</Text>
                     </Box>
-                    <Box p={4} bg="green.50" borderRadius="md">
+                    <Box p={4} bg="brand.50" borderRadius="md">
                       <HStack justify="space-between">
                         <Text fontWeight="bold">Growth Accelerator Clients</Text>
-                        <Text fontWeight="bold" color="#1F4287">$299/month</Text>
+                        <Text fontWeight="bold" color="brand.primary">$299/month</Text>
                       </HStack>
                       <Text fontSize="sm" color="gray.600">per client (vs. $499 regular)</Text>
                     </Box>
-                    <Box p={4} bg="purple.50" borderRadius="md">
+                    <Box p={4} bg="brand.50" borderRadius="md">
                       <HStack justify="space-between">
                         <Text fontWeight="bold">Elite Strategist Clients</Text>
-                        <Text fontWeight="bold" color="#1F4287">$799/month</Text>
+                        <Text fontWeight="bold" color="brand.primary">$799/month</Text>
                       </HStack>
                       <Text fontSize="sm" color="gray.600">per client (vs. $1,199 regular)</Text>
                     </Box>
                                          <Button
-                       bg="#1F4287"
-                       color="#FFC300"
-                       _hover={{ bg: "#163a6f" }}
+                       variant="brandSolid"
                        size="lg"
                        mt={4}
                        onClick={handleClientPortal}
@@ -1074,7 +1072,7 @@ export default function HomePage() {
       </Box>
 
       {/* CTA Section */}
-             <Box py={20} bg="#1F4287" color="white">
+             <Box py={20} bg="brand.primary" color="white">
         <Container maxW="container.xl">
           <VStack spacing={8} textAlign="center">
             <Heading size="xl" mb={4}>
@@ -1087,9 +1085,7 @@ export default function HomePage() {
                          <HStack spacing={4}>
                               <Button
                   size="lg"
-                  bg="#1F4287"
-                  color="#FFC300"
-                  _hover={{ bg: "#163a6f" }}
+                  variant="brand"
                   onClick={handleGetStarted}
                   leftIcon={<FiArrowRight />}
                 >
@@ -1097,9 +1093,7 @@ export default function HomePage() {
                 </Button>
                <Button
                  size="lg"
-                 bg="#1F4287"
-                 color="#FFC300"
-                 borderColor="#FFC300"
+                 variant="brandOutline"
                  onClick={handleDemo}
                  leftIcon={<FiHeadphones />}
                >
@@ -1122,8 +1116,8 @@ export default function HomePage() {
                  <HStack spacing={3}>
                    <Logo size={32} />
                    <Heading size="lg">
-                     <Text as="span" color="#1F4287">DigiSol</Text>
-                     <Text as="span" color="#FFC300">.AI</Text>
+                     <Text as="span" color="brand.primary">DigiSol</Text>
+                     <Text as="span" color="brand.accent">.AI</Text>
                    </Heading>
                  </HStack>
                 <Text color="gray.400" maxW="md">

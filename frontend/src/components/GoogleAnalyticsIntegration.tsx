@@ -264,7 +264,7 @@ export const GoogleAnalyticsIntegration: React.FC<GoogleAnalyticsIntegrationProp
             ) : (
               <Button
                 onClick={onOpen}
-                colorScheme="blue"
+                variant="brandSolid"
                 leftIcon={<FiGlobe />}
               >
                 Connect Google Analytics
@@ -301,7 +301,7 @@ export const GoogleAnalyticsIntegration: React.FC<GoogleAnalyticsIntegrationProp
               <HStack spacing={3} width="full" justify="flex-end">
                 <Button onClick={onClose}>Cancel</Button>
                 <Button
-                  colorScheme="blue"
+                  variant="brandSolid"
                   onClick={handleConnect}
                   isLoading={loading}
                 >

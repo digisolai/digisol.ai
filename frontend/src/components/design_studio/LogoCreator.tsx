@@ -204,7 +204,7 @@ const LogoCreator: React.FC<LogoCreatorProps> = ({ onImageGenerated }) => {
 
               <Button
                 type="submit"
-                colorScheme="blue"
+                variant="brandSolid"
                 size="lg"
                 leftIcon={<FiUpload />}
                 isLoading={loading}

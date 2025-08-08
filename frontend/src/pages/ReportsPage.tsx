@@ -463,7 +463,7 @@ export default function ReportsPage() {
                           <CardHeader>
                             <HStack justify="space-between">
                               <Heading size="sm">{template.name}</Heading>
-                              <Badge colorScheme="blue">{template.template_type_display}</Badge>
+                              <Badge colorScheme="brand">{template.template_type_display}</Badge>
                             </HStack>
                           </CardHeader>
                           <CardBody>
@@ -599,7 +599,7 @@ export default function ReportsPage() {
                           <CardHeader>
                             <HStack justify="space-between">
                               <Heading size="sm">{insight.title}</Heading>
-                              <Badge colorScheme="blue">{insight.insight_type}</Badge>
+                                                                <Badge colorScheme="brand">{insight.insight_type}</Badge>
                             </HStack>
                           </CardHeader>
                           <CardBody>

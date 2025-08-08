@@ -484,7 +484,7 @@ export default function IntegrationsPage() {
           )}
 
           {/* Tabs */}
-          <Tabs variant="enclosed" colorScheme="blue">
+          <Tabs variant="enclosed" colorScheme="brand">
             <TabList>
               <Tab>Integrations</Tab>
               <Tab>Data Flows</Tab>

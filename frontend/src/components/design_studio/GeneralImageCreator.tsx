@@ -130,7 +130,7 @@ const GeneralImageCreator: React.FC<GeneralImageCreatorProps> = ({ onImageGenera
 
               <Button
                 type="submit"
-                colorScheme="blue"
+                variant="brandSolid"
                 size="lg"
                 leftIcon={<FiUpload />}
                 isLoading={loading}

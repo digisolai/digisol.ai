@@ -227,7 +227,7 @@ const PresentationSlideDesigner: React.FC<PresentationSlideDesignerProps> = ({ o
 
               <Button
                 type="submit"
-                colorScheme="blue"
+                variant="brandSolid"
                 size="lg"
                 leftIcon={<FiUpload />}
                 isLoading={loading}

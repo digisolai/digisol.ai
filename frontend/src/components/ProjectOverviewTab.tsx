@@ -449,7 +449,7 @@ const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project }) => {
                     </Text>
                     <HStack spacing={1} mt={1}>
                       {member.skills?.slice(0, 2).map((skill) => (
-                        <Badge key={skill} size="xs" colorScheme="blue" variant="subtle">
+                        <Badge key={skill} size="xs" colorScheme="brand" variant="subtle">
                           {skill}
                         </Badge>
                       ))}

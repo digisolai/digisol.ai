@@ -195,12 +195,12 @@ export function BudgetingModals({
                 </FormControl>
               </SimpleGrid>
 
-              <Box width="full" p={4} bg="blue.50" borderRadius="md">
+              <Box width="full" p={4} bg="brand.50" borderRadius="md">
                 <HStack mb={2}>
-                  <FiInfo color="blue" />
-                  <Text fontWeight="bold" color="blue.600">Pecunia Tip</Text>
+                  <FiInfo color="brand.primary" />
+                  <Text fontWeight="bold" color="brand.primary">Pecunia Tip</Text>
                 </HStack>
-                <Text fontSize="sm" color="blue.700">
+                <Text fontSize="sm" color="brand.primary">
                   Set realistic targets for ROI and CPA to help Pecunia provide better optimization recommendations.
                 </Text>
               </Box>
@@ -210,7 +210,7 @@ export function BudgetingModals({
                   Cancel
                 </Button>
                 <Button
-                  colorScheme="blue"
+                  variant="brandSolid"
                   onClick={handleBudgetSubmit}
                   isLoading={submitting}
                   width="full"
@@ -382,12 +382,12 @@ export function BudgetingModals({
                 />
               </FormControl>
 
-              <Box width="full" p={4} bg="green.50" borderRadius="md">
+              <Box width="full" p={4} bg="brand.50" borderRadius="md">
                 <HStack mb={2}>
-                  <FiInfo color="green" />
-                  <Text fontWeight="bold" color="green.600">Pecunia Auto-Categorization</Text>
+                  <FiInfo color="brand.accent" />
+                  <Text fontWeight="bold" color="brand.accent">Pecunia Auto-Categorization</Text>
                 </HStack>
-                <Text fontSize="sm" color="green.700">
+                <Text fontSize="sm" color="brand.accent">
                   Pecunia will automatically categorize your expense based on the description and vendor.
                 </Text>
               </Box>
@@ -397,7 +397,7 @@ export function BudgetingModals({
                   Cancel
                 </Button>
                 <Button
-                  colorScheme="green"
+                  variant="brandSolid"
                   onClick={handleExpenseSubmit}
                   isLoading={submitting}
                   width="full"
@@ -469,12 +469,12 @@ export function BudgetingModals({
                 </FormControl>
               </SimpleGrid>
 
-              <Box width="full" p={4} bg="purple.50" borderRadius="md">
+              <Box width="full" p={4} bg="brand.50" borderRadius="md">
                 <HStack mb={2}>
-                  <FiInfo color="purple" />
-                  <Text fontWeight="bold" color="purple.600">Pecunia Goal Assessment</Text>
+                  <FiInfo color="brand.primary" />
+                  <Text fontWeight="bold" color="brand.primary">Pecunia Goal Assessment</Text>
                 </HStack>
-                <Text fontSize="sm" color="purple.700">
+                <Text fontSize="sm" color="brand.primary">
                   Pecunia will assess the feasibility of your goal and provide recommendations for achieving it.
                 </Text>
               </Box>
@@ -484,7 +484,7 @@ export function BudgetingModals({
                   Cancel
                 </Button>
                 <Button
-                  colorScheme="purple"
+                  variant="brandSolid"
                   onClick={handleGoalSubmit}
                   isLoading={submitting}
                   width="full"

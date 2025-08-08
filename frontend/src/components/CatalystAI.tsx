@@ -454,7 +454,7 @@ export default function CatalystAI({
                 {selectedInsight.confidence_score && (
                   <HStack justify="space-between">
                     <Text fontSize="sm">Confidence Score:</Text>
-                    <Badge colorScheme="blue">{selectedInsight.confidence_score}%</Badge>
+                    <Badge colorScheme="brand">{selectedInsight.confidence_score}%</Badge>
                   </HStack>
                 )}
                 

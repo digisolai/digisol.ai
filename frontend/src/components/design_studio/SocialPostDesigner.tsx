@@ -226,7 +226,7 @@ const SocialPostDesigner: React.FC<SocialPostDesignerProps> = ({ onImageGenerate
 
               <Button
                 type="submit"
-                colorScheme="blue"
+                variant="brandSolid"
                 size="lg"
                 leftIcon={<FiUpload />}
                 isLoading={loading}

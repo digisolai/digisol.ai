@@ -335,8 +335,7 @@ export default function AutomationsPage() {
                       <HStack spacing={2} justifyContent="flex-end">
                         <Button 
                           size="sm" 
-                          colorScheme="blue" 
-                          variant="outline" 
+                          variant="brandOutline" 
                           leftIcon={<Icon as={FiEdit3} />}
                           onClick={() => handleEditWorkflow(workflow)}
                         >
@@ -397,7 +396,7 @@ export default function AutomationsPage() {
                 Cancel
               </Button>
               <Button
-                colorScheme="blue"
+                variant="brandSolid"
                 onClick={handleCreateWorkflow}
                 isLoading={isCreatingWorkflow}
                 loadingText="Creating..."
@@ -439,7 +438,7 @@ export default function AutomationsPage() {
                         Started: {new Date(execution.started_at).toLocaleString()}
                         </Text>
                       {execution.status === 'in_progress' && (
-                        <Progress size="sm" colorScheme="blue" isIndeterminate />
+                        <Progress size="sm" colorScheme="brand" isIndeterminate />
                       )}
                     </VStack>
                   </CardBody>

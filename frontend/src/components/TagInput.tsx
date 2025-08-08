@@ -75,7 +75,7 @@ const TagInput: React.FC<TagInputProps> = ({
         <Wrap spacing={2} mt={2}>
           {value.map((tag, index) => (
             <WrapItem key={index}>
-              <Tag size="md" colorScheme="blue" borderRadius="full">
+              <Tag size="md" colorScheme="brand" borderRadius="full">
                 <TagLabel>{tag}</TagLabel>
                 <TagCloseButton onClick={() => removeTag(tag)} />
               </Tag>

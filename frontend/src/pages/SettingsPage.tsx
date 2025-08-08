@@ -105,7 +105,7 @@ export default function SettingsPage() {
           </Box>
         </Flex>
 
-        <Tabs variant="enclosed" colorScheme="blue">
+        <Tabs variant="enclosed" colorScheme="brand">
           <TabList>
             <Tab>
               <Icon as={FiUser} mr={2} />

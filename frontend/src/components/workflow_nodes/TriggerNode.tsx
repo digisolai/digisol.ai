@@ -23,9 +23,9 @@ const TriggerNode: React.FC<TriggerNodeProps> = ({ data }) => {
   return (
     <Card
       minW="180px"
-      bg="blue.50"
+      bg="brand.50"
       border="2px solid"
-      borderColor="blue.200"
+              borderColor="brand.200"
       borderRadius="lg"
       boxShadow="md"
       _hover={{ boxShadow: 'lg', transform: 'translateY(-1px)' }}
@@ -39,14 +39,14 @@ const TriggerNode: React.FC<TriggerNodeProps> = ({ data }) => {
       
       <CardBody p={3}>
         <HStack spacing={2} align="center">
-          <Icon as={FiZap} color="blue.500" boxSize={4} />
-          <Text fontSize="sm" fontWeight="bold" color="blue.700">
+          <Icon as={FiZap} color="brand.primary" boxSize={4} />
+          <Text fontSize="sm" fontWeight="bold" color="brand.primary">
             {data.label}
           </Text>
         </HStack>
         
         {data.triggerType && (
-          <Badge size="sm" colorScheme="blue" variant="subtle" mt={2}>
+          <Badge size="sm" colorScheme="brand" variant="subtle" mt={2}>
             {data.triggerType}
           </Badge>
         )}

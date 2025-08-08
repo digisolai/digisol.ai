@@ -23,9 +23,9 @@ const ActionNode: React.FC<ActionNodeProps> = ({ data }) => {
   return (
     <Card
       minW="180px"
-      bg="green.50"
+      bg="brand.50"
       border="2px solid"
-      borderColor="green.200"
+              borderColor="brand.200"
       borderRadius="lg"
       boxShadow="md"
       _hover={{ boxShadow: 'lg', transform: 'translateY(-1px)' }}

@@ -281,7 +281,7 @@ export default function CampaignAnalytics({ campaignId, dateRange = 30 }: Campai
               </Text>
               <Progress
                 value={analyticsData.metrics.ctr}
-                colorScheme="blue"
+                colorScheme="brand"
                 size="sm"
                 w="full"
               />
@@ -360,7 +360,7 @@ export default function CampaignAnalytics({ campaignId, dateRange = 30 }: Campai
                       <Text fontWeight="medium">
                         {new Date(trend.date).toLocaleDateString()}
                       </Text>
-                      <Badge colorScheme="blue">
+                      <Badge colorScheme="brand">
                         {formatCurrency(trend.revenue)}
                       </Badge>
                     </HStack>

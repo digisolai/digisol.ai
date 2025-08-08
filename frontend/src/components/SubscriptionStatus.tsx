@@ -321,7 +321,7 @@ export default function SubscriptionStatus() {
           <VStack spacing={3}>
             {!hasSubscription ? (
               <Button
-                colorScheme="blue"
+                variant="brandSolid"
                 size="lg"
                 width="full"
                 onClick={handleUpgrade}

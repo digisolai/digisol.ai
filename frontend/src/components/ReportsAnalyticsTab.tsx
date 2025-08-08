@@ -344,7 +344,7 @@ const ReportsAnalyticsTab: React.FC<ReportsAnalyticsTabProps> = ({ project }) =>
                             </HStack>
                           </Td>
                           <Td>
-                            <Badge colorScheme="blue" variant="subtle">
+                            <Badge colorScheme="brand" variant="subtle">
                               {report.report_type.replace('_', ' ').toUpperCase()}
                             </Badge>
                           </Td>

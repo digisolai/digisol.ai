@@ -478,7 +478,7 @@ export const AITutorialAgent: React.FC<AITutorialAgentProps> = ({
                         <Text fontWeight="bold" fontSize="lg">
                           Step {currentStep + 1}: {activeTutorial.steps[currentStep]?.title}
                         </Text>
-                        <Badge colorScheme="blue">
+                        <Badge colorScheme="brand">
                           {currentStep + 1} of {activeTutorial.steps.length}
                         </Badge>
                       </HStack>

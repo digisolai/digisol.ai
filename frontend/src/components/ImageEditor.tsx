@@ -383,7 +383,7 @@ export default function ImageEditor({ isOpen, onClose, imageUrl, requestId, prom
               
               <HStack spacing={2}>
                 {assetTags.map((tag, index) => (
-                  <Badge key={index} colorScheme="blue" variant="subtle">
+                  <Badge key={index} colorScheme="brand" variant="subtle">
                     {tag}
                   </Badge>
                 ))}
@@ -398,7 +398,7 @@ export default function ImageEditor({ isOpen, onClose, imageUrl, requestId, prom
               Cancel
             </Button>
             <Button
-              colorScheme="blue"
+              variant="brandSolid"
               onClick={saveEditedImage}
               isLoading={isSaving}
               loadingText="Saving..."

@@ -64,9 +64,9 @@ const AIGenerateContentNode: React.FC<AIGenerateContentNodeProps> = ({ data }) =
     <>
       <Card
         minW="200px"
-        bg="purple.50"
+        bg="brand.50"
         border="2px solid"
-        borderColor="purple.200"
+                  borderColor="brand.200"
         borderRadius="lg"
         boxShadow="md"
         _hover={{ boxShadow: 'lg', transform: 'translateY(-1px)' }}
@@ -81,7 +81,7 @@ const AIGenerateContentNode: React.FC<AIGenerateContentNodeProps> = ({ data }) =
           left="-2px"
           right="-2px"
           bottom="-2px"
-          bg="purple.300"
+          bg="brand.300"
           borderRadius="lg"
           opacity="0.3"
           filter="blur(4px)"

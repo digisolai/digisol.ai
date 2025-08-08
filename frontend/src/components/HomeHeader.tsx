@@ -242,7 +242,7 @@ const CollapsibleNav = ({ isOpen, onLogin, onSignup }: CollapsibleNavProps) => {
           </Button>
           <Button
             w="full"
-            colorScheme="blue"
+            variant="brandSolid"
             onClick={onSignup}
           >
             Sign Up

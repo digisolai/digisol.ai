@@ -258,7 +258,7 @@ const BusinessCardDesigner: React.FC<BusinessCardDesignerProps> = ({ onImageGene
 
               <Button
                 type="submit"
-                colorScheme="blue"
+                variant="brandSolid"
                 size="lg"
                 leftIcon={<FiUpload />}
                 isLoading={loading}

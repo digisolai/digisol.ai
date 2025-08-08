@@ -249,7 +249,7 @@ const WorkflowCanvas: React.FC<WorkflowEditorProps> = ({ workflow, onSave }) => 
                 <Button size="xs" onClick={clearCanvas} colorScheme="red" variant="outline">
                   Clear
                 </Button>
-                <Button size="xs" onClick={resetDemo} colorScheme="blue" variant="outline">
+                <Button size="xs" onClick={resetDemo} variant="brandOutline">
                   Reset Demo
                 </Button>
               </>

@@ -34,7 +34,7 @@ import {
   StatNumber,
   StatHelpText,
 } from "@chakra-ui/react";
-import {FiPlus, FiXCircle, FiUsers, FiSave, FiDownload, FiEdit, FiTrash2} from "react-icons/fi";
+import {FiPlus, FiXCircle, FiUsers, FiSave, FiDownload, FiEdit, FiTrash2, FiZap} from "react-icons/fi";
 import { Layout } from "../components/Layout";
 import { AIAgentSection } from "../components/AIAgentSection";
 import TagInput from "../components/TagInput";
@@ -308,9 +308,9 @@ export default function ContactsPage() {
     try {
       const updatedContact: Contact = {
         ...editingContact,
-        first_name: editForm.first_name,
-        last_name: editForm.last_name,
-        email: editForm.email,
+        first_name: editForm.first_name || editingContact.first_name,
+        last_name: editForm.last_name || editingContact.last_name,
+        email: editForm.email || editingContact.email,
         phone_number: editForm.phone_number,
         company: editForm.company,
         job_title: editForm.job_title,
@@ -433,7 +433,7 @@ export default function ContactsPage() {
       const headers = Object.keys(csvData[0]);
       const csvContent = [
         headers.join(','),
-        ...csvData.map(row => headers.map(header => `"${row[header]}"`).join(','))
+        ...csvData.map(row => headers.map(header => `"${row[header as keyof typeof row]}"`).join(','))
       ].join('\n');
 
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -722,7 +722,7 @@ export default function ContactsPage() {
                         ) : contact.assigned_to_team_name ? (
                           <Badge colorScheme="cyan" variant="solid">Team: {contact.assigned_to_team_name}</Badge>
                         ) : contact.assigned_to_department_name ? (
-                          <Badge colorScheme="blue" variant="solid">Dept: {contact.assigned_to_department_name}</Badge>
+                          <Badge colorScheme="brand" variant="solid">Dept: {contact.assigned_to_department_name}</Badge>
                         ) : (
                           <Badge colorScheme="gray" variant="solid">Unassigned</Badge>
                         )}

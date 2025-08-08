@@ -335,7 +335,7 @@ const BillingPage: React.FC = () => {
                       Next billing date: {new Date(currentPlan.current_period_end).toLocaleDateString()}
                     </Text>
                     <Button
-                      colorScheme="blue"
+                      variant="brandSolid"
                       leftIcon={<FiCreditCard />}
                       onClick={handleManageSubscription}
                       isLoading={isLoadingPortal}
@@ -423,7 +423,7 @@ const BillingPage: React.FC = () => {
 
                       {/* Action Button */}
                       <Button
-                        colorScheme="blue"
+                        variant="brandSolid"
                         size="lg"
                         onClick={() => handleChoosePlan(plan)}
                         isLoading={isLoadingCheckout === plan.id}

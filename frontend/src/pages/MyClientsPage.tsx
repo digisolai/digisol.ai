@@ -879,7 +879,7 @@ const MyClientsPage: React.FC = () => {
                                     {activity.client_user_name || 'System'} • {new Date(activity.created_at).toLocaleString()}
                                   </Text>
                                 </VStack>
-                                <Badge colorScheme="blue">{activity.activity_type}</Badge>
+                                <Badge colorScheme="brand">{activity.activity_type}</Badge>
                               </HStack>
                             </CardBody>
                           </Card>
