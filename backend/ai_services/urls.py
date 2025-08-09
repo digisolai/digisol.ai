@@ -15,7 +15,8 @@ from .views import (
     ImageGenerationRequestViewSet,
     AIPlanningView,
     StructuraInsightViewSet,
-    AIEcosystemHealthViewSet
+    AIEcosystemHealthViewSet,
+    GeminiChatView
 )
 
 app_name = 'ai_services'
@@ -42,6 +43,9 @@ urlpatterns = [
     # AI Planning and Orchestration
     path('planning/', AIPlanningView.as_view(), name='ai-planning'),
     path('orchestrate-plan/', AIOrchestrationView.as_view(), name='orchestrate-plan'),
+    
+    # Gemini Chat
+    path('gemini-chat/', GeminiChatView.as_view(), name='gemini-chat'),
     
     # Router URLs
     path('', include(router.urls)),

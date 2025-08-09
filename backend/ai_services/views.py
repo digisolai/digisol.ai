@@ -33,10 +33,105 @@ from .serializers import (
     AIEcosystemHealthSerializer
 )
 from .tasks import generate_content_task, generate_image_task, upload_edited_image_task
+from .gemini_utils import call_gemini_for_ai_agent
 from core.models import BrandProfile, Tenant, BrandAsset
 from accounts.models import CustomUser
 
 logger = logging.getLogger(__name__)
+
+
+class GeminiChatView(APIView):
+    """
+    API view for real-time chat with AI agents using Gemini.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def post(self, request):
+        """
+        Handle chat messages with AI agents using Gemini.
+        
+        Expected JSON body:
+        {
+            "message": "string",
+            "agent_name": "string",
+            "agent_specialization": "string",
+            "conversation_history": [{"role": "user|ai_agent", "content": "string"}]
+        }
+        """
+        try:
+            message = request.data.get('message')
+            agent_name = request.data.get('agent_name', 'AI Assistant')
+            agent_specialization = request.data.get('agent_specialization', 'general')
+            conversation_history = request.data.get('conversation_history', [])
+            
+            if not message:
+                return Response(
+                    {'error': 'Message is required'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Build context from conversation history
+            context = {
+                'user_tenant': request.user.tenant.name if request.user.tenant else 'Unknown',
+                'conversation_length': len(conversation_history),
+                'previous_messages': conversation_history[-5:] if conversation_history else []  # Last 5 messages for context
+            }
+            
+            # Get agent personality based on specialization
+            agent_personalities = {
+                'lead_nurturing': 'A lead nurturing specialist who develops personalized engagement strategies to convert prospects into customers through targeted communication.',
+                'brand_identity': 'Creative, visually-driven, and brand-conscious. Helps develop and maintain a cohesive brand identity across all touchpoints.',
+                'campaign_optimization': 'Data-driven campaign optimizer who analyzes performance metrics and provides actionable recommendations to improve ROI.',
+                'budget_analysis': 'Financial expert who provides insights on budget allocation, cost optimization, and ROI analysis.',
+                'content_creation': 'Creative content specialist who crafts engaging, brand-aligned content across all channels.',
+                'general': 'A helpful AI assistant specializing in marketing and business strategy.'
+            }
+            
+            agent_personality = agent_personalities.get(agent_specialization, agent_personalities['general'])
+            
+            # Call Gemini API
+            response = call_gemini_for_ai_agent(
+                prompt=message,
+                agent_name=agent_name,
+                agent_personality=agent_personality,
+                specialization=agent_specialization,
+                context=context
+            )
+            
+            # Log the interaction
+            try:
+                AIInteractionLog.objects.create(
+                    tenant=request.user.tenant,
+                    user=request.user,
+                    role='user',
+                    message_content=message
+                )
+                
+                AIInteractionLog.objects.create(
+                    tenant=request.user.tenant,
+                    ai_profile=None,  # Will be set if we have a specific agent
+                    role='ai_agent',
+                    message_content=response
+                )
+            except Exception as e:
+                logger.warning(f"Failed to log AI interaction: {str(e)}")
+            
+            return Response({
+                'response': response,
+                'agent_name': agent_name,
+                'agent_specialization': agent_specialization,
+                'timestamp': timezone.now().isoformat()
+            })
+            
+        except Exception as e:
+            logger.error(f"Gemini chat error: {str(e)}")
+            return Response(
+                {
+                    'error': 'Failed to process chat message',
+                    'message': str(e)
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class ContentGenerationView(APIView):

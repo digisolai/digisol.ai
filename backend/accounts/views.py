@@ -595,6 +595,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     """
     Custom token obtain view with additional user data.
     """
+    # Ensure login is accessible without prior authentication in production
+    permission_classes = [AllowAny]
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         
@@ -623,4 +625,5 @@ class CustomTokenRefreshView(TokenRefreshView):
     """
     Custom token refresh view.
     """
-    pass
+    # Allow anonymous access; refresh is validated by the provided refresh token
+    permission_classes = [AllowAny]

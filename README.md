@@ -21,7 +21,7 @@ A full-stack marketing automation platform with AI-powered features, project man
 - **PostgreSQL/SQLite** - Database
 - **Celery** - Background task processing
 - **Redis** - Caching and message broker
-- **OpenAI API** - AI content generation
+- **Gemini API** - AI content generation
 - **Stripe** - Payment processing
 
 ### Frontend
@@ -98,7 +98,7 @@ SECRET_KEY=your-secret-key-here
 ALLOWED_HOSTS=localhost,127.0.0.1
 
 # API Keys
-OPENAI_API_KEY=your-openai-api-key-here
+GEMINI_API_KEY=your-gemini-api-key-here
 STRIPE_SECRET_KEY=your-stripe-secret-key-here
 STRIPE_PUBLISHABLE_KEY=your-stripe-publishable-key-here
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Text,
@@ -10,7 +10,15 @@ import {
   AlertIcon,
   useToast,
   Icon,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
 } from '@chakra-ui/react';
+import AIChatInterface from './AIChatInterface';
 import { 
   FiMessageCircle,
   FiTarget,
@@ -127,19 +135,10 @@ export const AIAgentSection: React.FC<AIAgentSectionProps> = ({
   onAskQuestion,
 }) => {
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleAskQuestion = () => {
-    if (onAskQuestion) {
-      onAskQuestion("How can you help me with this page?");
-    } else {
-      toast({
-        title: `${agent?.name || 'AI Agent'} is ready to assist`,
-        description: "This feature is coming soon!",
-        status: "info",
-        duration: 5000,
-        isClosable: true,
-      });
-    }
+    onOpen();
   };
 
   if (loading) {
@@ -215,9 +214,28 @@ export const AIAgentSection: React.FC<AIAgentSectionProps> = ({
           px={8}
           py={4}
         >
-          Ask {agent.name} A Question
+          Chat with {agent.name}
         </Button>
       </Flex>
+
+      {/* AI Chat Modal */}
+      <Modal isOpen={isOpen} onClose={onClose} size="xl">
+        <ModalOverlay />
+        <ModalContent maxW="800px" h="700px">
+          <ModalHeader>
+            Chat with {agent?.name} - {agent?.specialization.replace('_', ' ')} Specialist
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody p={0}>
+            <AIChatInterface
+              agentId={agent?.id}
+              agentName={agent?.name}
+              agentSpecialization={agent?.specialization}
+              onClose={onClose}
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
     </Box>
   );
 }; 

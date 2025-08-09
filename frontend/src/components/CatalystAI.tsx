@@ -181,16 +181,11 @@ export default function CatalystAI({
               leftIcon={<Icon as={FiZap} />}
               aria-label="Ask Catalyst AI"
               onClick={() => {
-                toast({
-                  title: 'Coming Soon',
-                  description: 'Interactive AI chat feature will be available soon!',
-                  status: 'info',
-                  duration: 3000,
-                  isClosable: true,
-                });
+                // Open chat interface for Catalyst AI
+                window.location.href = '/ai-overview'; // Redirect to AI overview page with chat
               }}
             >
-              Ask Catalyst AI
+              Chat with Catalyst AI
             </Button>
           </VStack>
         </CardBody>

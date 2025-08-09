@@ -198,8 +198,7 @@ CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:
 CORS_ALLOW_CREDENTIALS = True
 
 # AI Services Configuration
-# AI/LLM API Keys
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
+# AI/LLM API Keys (OpenAI not used)
 GOOGLE_GEMINI_API_KEY = os.environ.get('GOOGLE_GEMINI_API_KEY')
 
 # AWS S3/Google Cloud Storage

@@ -66,11 +66,18 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@digisolai.ca')
 
 # CORS Settings
-# Exact origins (CSV). Add your Netlify/production domains here in Render env.
-CORS_ALLOWED_ORIGINS = os.environ.get(
-    'CORS_ALLOWED_ORIGINS',
-    'https://www.digisolai.ca,https://digisolai.ca,https://digisolai.netlify.app'
-).split(',')
+# Merge env-provided origins with safe defaults to avoid accidentally blocking Netlify
+_default_cors_origins = [
+    'https://www.digisolai.ca',
+    'https://digisolai.ca',
+    'https://digisolai.netlify.app',
+]
+_env_cors_csv = os.environ.get('CORS_ALLOWED_ORIGINS', '').strip()
+_env_cors_list = [o.strip() for o in _env_cors_csv.split(',') if o.strip()]
+
+# Merge and de-duplicate
+_merged_cors = list(dict.fromkeys(_env_cors_list + _default_cors_origins))
+CORS_ALLOWED_ORIGINS = _merged_cors
 
 # Regex origins for Netlify preview deploys (e.g., https://<hash>--site.netlify.app)
 _cors_regex_env = os.environ.get('CORS_ALLOWED_ORIGIN_REGEXES', '').strip()

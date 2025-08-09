@@ -149,9 +149,8 @@ SIMPLE_JWT = {
     'TOKEN_TYPE_CLAIM': 'token_type',
 }
 
-# External API Keys (required for ai_services)
+# External API Keys (Gemini only)
 GOOGLE_GEMINI_API_KEY = os.environ.get('GOOGLE_GEMINI_API_KEY', '')
-OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY', '')
 
 # Logging
 LOGGING = {
