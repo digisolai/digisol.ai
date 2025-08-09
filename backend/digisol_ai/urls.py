@@ -40,6 +40,7 @@ def serve_frontend(request, path=''):
     return serve(request, 'index.html', settings.FRONTEND_BUILD_DIR)
 
 urlpatterns = [
+    path('', root_handler, name='root'),
     path('health/', health_check, name='health_check'),
     path('admin/', admin.site.urls),
 
