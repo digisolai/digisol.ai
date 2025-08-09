@@ -24,9 +24,10 @@ if not SECRET_KEY or len(SECRET_KEY) < 50:
     raise ValueError("SECRET_KEY must be set and at least 50 characters long in production")
 
 # Production hosts
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
-if not ALLOWED_HOSTS or ALLOWED_HOSTS == ['']:
-    raise ValueError("ALLOWED_HOSTS must be set in production")
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS',
+    'digisol-backend.onrender.com,www.digisolai.ca,digisolai.ca'
+).split(',')
 
 # Security Settings
 SECURE_SSL_REDIRECT = True

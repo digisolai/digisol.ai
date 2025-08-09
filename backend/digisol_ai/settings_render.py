@@ -18,7 +18,11 @@ if not SECRET_KEY:
     raise ValueError("SECRET_KEY must be set in production")
 
 # Production hosts
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'digisol-backend.onrender.com').split(',')
+# Include Render service and frontend domains by default; can be overridden via env
+ALLOWED_HOSTS = os.environ.get(
+    'ALLOWED_HOSTS',
+    'digisol-backend.onrender.com,www.digisolai.ca,digisolai.ca'
+).split(',')
 
 # Security Settings
 SECURE_SSL_REDIRECT = True
