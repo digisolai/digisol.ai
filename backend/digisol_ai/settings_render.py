@@ -29,6 +29,10 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
+# Behind a proxy (Render) ensure Django recognizes the original scheme/host
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
 # Session and CSRF Security
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -58,12 +62,37 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@digisolai.ca')
 
 # CORS Settings
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'https://www.digisolai.ca,https://digisolai.ca').split(',')
+# Exact origins (CSV). Add your Netlify/production domains here in Render env.
+CORS_ALLOWED_ORIGINS = os.environ.get(
+    'CORS_ALLOWED_ORIGINS',
+    'https://www.digisolai.ca,https://digisolai.ca,https://digisolai.netlify.app'
+).split(',')
+
+# Regex origins for Netlify preview deploys (e.g., https://<hash>--site.netlify.app)
+_cors_regex_env = os.environ.get('CORS_ALLOWED_ORIGIN_REGEXES', '').strip()
+if _cors_regex_env:
+    CORS_ALLOWED_ORIGIN_REGEXES = [r.strip() for r in _cors_regex_env.split(',') if r.strip()]
+else:
+    CORS_ALLOWED_ORIGIN_REGEXES = [r"^https://[a-z0-9-]+--digisolai\\.netlify\\.app$"]
+
 CORS_ALLOW_CREDENTIALS = True
 
-# Redis configuration for Celery (use memory broker for free tier)
-CELERY_BROKER_URL = 'memory://'
-CELERY_RESULT_BACKEND = 'rpc://'
+# CSRF trusted origins (needed for some auth flows; safe to include wildcards)
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    'CSRF_TRUSTED_ORIGINS',
+    'https://*.digisolai.ca,https://*.netlify.app,https://*.onrender.com'
+).split(',')
+
+# Redis/Celery configuration
+# If REDIS_URL is provided (e.g., in Render env vars), use it for Celery broker/result backend.
+# Otherwise, fall back to in-memory broker suitable only for basic/free-tier setups (no background worker).
+REDIS_URL = os.environ.get('REDIS_URL')
+if REDIS_URL:
+    CELERY_BROKER_URL = REDIS_URL
+    CELERY_RESULT_BACKEND = REDIS_URL
+else:
+    CELERY_BROKER_URL = 'memory://'
+    CELERY_RESULT_BACKEND = 'rpc://'
 
 # Override INSTALLED_APPS for production
 INSTALLED_APPS = [

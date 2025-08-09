@@ -37,6 +37,10 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
+# Behind a proxy/load balancer (Render/Nginx), ensure correct scheme/host detection
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
 # Session and CSRF Security
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
@@ -121,9 +125,13 @@ INSTALLED_APPS = [
     'integrations.apps.IntegrationsConfig',
 ]
 
-# CORS settings for production
+# CORS/CSRF settings for production
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',')
 CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = os.environ.get(
+    'CSRF_TRUSTED_ORIGINS',
+    'https://*.digisolai.ca,https://*.netlify.app,https://*.onrender.com'
+).split(',')
 
 # Authentication backend
 AUTHENTICATION_BACKENDS = [
