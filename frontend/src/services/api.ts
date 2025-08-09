@@ -1,7 +1,20 @@
 import axios from "axios";
 
-// Use direct backend URL for now
-const baseURL = import.meta.env.VITE_BACKEND_URL || "https://digisol-backend.onrender.com/api";
+// Build and sanitize backend base URL to avoid accidental trailing dots/slashes
+function sanitizeBaseURL(url: string): string {
+  if (!url) return url;
+  // Remove any trailing spaces
+  let cleaned = url.trim();
+  // Remove any accidental trailing dot before path usage (e.g., .../api.)
+  cleaned = cleaned.replace(/[.]+$/g, "");
+  // Collapse multiple slashes
+  cleaned = cleaned.replace(/([^:])\/+/g, (m, p1) => p1 + "/");
+  return cleaned;
+}
+
+// Prefer env; fallback to Netlify proxy via relative /api
+const rawBase = import.meta.env.VITE_BACKEND_URL || "/api";
+const baseURL = sanitizeBaseURL(rawBase);
 
 const api = axios.create({
   baseURL,
