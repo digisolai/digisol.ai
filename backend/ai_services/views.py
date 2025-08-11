@@ -792,15 +792,15 @@ class AITaskViewSet(ModelViewSet):
         return AITaskSerializer
 
     def perform_create(self, serializer):
-        """Set requester automatically on creation - no tenant required."""
+        """Set requester and tenant automatically on creation."""
         user = self.request.user
         
         # Extract auto_delegate and priority from validated data
         auto_delegate = serializer.validated_data.pop('auto_delegate', True)
         priority = serializer.validated_data.pop('priority', 'medium')
         
-        # Create the task
-        task = serializer.save(requester=user)
+        # Create the task with tenant and requester
+        task = serializer.save(tenant=user.tenant, requester=user)
         
         # If auto_delegate is True, assign the most appropriate agent
         if auto_delegate and not task.assignee_agent:
@@ -1013,7 +1013,7 @@ class AIOrchestrationView(APIView):
             # Create the coordinator task
             task = AITask.objects.create(
                 tenant=user.tenant,
-                requested_by=user,
+                requester=user,
                 objective=serializer.validated_data['objective'],
                 status='pending'
             )
