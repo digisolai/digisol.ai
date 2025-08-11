@@ -166,11 +166,11 @@ AUTHENTICATION_BACKENDS = [
 # Logging configuration
 from .logging_config import LOGGING
 
-# Cache configuration
+# Cache configuration - Use local memory cache for simplicity
 CACHES = {
     'default': {
-        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': REDIS_URL,
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
     }
 }
 
