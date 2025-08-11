@@ -131,11 +131,6 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterField(
             model_name='campaignstep',
-            name='id',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
-        ),
-        migrations.AlterField(
-            model_name='campaignstep',
             name='step_type',
             field=models.CharField(choices=[('Email', 'Email'), ('SMS', 'SMS'), ('Ad', 'Ad Display'), ('Conditional', 'Conditional Logic'), ('Delay', 'Delay'), ('Goal', 'Campaign Goal'), ('AI_Insight', 'AI Insight/Action'), ('Trigger', 'Trigger'), ('Social_Post', 'Social Media Post'), ('Landing_Page', 'Landing Page'), ('Webhook', 'Webhook'), ('A_B_Test', 'A/B Test')], max_length=50),
         ),
@@ -143,11 +138,6 @@ class Migration(migrations.Migration):
             model_name='campaignstep',
             name='true_path_next_step',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='conditional_true_parent', to='campaigns.campaignstep'),
-        ),
-        migrations.AlterField(
-            model_name='marketingcampaign',
-            name='id',
-            field=models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False),
         ),
         migrations.AlterField(
             model_name='marketingcampaign',

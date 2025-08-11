@@ -42,7 +42,7 @@ No OpenAI key is required.
 ```bash
 # Get key from: https://makersuite.google.com/app/apikey
 # Update backend/env.local:
-GOOGLE_GEMINI_API_KEY=your_actual_gemini_key_here
+GOOGLE_GEMINI_API_KEY=
 ```
 
 ### **3. Test the Integration**
