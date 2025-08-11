@@ -14,12 +14,13 @@ function sanitizeBaseURL(url: string): string {
   return cleaned;
 }
 
-// For production, use the Netlify proxy via relative /api
+// TEMPORARY: Use direct backend URL to bypass Netlify proxy issues
+// For production, use the direct backend URL
 // For development, use the local backend
 const isDevelopment = import.meta.env.DEV;
 const rawBase = isDevelopment 
   ? "http://localhost:8000/api"
-  : "/api"; // Use Netlify proxy in production
+  : "https://digisol-backend.onrender.com/api"; // Use direct backend URL temporarily
 
 const baseURL = sanitizeBaseURL(rawBase);
 

@@ -194,7 +194,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Denver'
 
 # CORS Headers Settings
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:5173').split(',')
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', 'http://localhost:3000,http://localhost:5173,https://digisolai.ca,https://digisolai.netlify.app').split(',')
 CORS_ALLOW_CREDENTIALS = True
 
 # AI Services Configuration
