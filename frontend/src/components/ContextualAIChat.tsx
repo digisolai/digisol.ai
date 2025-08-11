@@ -167,7 +167,7 @@ export default function ContextualAIChat({
   // Show authentication message if not logged in
   if (isAuthenticated === false) {
     return (
-      <Card h="600px" display="flex" flexDirection="column">
+      <Card h="300px" display="flex" flexDirection="column">
         <CardBody p={0} display="flex" flexDirection="column">
           {/* Header */}
           <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg="brand.50">
@@ -202,7 +202,7 @@ export default function ContextualAIChat({
   }
 
   const chatInterface = (
-    <Card h="600px" display="flex" flexDirection="column">
+    <Card h="300px" display="flex" flexDirection="column">
       <CardBody p={0} display="flex" flexDirection="column">
         {/* Header */}
         <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg="brand.50">
@@ -324,9 +324,9 @@ export default function ContextualAIChat({
           </Button>
         )}
 
-        <Modal isOpen={isOpen} onClose={onModalClose} size="6xl" maxW="90vw">
+        <Modal isOpen={isOpen} onClose={onModalClose} size="6xl">
           <ModalOverlay />
-          <ModalContent maxH="90vh">
+          <ModalContent maxH="70vh" maxW="90vw">
             <ModalHeader>
               <HStack>
                 <Icon as={FiCpu} color="brand.primary" />

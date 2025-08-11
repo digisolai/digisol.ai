@@ -694,7 +694,7 @@ export default function BudgetingPage() {
         {/* Pecunia Chat Modal */}
         <Modal isOpen={isPecuniaChatOpen} onClose={onPecuniaChatClose} size="6xl" maxW="90vw">
           <ModalOverlay />
-          <ModalContent maxH="90vh">
+          <ModalContent maxH="70vh">
             <ModalHeader>
               <HStack>
                 <Icon as={FiDollarSign} color="green.500" />

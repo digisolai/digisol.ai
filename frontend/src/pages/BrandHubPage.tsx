@@ -1285,7 +1285,7 @@ export default function BrandHubPage() {
         {/* Icona Chat Modal */}
         <Modal isOpen={isIconaChatOpen} onClose={onIconaChatClose} size="6xl" maxW="90vw">
           <ModalOverlay />
-          <ModalContent maxH="90vh">
+          <ModalContent maxH="70vh">
             <ModalHeader>
               <HStack>
                 <Icon as={FiImage} color="pink.500" />

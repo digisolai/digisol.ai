@@ -221,7 +221,7 @@ export const AIAgentSection: React.FC<AIAgentSectionProps> = ({
       {/* AI Chat Modal */}
       <Modal isOpen={isOpen} onClose={onClose} size="xl">
         <ModalOverlay />
-        <ModalContent maxW="800px" h="700px">
+        <ModalContent maxW="800px" h="500px">
           <ModalHeader>
             Chat with {agent?.name} - {agent?.specialization.replace('_', ' ')} Specialist
           </ModalHeader>

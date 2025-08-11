@@ -937,7 +937,7 @@ export default function AIOverviewPage() {
         {/* Structura Chat Modal */}
         <Modal isOpen={isStructuraChatOpen} onClose={onStructuraChatClose} size="full">
           <ModalOverlay />
-          <ModalContent maxW="90vw" maxH="90vh">
+          <ModalContent maxW="90vw" maxH="70vh">
             <ModalHeader>
               <HStack>
                 <Icon as={FiCpu} color="brand.primary" />

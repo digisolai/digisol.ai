@@ -567,7 +567,7 @@ export default function CatalystAI({
       {/* Catalyst AI Chat Modal */}
       <Modal isOpen={isChatOpen} onClose={onChatClose} size="full">
         <ModalOverlay />
-        <ModalContent maxW="90vw" maxH="90vh">
+                  <ModalContent maxW="90vw" maxH="70vh">
           <ModalHeader>
             <HStack>
               <Icon as={FiZap} color="brand.primary" />

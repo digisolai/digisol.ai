@@ -154,7 +154,7 @@ export default function AIChatInterface({
   // Show authentication message if not logged in
   if (isAuthenticated === false) {
     return (
-      <Card h="600px" display="flex" flexDirection="column">
+      <Card h="300px" display="flex" flexDirection="column">
         <CardBody p={0} display="flex" flexDirection="column">
           {/* Header */}
           <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg="brand.50">
@@ -189,7 +189,7 @@ export default function AIChatInterface({
   }
 
   return (
-    <Card h="600px" display="flex" flexDirection="column">
+    <Card h="300px" display="flex" flexDirection="column">
       <CardBody p={0} display="flex" flexDirection="column">
         {/* Header */}
         <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg="brand.50">

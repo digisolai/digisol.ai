@@ -334,7 +334,7 @@ export default function LearningPage() {
         {/* Mentor Chat Modal */}
         <Modal isOpen={isMentorChatOpen} onClose={onMentorChatClose} size="6xl" maxW="90vw">
           <ModalOverlay />
-          <ModalContent maxH="90vh">
+          <ModalContent maxH="70vh">
             <ModalHeader>
               <HStack>
                 <Icon as={FiBook} color="teal.500" />

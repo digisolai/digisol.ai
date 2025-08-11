@@ -10,6 +10,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction, models
 from django.utils import timezone
 from django.core.management import call_command
+from django.conf import settings
 from .models import (
     ContentGenerationRequest, ImageGenerationRequest, AIRecommendation,
     AIProfile, AITask, AIInteractionLog, StructuraInsight, AIEcosystemHealth

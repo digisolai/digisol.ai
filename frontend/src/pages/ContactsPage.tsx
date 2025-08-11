@@ -1041,7 +1041,7 @@ export default function ContactsPage() {
       {/* Prospero Chat Modal */}
       <Modal isOpen={isProsperoChatOpen} onClose={onProsperoChatClose} size="6xl" maxW="90vw">
         <ModalOverlay />
-        <ModalContent maxH="90vh">
+                  <ModalContent maxH="70vh">
           <ModalHeader>
             <HStack>
               <Icon as={FiZap} color="purple.500" />
