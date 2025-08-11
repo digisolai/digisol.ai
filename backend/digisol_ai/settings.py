@@ -229,6 +229,10 @@ CORS_EXPOSE_HEADERS = [
 ]
 CORS_PREFLIGHT_MAX_AGE = 86400  # 24 hours
 
+# Ensure CORS headers are added to all responses
+CORS_URLS_REGEX = r'^api/.*$'
+CORS_REPLACE_HTTPS_REFERER = True
+
 # AI Services Configuration
 # AI/LLM API Keys (OpenAI not used)
 GOOGLE_GEMINI_API_KEY = os.environ.get('GOOGLE_GEMINI_API_KEY')
