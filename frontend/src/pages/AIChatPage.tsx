@@ -26,7 +26,7 @@ import {
 import { Layout } from '../components/Layout';
 import AIChatInterface from '../components/AIChatInterface';
 import api from '../services/api';
-import { AIProfile } from '../types/ai';
+import type { AIProfile } from '../types/ai';
 import {
   FiCpu,
   FiZap,
