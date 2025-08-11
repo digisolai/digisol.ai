@@ -25,22 +25,93 @@
 [build.processing.images]
   compress = true
 
-# API proxy redirects
+# API proxy redirects - more specific rules
+[[redirects]]
+  from = "/api/accounts/*"
+  to = "https://digisol-backend.onrender.com/api/accounts/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/ai-services/*"
+  to = "https://digisol-backend.onrender.com/api/ai-services/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/core/*"
+  to = "https://digisol-backend.onrender.com/api/core/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/campaigns/*"
+  to = "https://digisol-backend.onrender.com/api/campaigns/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/project-management/*"
+  to = "https://digisol-backend.onrender.com/api/project-management/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/billing/*"
+  to = "https://digisol-backend.onrender.com/api/billing/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/subscription-billing/*"
+  to = "https://digisol-backend.onrender.com/api/subscription-billing/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/templates/*"
+  to = "https://digisol-backend.onrender.com/api/templates/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/marketing-templates/*"
+  to = "https://digisol-backend.onrender.com/api/marketing-templates/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/learning/*"
+  to = "https://digisol-backend.onrender.com/api/learning/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/budgeting/*"
+  to = "https://digisol-backend.onrender.com/api/budgeting/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/analytics/*"
+  to = "https://digisol-backend.onrender.com/api/analytics/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/api/integrations/*"
+  to = "https://digisol-backend.onrender.com/api/integrations/:splat"
+  status = 200
+  force = true
+
+# Catch-all API redirect
 [[redirects]]
   from = "/api/*"
   to = "https://digisol-backend.onrender.com/api/:splat"
   status = 200
   force = true
 
-# Handle CORS preflight requests
-[[redirects]]
-  from = "/api/*"
-  to = "https://digisol-backend.onrender.com/api/:splat"
-  status = 200
-  method = "OPTIONS"
-  force = true
-
-# SPA fallback
+# SPA fallback - must be last
 [[redirects]]
   from = "/*"
   to = "/index.html"
