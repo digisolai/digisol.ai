@@ -9,12 +9,21 @@ function sanitizeBaseURL(url: string): string {
   cleaned = cleaned.replace(/[.]+$/g, "");
   // Collapse multiple slashes
   cleaned = cleaned.replace(/([^:])\/+/g, (m, p1) => p1 + "/");
+  // Ensure no trailing slash
+  cleaned = cleaned.replace(/\/$/, "");
   return cleaned;
 }
 
-// Prefer env; fallback to Netlify proxy via relative /api
-const rawBase = import.meta.env.VITE_BACKEND_URL || "https://digisol-backend.onrender.com/api";
+// For production, use the Netlify proxy via relative /api
+// For development, use the local backend
+const isDevelopment = import.meta.env.DEV;
+const rawBase = isDevelopment 
+  ? "http://localhost:8000/api"
+  : "/api"; // Use Netlify proxy in production
+
 const baseURL = sanitizeBaseURL(rawBase);
+
+console.log('API Base URL:', baseURL); // Debug log
 
 const api = axios.create({
   baseURL,
@@ -31,6 +40,10 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Debug log for requests
+    console.log('API Request:', config.method?.toUpperCase(), config.url);
+    
     return config;
   },
   (error) => Promise.reject(error)

@@ -25,17 +25,34 @@
 [build.processing.images]
   compress = true
 
+# API proxy redirects
 [[redirects]]
   from = "/api/*"
   to = "https://digisol-backend.onrender.com/api/:splat"
   status = 200
   force = true
+  headers = {Access-Control-Allow-Origin = "*"}
 
+# Handle CORS preflight requests
+[[redirects]]
+  from = "/api/*"
+  to = "https://digisol-backend.onrender.com/api/:splat"
+  status = 200
+  method = "OPTIONS"
+  force = true
+  headers = {
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+  }
+
+# SPA fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
+# Security headers
 [[headers]]
   for = "/*"
   [headers.values]
@@ -43,8 +60,11 @@
     X-XSS-Protection = "1; mode=block"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
-    Cache-Control = "public, max-age=31536000, immutable"
+    Cache-Control = "no-cache, no-store, must-revalidate"
+    Pragma = "no-cache"
+    Expires = "0"
 
+# Cache static assets
 [[headers]]
   for = "/assets/*"
   [headers.values]
