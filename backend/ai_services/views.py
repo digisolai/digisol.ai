@@ -35,7 +35,7 @@ from .serializers import (
     AIEcosystemHealthSerializer
 )
 from .tasks import generate_content_task, generate_image_task, upload_edited_image_task
-from .gemini_utils import call_gemini_for_ai_agent
+from .gemini_utils import call_gemini_for_ai_agent, get_quota_status
 from core.models import BrandProfile, Tenant, BrandAsset
 from accounts.models import CustomUser
 
@@ -98,24 +98,72 @@ class GeminiChatView(APIView):
             if not settings.GOOGLE_GEMINI_API_KEY:
                 return Response(
                     {
-                        'error': 'AI service not configured',
-                        'message': 'Gemini API key is not configured. Please contact support.'
+                        'error': 'Gemini API not configured',
+                        'message': 'Please configure the Gemini API key in settings'
                     },
                     status=status.HTTP_503_SERVICE_UNAVAILABLE
                 )
             
+            # Check quota status
+            quota_status = get_quota_status()
+            if quota_status['quota_exceeded']:
+                return Response(
+                    {
+                        'error': 'API quota exceeded',
+                        'message': f"Daily quota: {quota_status['daily_used']}/{quota_status['daily_limit']}, Minute quota: {quota_status['minute_used']}/{quota_status['minute_limit']}",
+                        'quota_status': quota_status
+                    },
+                    status=status.HTTP_429_TOO_MANY_REQUESTS
+                )
+            
+            # Get request data
             message = request.data.get('message')
-            agent_name = request.data.get('agent_name', 'AI Assistant')
-            agent_specialization = request.data.get('agent_specialization', 'general')
+            agent_name = request.data.get('agent_name')
+            agent_specialization = request.data.get('agent_specialization')
             conversation_history = request.data.get('conversation_history', [])
             
-            if not message:
+            if not message or not agent_name:
                 return Response(
-                    {'error': 'Message is required'},
+                    {
+                        'error': 'Missing required fields',
+                        'message': 'message and agent_name are required'
+                    },
                     status=status.HTTP_400_BAD_REQUEST
                 )
             
             # Build context from conversation history
+            context = {
+                'conversation_history': conversation_history,
+                'user': request.user.email,
+                'tenant': request.user.tenant.name if request.user.tenant else 'Unknown'
+            }
+            
+            # Call Gemini API
+            response = call_gemini_for_ai_agent(
+                prompt=message,
+                agent_name=agent_name,
+                agent_personality=f"Professional AI agent specializing in {agent_specialization}",
+                specialization=agent_specialization,
+                context=context
+            )
+            
+            return Response({
+                'response': response,
+                'agent_name': agent_name,
+                'quota_status': get_quota_status()
+            })
+            
+        except Exception as e:
+            logger.error(f"Error processing chat message: {str(e)}")
+            return Response(
+                {
+                    'error': 'Failed to process chat message',
+                    'message': str(e)
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+
             context = {
                 'user_tenant': request.user.tenant.name if request.user.tenant else 'Unknown',
                 'conversation_length': len(conversation_history),
@@ -1157,6 +1205,31 @@ class AIEcosystemHealthViewSet(ModelViewSet):
         serializer = self.get_serializer(health)
         return Response(serializer.data)
 
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def get_quota_status_view(request):
+    """
+    Get current Gemini API quota status.
+    """
+    try:
+        from .gemini_utils import get_quota_status
+        quota_status = get_quota_status()
+        
+        return Response({
+            'quota_status': quota_status,
+            'message': 'Current quota status retrieved successfully'
+        })
+        
+    except Exception as e:
+        logger.error(f"Error getting quota status: {str(e)}")
+        return Response(
+            {
+                'error': 'Failed to get quota status',
+                'message': str(e)
+            },
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
 
 @api_view(['POST'])
 @permission_classes([permissions.IsAuthenticated])

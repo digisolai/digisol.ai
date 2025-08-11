@@ -45,12 +45,15 @@ def generate_content_task(self, request_id):
         # Construct the prompt with branding context
         enhanced_prompt, brand_context = _build_enhanced_prompt(request, brand_profile)
         
-        # Call Gemini API
-        response = call_gemini_for_content_generation(
-            prompt=enhanced_prompt,
-            content_type=request.content_type,
-            brand_context=brand_context
-        )
+        # Call Gemini API (disabled for automatic processes to prevent quota issues)
+        # response = call_gemini_for_content_generation(
+        #     prompt=enhanced_prompt,
+        #     content_type=request.content_type,
+        #     brand_context=brand_context
+        # )
+        
+        # For now, return a placeholder response to prevent quota issues
+        response = f"Content generation temporarily disabled to prevent API quota issues. Your request was: {enhanced_prompt}"
         
         # Update the request with generated content
         request.mark_as_completed(response, credits_used=1)
@@ -729,7 +732,8 @@ def generate_campaign_insights_task(self, campaign_id, campaign_stats_data, ai_p
         prompt = _build_campaign_insights_prompt(campaign, campaign_stats_data)
         
         # Call the external LLM API
-        insights_text = _call_gemini_api_for_insights(prompt)
+        # insights_text = _call_gemini_api_for_insights(prompt)
+        insights_text = "AI insights temporarily disabled to prevent API quota issues."
         
         # Find the existing placeholder recommendation and update it
         recommendation = AIRecommendation.objects.filter(
@@ -918,14 +922,15 @@ def analyze_project_health(project_id: str) -> dict:
         6. Budget burn rate analysis
         """
         
-        # Call Promana AI
-        response = call_gemini_for_ai_agent(
-            prompt=prompt,
-            agent_name="Promana",
-            agent_personality="A project management expert who specializes in planning, scheduling, resource allocation, and progress tracking. Promana ensures projects stay on time, within budget, and meet quality standards.",
-            specialization="project_management",
-            context=project_data
-        )
+        # Call Promana AI (disabled for automatic processes to prevent quota issues)
+        # response = call_gemini_for_ai_agent(
+        #     prompt=prompt,
+        #     agent_name="Promana",
+        #     agent_personality="A project management expert who specializes in planning, scheduling, resource allocation, and progress tracking. Promana ensures projects stay on time, within budget, and meet quality standards.",
+        #     specialization="project_management",
+        #     context=project_data
+        # )
+        response = f"Project analysis temporarily disabled to prevent API quota issues. Your request was: {prompt}"
         
         # Parse response and update project
         analysis_result = parse_promana_analysis(response, project_data)
@@ -1006,13 +1011,14 @@ def suggest_task_assignee(task_id: str) -> dict:
         4. Alternative suggestions
         """
         
-        # Call Promana AI
-        response = call_gemini_for_ai_agent(
-            prompt=prompt,
-            agent_name="Promana",
-            agent_personality="A project management expert who specializes in planning, scheduling, resource allocation, and progress tracking.",
-            specialization="project_management",
-            context={'task': task.name, 'team_size': len(team_members)}
+        # Call Promana AI (disabled for automatic processes to prevent quota issues)
+        # response = call_gemini_for_ai_agent(
+        #     prompt=prompt,
+        #     agent_name="Promana",
+        #     agent_personality="A project management expert who specializes in planning, scheduling, resource allocation, and progress tracking.",
+        #     specialization="project_management",
+        #     context={'task': task.name, 'team_size': len(team_members)}
+        response = f"Task assignment temporarily disabled to prevent API quota issues. Your request was: {prompt}"
         )
         
         return parse_assignee_recommendation(response, team_members)

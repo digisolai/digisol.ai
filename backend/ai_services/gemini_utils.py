@@ -2,6 +2,8 @@ import logging
 import google.generativeai as genai
 from django.conf import settings
 from typing import Dict, Any, Optional
+from django.core.cache import cache
+import time
 
 logger = logging.getLogger(__name__)
 
@@ -14,6 +16,96 @@ GEMINI_MODELS = {
     'gemini-1.5-pro': 'gemini-1.5-pro',
     'gemini-1.0-pro': 'gemini-1.0-pro',
 }
+
+# Quota management settings
+QUOTA_CACHE_KEY = 'gemini_api_quota'
+QUOTA_LIMIT_PER_DAY = 50  # Conservative daily limit
+QUOTA_LIMIT_PER_MINUTE = 2  # Conservative per-minute limit
+
+def check_api_quota() -> bool:
+    """
+    Check if we're within API quota limits.
+    
+    Returns:
+        bool: True if within limits, False if quota exceeded
+    """
+    try:
+        # Check daily quota
+        daily_key = f"{QUOTA_CACHE_KEY}_daily_{time.strftime('%Y-%m-%d')}"
+        daily_count = cache.get(daily_key, 0)
+        
+        if daily_count >= QUOTA_LIMIT_PER_DAY:
+            logger.warning(f"Daily quota exceeded: {daily_count}/{QUOTA_LIMIT_PER_DAY}")
+            return False
+        
+        # Check per-minute quota
+        minute_key = f"{QUOTA_CACHE_KEY}_minute_{int(time.time() // 60)}"
+        minute_count = cache.get(minute_key, 0)
+        
+        if minute_count >= QUOTA_LIMIT_PER_MINUTE:
+            logger.warning(f"Per-minute quota exceeded: {minute_count}/{QUOTA_LIMIT_PER_MINUTE}")
+            return False
+        
+        return True
+        
+    except Exception as e:
+        logger.error(f"Error checking quota: {str(e)}")
+        return False  # Fail safe - don't allow API calls if quota check fails
+
+def increment_api_quota():
+    """
+    Increment API quota counters.
+    """
+    try:
+        # Increment daily counter
+        daily_key = f"{QUOTA_CACHE_KEY}_daily_{time.strftime('%Y-%m-%d')}"
+        daily_count = cache.get(daily_key, 0) + 1
+        cache.set(daily_key, daily_count, 86400)  # 24 hours
+        
+        # Increment per-minute counter
+        minute_key = f"{QUOTA_CACHE_KEY}_minute_{int(time.time() // 60)}"
+        minute_count = cache.get(minute_key, 0) + 1
+        cache.set(minute_key, minute_count, 60)  # 1 minute
+        
+        logger.info(f"API quota incremented - Daily: {daily_count}/{QUOTA_LIMIT_PER_DAY}, Minute: {minute_count}/{QUOTA_LIMIT_PER_MINUTE}")
+        
+    except Exception as e:
+        logger.error(f"Error incrementing quota: {str(e)}")
+
+def get_quota_status() -> Dict[str, Any]:
+    """
+    Get current quota status.
+    
+    Returns:
+        dict: Quota status information
+    """
+    try:
+        daily_key = f"{QUOTA_CACHE_KEY}_daily_{time.strftime('%Y-%m-%d')}"
+        minute_key = f"{QUOTA_CACHE_KEY}_minute_{int(time.time() // 60)}"
+        
+        daily_count = cache.get(daily_key, 0)
+        minute_count = cache.get(minute_key, 0)
+        
+        return {
+            'daily_used': daily_count,
+            'daily_limit': QUOTA_LIMIT_PER_DAY,
+            'daily_remaining': max(0, QUOTA_LIMIT_PER_DAY - daily_count),
+            'minute_used': minute_count,
+            'minute_limit': QUOTA_LIMIT_PER_MINUTE,
+            'minute_remaining': max(0, QUOTA_LIMIT_PER_MINUTE - minute_count),
+            'quota_exceeded': daily_count >= QUOTA_LIMIT_PER_DAY or minute_count >= QUOTA_LIMIT_PER_MINUTE
+        }
+    except Exception as e:
+        logger.error(f"Error getting quota status: {str(e)}")
+        return {
+            'daily_used': 0,
+            'daily_limit': QUOTA_LIMIT_PER_DAY,
+            'daily_remaining': QUOTA_LIMIT_PER_DAY,
+            'minute_used': 0,
+            'minute_limit': QUOTA_LIMIT_PER_MINUTE,
+            'minute_remaining': QUOTA_LIMIT_PER_MINUTE,
+            'quota_exceeded': False
+        }
 
 def get_gemini_model(model_name: str = 'gemini-1.5-flash'):
     """
@@ -40,6 +132,7 @@ def call_gemini_api(
     model_name: str = 'gemini-1.5-flash',
     max_tokens: int = 1000,
     temperature: float = 0.7,
+    check_quota: bool = True,
     **kwargs
 ) -> str:
     """
@@ -51,16 +144,22 @@ def call_gemini_api(
         model_name: Gemini model to use
         max_tokens: Maximum tokens to generate
         temperature: Creativity level (0.0 to 1.0)
+        check_quota: Whether to check quota before making API call
         **kwargs: Additional parameters
     
     Returns:
         str: Generated content from Gemini
     
     Raises:
-        Exception: If API call fails
+        Exception: If API call fails or quota exceeded
     """
     if not settings.GOOGLE_GEMINI_API_KEY:
         raise Exception("Gemini API key not configured")
+    
+    # Check quota if enabled
+    if check_quota and not check_api_quota():
+        quota_status = get_quota_status()
+        raise Exception(f"API quota exceeded. Daily: {quota_status['daily_used']}/{quota_status['daily_limit']}, Minute: {quota_status['minute_used']}/{quota_status['minute_limit']}")
     
     try:
         model = get_gemini_model(model_name)
@@ -98,6 +197,9 @@ def call_gemini_api(
         if not generated_content:
             raise Exception("Gemini returned empty content")
         
+        # Increment quota counter
+        increment_api_quota()
+        
         return generated_content
         
     except Exception as e:
@@ -107,7 +209,8 @@ def call_gemini_api(
 def call_gemini_for_content_generation(
     prompt: str, 
     content_type: str,
-    brand_context: str = None
+    brand_context: str = None,
+    check_quota: bool = True
 ) -> str:
     """
     Call Gemini API specifically for content generation with marketing context.
@@ -116,6 +219,7 @@ def call_gemini_for_content_generation(
         prompt: The user prompt
         content_type: Type of content being generated
         brand_context: Optional brand context
+        check_quota: Whether to check quota before making API call
     
     Returns:
         str: Generated content
@@ -161,7 +265,8 @@ def call_gemini_for_ai_agent(
     agent_name: str,
     agent_personality: str,
     specialization: str,
-    context: Dict[str, Any] = None
+    context: Dict[str, Any] = None,
+    check_quota: bool = True
 ) -> str:
     """
     Call Gemini API for AI agent interactions.
@@ -172,6 +277,7 @@ def call_gemini_for_ai_agent(
         agent_personality: Personality description of the agent
         specialization: Agent's specialization
         context: Additional context data
+        check_quota: Whether to check quota before making API call
     
     Returns:
         str: Agent's response
@@ -195,12 +301,14 @@ Current context: {context or 'No additional context provided'}"""
         system_prompt=system_prompt,
         model_name="gemini-1.5-pro",
         max_tokens=1200,
-        temperature=0.7
+        temperature=0.7,
+        check_quota=check_quota
     )
 
 def call_gemini_for_insights(
     prompt: str,
-    data_context: str = None
+    data_context: str = None,
+    check_quota: bool = True
 ) -> str:
     """
     Call Gemini API for generating insights and recommendations.
@@ -208,6 +316,7 @@ def call_gemini_for_insights(
     Args:
         prompt: The analysis request
         data_context: Context about the data being analyzed
+        check_quota: Whether to check quota before making API call
     
     Returns:
         str: Generated insights
@@ -230,5 +339,6 @@ Focus on:
         system_prompt=system_prompt,
         model_name="gemini-1.5-pro",
         max_tokens=1500,
-        temperature=0.6
+        temperature=0.6,
+        check_quota=check_quota
     ) 

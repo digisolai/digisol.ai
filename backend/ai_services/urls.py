@@ -17,7 +17,8 @@ from .views import (
     StructuraInsightViewSet,
     AIEcosystemHealthViewSet,
     GeminiChatView,
-    setup_ai_agents
+    setup_ai_agents,
+    get_quota_status_view
 )
 
 app_name = 'ai_services'
@@ -50,6 +51,9 @@ urlpatterns = [
     
     # Setup endpoint
     path('setup-agents/', setup_ai_agents, name='setup-ai-agents'),
+    
+    # Quota status endpoint
+    path('quota-status/', get_quota_status_view, name='quota-status'),
     
     # Router URLs
     path('', include(router.urls)),
