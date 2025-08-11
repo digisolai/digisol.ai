@@ -46,9 +46,26 @@ export default function AIChatInterface({
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [currentTask, setCurrentTask] = useState<string | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const toast = useToast();
+
+  // Check authentication status on component mount
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+      setIsAuthenticated(true);
+    } else {
+      setIsAuthenticated(false);
+      toast({
+        title: 'Authentication Required',
+        description: 'Please log in to use the AI chat feature.',
+        status: 'warning',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }, [toast]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -98,13 +115,27 @@ export default function AIChatInterface({
       setMessages(prev => [...prev, aiResponse]);
       setIsLoading(false);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error sending message:', error);
+      
+      // Handle different types of errors
+      let errorMessage = 'Failed to send message. Please try again.';
+      
+      if (error.response?.status === 401) {
+        errorMessage = 'Authentication required. Please log in again.';
+      } else if (error.response?.status === 500) {
+        errorMessage = 'AI service error. Please check your Gemini API key configuration.';
+      } else if (error.response?.data?.detail) {
+        errorMessage = error.response.data.detail;
+      } else if (error.message) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: 'Error',
-        description: 'Failed to send message. Please try again.',
+        description: errorMessage,
         status: 'error',
-        duration: 3000,
+        duration: 5000,
         isClosable: true,
       });
       setIsLoading(false);
@@ -119,6 +150,43 @@ export default function AIChatInterface({
       sendMessage();
     }
   };
+
+  // Show authentication message if not logged in
+  if (isAuthenticated === false) {
+    return (
+      <Card h="600px" display="flex" flexDirection="column">
+        <CardBody p={0} display="flex" flexDirection="column">
+          {/* Header */}
+          <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg="brand.50">
+            <HStack>
+              <Avatar size="sm" bg="brand.primary" icon={<Icon as={FiCpu} />} />
+              <VStack align="start" spacing={0}>
+                <Text fontWeight="bold">{agentName}</Text>
+                <Badge colorScheme="blue" size="sm">{agentSpecialization}</Badge>
+              </VStack>
+            </HStack>
+          </Box>
+          
+          {/* Authentication Required Message */}
+          <Box p={8} textAlign="center">
+            <Icon as={FiZap} boxSize={12} color="brand.primary" mb={4} />
+            <Text fontSize="lg" fontWeight="bold" mb={2}>
+              Authentication Required
+            </Text>
+            <Text color="gray.600" mb={4}>
+              Please log in to use the AI chat feature.
+            </Text>
+            <Button
+              colorScheme="brand"
+              onClick={() => window.location.href = '/login'}
+            >
+              Go to Login
+            </Button>
+          </Box>
+        </CardBody>
+      </Card>
+    );
+  }
 
   return (
     <Card h="600px" display="flex" flexDirection="column">

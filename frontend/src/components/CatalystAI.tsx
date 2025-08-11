@@ -28,7 +28,9 @@ import {
 import {
   FiPlay,
   FiZap,
+  FiMessageSquare,
 } from 'react-icons/fi';
+import AIChatInterface from './AIChatInterface';
 
 interface CatalystInsight {
   id: string;
@@ -83,6 +85,7 @@ export default function CatalystAI({
   
   const { isOpen: isInsightModalOpen, onOpen: onInsightModalOpen, onClose: onInsightModalClose } = useDisclosure();
   const { isOpen: isRecommendationModalOpen, onOpen: onRecommendationModalOpen, onClose: onRecommendationModalClose } = useDisclosure();
+  const { isOpen: isChatOpen, onOpen: onChatOpen, onClose: onChatClose } = useDisclosure();
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -178,12 +181,9 @@ export default function CatalystAI({
               color="brand.accent"
               fontWeight="bold"
               _hover={{ bg: "#1a365d" }}
-              leftIcon={<Icon as={FiZap} />}
+              leftIcon={<Icon as={FiMessageSquare} />}
               aria-label="Ask Catalyst AI"
-              onClick={() => {
-                // Open chat interface for Catalyst AI
-                window.location.href = '/ai-overview'; // Redirect to AI overview page with chat
-              }}
+              onClick={onChatOpen}
             >
               Chat with Catalyst AI
             </Button>
@@ -561,6 +561,28 @@ export default function CatalystAI({
               </Button>
             )}
           </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Catalyst AI Chat Modal */}
+      <Modal isOpen={isChatOpen} onClose={onChatClose} size="6xl" maxW="90vw">
+        <ModalOverlay />
+        <ModalContent maxH="90vh">
+          <ModalHeader>
+            <HStack>
+              <Icon as={FiZap} color="brand.primary" />
+              <Text>Chat with Catalyst AI</Text>
+            </HStack>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody p={0}>
+            <AIChatInterface
+              agentId="catalyst"
+              agentName="Catalyst"
+              agentSpecialization="campaign_optimization"
+              onClose={onChatClose}
+            />
+          </ModalBody>
         </ModalContent>
       </Modal>
     </VStack>

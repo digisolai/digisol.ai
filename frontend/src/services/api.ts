@@ -48,6 +48,9 @@ api.interceptors.response.use(
                            error.config?.url?.includes('/login/') ||
                            error.config?.url?.includes('/register/');
       
+      // Check if this is an AI service endpoint (don't redirect for these)
+      const isAIServiceEndpoint = error.config?.url?.includes('/ai-services/');
+      
       // Only redirect to login if it's an authentication-related endpoint
       // or if the error message indicates authentication failure
       const errorMessage = error.response?.data?.detail || '';
@@ -56,7 +59,7 @@ api.interceptors.response.use(
                          errorMessage.includes('token') ||
                          errorMessage.includes('login');
       
-      if (isAuthEndpoint || isAuthError) {
+      if ((isAuthEndpoint || isAuthError) && !isAIServiceEndpoint) {
         console.log('Authentication error detected, redirecting to login');
         // Clear tokens and redirect to login
         localStorage.removeItem('access_token');

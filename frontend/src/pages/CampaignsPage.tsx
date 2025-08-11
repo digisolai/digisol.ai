@@ -1952,10 +1952,10 @@ export default function CampaignsPage() {
                       </Text>
                       <Button
                         leftIcon={<FiPlus />}
-                        bg="brand.accent"
-                        color="brand.primary"
+                        bg="brand.primary"
+                        color="brand.accent"
                         fontWeight="bold"
-                        _hover={{ bg: "#FFD700" }}
+                        _hover={{ bg: "#1a365d" }}
                         mt={4}
                         onClick={onCreateModalOpen}
                       >
