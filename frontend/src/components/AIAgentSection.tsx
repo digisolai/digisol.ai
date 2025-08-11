@@ -18,7 +18,7 @@ import {
   ModalCloseButton,
   useDisclosure,
 } from '@chakra-ui/react';
-import AIChatInterface from './AIChatInterface';
+import ContextualAIChat from './ContextualAIChat';
 import { 
   FiMessageCircle,
   FiTarget,
@@ -227,10 +227,11 @@ export const AIAgentSection: React.FC<AIAgentSectionProps> = ({
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody p={0}>
-            <AIChatInterface
+            <ContextualAIChat
               agentId={agent?.id}
               agentName={agent?.name}
               agentSpecialization={agent?.specialization}
+              pageContext={agent?.specialization}
               onClose={onClose}
             />
           </ModalBody>

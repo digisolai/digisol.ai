@@ -30,7 +30,7 @@ import {
   FiZap,
   FiMessageSquare,
 } from 'react-icons/fi';
-import AIChatInterface from './AIChatInterface';
+import ContextualAIChat from './ContextualAIChat';
 
 interface CatalystInsight {
   id: string;
@@ -565,9 +565,9 @@ export default function CatalystAI({
       </Modal>
 
       {/* Catalyst AI Chat Modal */}
-      <Modal isOpen={isChatOpen} onClose={onChatClose} size="6xl" maxW="90vw">
+      <Modal isOpen={isChatOpen} onClose={onChatClose} size="full">
         <ModalOverlay />
-        <ModalContent maxH="90vh">
+        <ModalContent maxW="90vw" maxH="90vh">
           <ModalHeader>
             <HStack>
               <Icon as={FiZap} color="brand.primary" />
@@ -575,14 +575,16 @@ export default function CatalystAI({
             </HStack>
           </ModalHeader>
           <ModalCloseButton />
-          <ModalBody p={0}>
-            <AIChatInterface
-              agentId="catalyst"
-              agentName="Catalyst"
-              agentSpecialization="campaign_optimization"
-              onClose={onChatClose}
-            />
-          </ModalBody>
+                      <ModalBody p={0}>
+              <ContextualAIChat
+                agentId="catalyst"
+                agentName="Catalyst"
+                agentSpecialization="campaign_optimization"
+                pageContext="campaigns"
+                pageData={{ insights, recommendations, healthScore }}
+                onClose={onChatClose}
+              />
+            </ModalBody>
         </ModalContent>
       </Modal>
     </VStack>

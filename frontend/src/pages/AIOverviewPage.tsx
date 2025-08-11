@@ -48,6 +48,7 @@ import {
 } from "@chakra-ui/react";
 import { Layout } from "../components/Layout";
 import api from "../services/api";
+import ContextualAIChat from "../components/ContextualAIChat";
 import { 
   FiCpu, 
   FiZap, 
@@ -934,9 +935,9 @@ export default function AIOverviewPage() {
         </Modal>
 
         {/* Structura Chat Modal */}
-        <Modal isOpen={isStructuraChatOpen} onClose={onStructuraChatClose} size="xl">
+        <Modal isOpen={isStructuraChatOpen} onClose={onStructuraChatClose} size="full">
           <ModalOverlay />
-          <ModalContent>
+          <ModalContent maxW="90vw" maxH="90vh">
             <ModalHeader>
               <HStack>
                 <Icon as={FiCpu} color="brand.primary" />
@@ -944,52 +945,22 @@ export default function AIOverviewPage() {
               </HStack>
             </ModalHeader>
             <ModalCloseButton />
-            <ModalBody pb={6}>
-              <VStack spacing={4} align="stretch">
-                <Text fontSize="sm" color="brand.neutral.600">
-                  Get strategic insights, predictions, and recommendations from your central AI intelligence.
-                </Text>
-                
-                <FormControl as="form" onSubmit={handleAskStructura}>
-                  <FormLabel>Your Question</FormLabel>
-                  <Textarea
-                    placeholder="Ask Structura anything about your business strategy, AI performance, or future opportunities..."
-                    value={askStructuraQuestion}
-                    onChange={(e) => setAskStructuraQuestion(e.target.value)}
-                    rows={4}
-                  />
-                </FormControl>
-
-                {structuraResponse && (
-                  <Box p={4} bg="brand.neutral.50" borderRadius="md">
-                    <Text fontWeight="bold" mb={2}>Structura's Response:</Text>
-                    <Text>{structuraResponse}</Text>
-                  </Box>
-                )}
-
-                {isAskingStructura && (
-                  <Center py={4}>
-                    <VStack spacing={2}>
-                      <Spinner color="brand.primary" />
-                      <Text fontSize="sm">Structura is analyzing your question...</Text>
-                    </VStack>
-                  </Center>
-                )}
-              </VStack>
+            <ModalBody p={0}>
+              <ContextualAIChat
+                agentId="structura"
+                agentName="Structura"
+                agentSpecialization="strategic_planning"
+                pageContext="ai_overview"
+                pageData={{ 
+                  aiProfiles, 
+                  aiTasks, 
+                  activeRecommendations, 
+                  structuraInsights,
+                  ecosystemHealth 
+                }}
+                onClose={onStructuraChatClose}
+              />
             </ModalBody>
-            <ModalFooter>
-              <Button variant="ghost" mr={3} onClick={onStructuraChatClose}>
-                Close
-              </Button>
-              <Button
-                colorScheme="brand"
-                onClick={handleAskStructura}
-                isLoading={isAskingStructura}
-                loadingText="Asking Structura..."
-              >
-                Ask Structura
-              </Button>
-            </ModalFooter>
           </ModalContent>
         </Modal>
       </Box>
