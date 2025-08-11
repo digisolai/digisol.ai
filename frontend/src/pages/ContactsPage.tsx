@@ -37,6 +37,7 @@ import {
 import {FiPlus, FiXCircle, FiUsers, FiSave, FiDownload, FiEdit, FiTrash2, FiZap} from "react-icons/fi";
 import { Layout } from "../components/Layout";
 import { AIAgentSection } from "../components/AIAgentSection";
+import ContextualAIChat from "../components/ContextualAIChat";
 import TagInput from "../components/TagInput";
 import api from "../services/api";
 import type { AIProfile } from "../types/ai";
@@ -123,6 +124,10 @@ export default function ContactsPage() {
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
   const [editForm, setEditForm] = useState<Partial<Contact>>({});
   
+  // State for Prospero Chat Modal
+  const { isOpen: isProsperoChatOpen, onOpen: onProsperoChatOpen, onClose: onProsperoChatClose } = useDisclosure();
+  const [askProsperoQuestion, setAskProsperoQuestion] = useState("");
+  
   const [exporting, setExporting] = useState(false);
 
   const toast = useToast();
@@ -165,13 +170,8 @@ export default function ContactsPage() {
   }
 
   const handleAskProspero = (question: string) => {
-    toast({
-      title: "Prospero is analyzing your contacts",
-      description: `Question: "${question}" - This feature is coming soon!`,
-      status: "info",
-      duration: 5000,
-      isClosable: true,
-    });
+    setAskProsperoQuestion(question);
+    onProsperoChatOpen();
   };
 
   // --- Data Fetching Functions ---
@@ -1035,6 +1035,34 @@ export default function ContactsPage() {
               Save Changes
             </Button>
           </ModalFooter>
+        </ModalContent>
+      </Modal>
+
+      {/* Prospero Chat Modal */}
+      <Modal isOpen={isProsperoChatOpen} onClose={onProsperoChatClose} size="6xl" maxW="90vw">
+        <ModalOverlay />
+        <ModalContent maxH="90vh">
+          <ModalHeader>
+            <HStack>
+              <Icon as={FiZap} color="purple.500" />
+              <Text>Chat with Prospero - Lead Nurturing Specialist</Text>
+            </HStack>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody p={0}>
+            <ContextualAIChat
+              agentId="prospero"
+              agentName="Prospero"
+              agentSpecialization="lead_nurturing"
+              pageContext="contacts"
+              pageData={{ 
+                contacts,
+                prosperoAgent,
+                askProsperoQuestion 
+              }}
+              onClose={onProsperoChatClose}
+            />
+          </ModalBody>
         </ModalContent>
       </Modal>
     </Layout>

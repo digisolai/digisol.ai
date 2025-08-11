@@ -41,6 +41,13 @@ import {
   AlertDialogHeader,
   AlertDialogContent,
   AlertDialogOverlay,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
 } from "@chakra-ui/react";
 import { 
   FiImage, 
@@ -60,6 +67,7 @@ import {
 } from "react-icons/fi";
 import { Layout } from "../components/Layout";
 import { AIAgentSection } from "../components/AIAgentSection";
+import ContextualAIChat from "../components/ContextualAIChat";
 import TagInput from "../components/TagInput";
 import ColorInput from "../components/ColorInput";
 import api from "../services/api";
@@ -169,6 +177,11 @@ export default function BrandHubPage() {
   const [previewMode, setPreviewMode] = useState<'web' | 'mobile' | 'tablet'>('web');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [showResetDialog, setShowResetDialog] = useState(false);
+  
+  // State for Icona Chat Modal
+  const { isOpen: isIconaChatOpen, onOpen: onIconaChatOpen, onClose: onIconaChatClose } = useDisclosure();
+  const [askIconaQuestion, setAskIconaQuestion] = useState("");
+  
   const cancelRef = useRef<HTMLButtonElement>(null);
   
   const toast = useToast();
@@ -218,13 +231,8 @@ export default function BrandHubPage() {
   }
 
   const handleAskIcona = (question: string) => {
-    toast({
-      title: "Icona is analyzing your brand",
-      description: `Question: "${question}" - This feature is coming soon!`,
-      status: "info",
-      duration: 5000,
-      isClosable: true,
-    });
+    setAskIconaQuestion(question);
+    onIconaChatOpen();
   };
 
   async function fetchBrandingData() {
@@ -1273,6 +1281,34 @@ export default function BrandHubPage() {
             </AlertDialogContent>
           </AlertDialogOverlay>
         </AlertDialog>
+
+        {/* Icona Chat Modal */}
+        <Modal isOpen={isIconaChatOpen} onClose={onIconaChatClose} size="6xl" maxW="90vw">
+          <ModalOverlay />
+          <ModalContent maxH="90vh">
+            <ModalHeader>
+              <HStack>
+                <Icon as={FiImage} color="pink.500" />
+                <Text>Chat with Icona - Brand Identity Specialist</Text>
+              </HStack>
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody p={0}>
+              <ContextualAIChat
+                agentId="icona"
+                agentName="Icona"
+                agentSpecialization="brand_identity"
+                pageContext="brand_hub"
+                pageData={{ 
+                  brandingConfig,
+                  iconaAgent,
+                  askIconaQuestion 
+                }}
+                onClose={onIconaChatClose}
+              />
+            </ModalBody>
+          </ModalContent>
+        </Modal>
       </Box>
     </Layout>
   );

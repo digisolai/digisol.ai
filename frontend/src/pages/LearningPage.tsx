@@ -22,10 +22,19 @@ import {
   StatLabel,
   StatNumber,
   StatGroup,
+  useDisclosure,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  Icon,
 } from "@chakra-ui/react";
 import {FiBook, FiPlay, FiCheck, FiClock} from "react-icons/fi";
 import { Layout } from "../components/Layout";
 import { AIAgentSection } from "../components/AIAgentSection";
+import ContextualAIChat from "../components/ContextualAIChat";
 import api from "../services/api";
 import type { AIProfile } from "../types/ai";
 
@@ -60,6 +69,11 @@ export default function LearningPage() {
   const [mentorAgent, setMentorAgent] = useState<AIProfile | null>(null);
   const [loadingAgent, setLoadingAgent] = useState(true);
   const [agentError, setAgentError] = useState<string | null>(null);
+  
+  // State for Mentor Chat Modal
+  const { isOpen: isMentorChatOpen, onOpen: onMentorChatOpen, onClose: onMentorChatClose } = useDisclosure();
+  const [askMentorQuestion, setAskMentorQuestion] = useState("");
+  
   const toast = useToast();
 
   useEffect(() => {
@@ -101,13 +115,8 @@ export default function LearningPage() {
   }
 
   const handleAskMentor = (question: string) => {
-    toast({
-      title: "Mentor is guiding your learning",
-      description: `Question: "${question}" - This feature is coming soon!`,
-      status: "info",
-      duration: 5000,
-      isClosable: true,
-    });
+    setAskMentorQuestion(question);
+    onMentorChatOpen();
   };
 
   async function fetchLearningData() {
@@ -321,6 +330,35 @@ export default function LearningPage() {
             </SimpleGrid>
           </Box>
         </VStack>
+
+        {/* Mentor Chat Modal */}
+        <Modal isOpen={isMentorChatOpen} onClose={onMentorChatClose} size="6xl" maxW="90vw">
+          <ModalOverlay />
+          <ModalContent maxH="90vh">
+            <ModalHeader>
+              <HStack>
+                <Icon as={FiBook} color="teal.500" />
+                <Text>Chat with Mentor - Learning Guidance Specialist</Text>
+              </HStack>
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody p={0}>
+              <ContextualAIChat
+                agentId="mentor"
+                agentName="Mentor"
+                agentSpecialization="learning_guidance"
+                pageContext="learning"
+                pageData={{ 
+                  courses,
+                  tutorials,
+                  mentorAgent,
+                  askMentorQuestion 
+                }}
+                onClose={onMentorChatClose}
+              />
+            </ModalBody>
+          </ModalContent>
+        </Modal>
       </Box>
     </Layout>
   );

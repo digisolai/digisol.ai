@@ -44,10 +44,12 @@ import {
   // IconButton,
   // Tooltip,
   useToast,
+  Icon,
 } from '@chakra-ui/react';
 import {FiPlus, FiDollarSign, FiEdit} from 'react-icons/fi';
 import { Layout } from '../components/Layout';
 import { AIAgentSection } from '../components/AIAgentSection';
+import ContextualAIChat from '../components/ContextualAIChat';
 import api from '../services/api';
 import type { AIProfile } from '../types/ai';
 
@@ -98,6 +100,10 @@ export default function BudgetingPage() {
   const { isOpen: isBudgetModalOpen, onOpen: onBudgetModalOpen, onClose: onBudgetModalClose } = useDisclosure();
   const { isOpen: isExpenseModalOpen, onOpen: onExpenseModalOpen, onClose: onExpenseModalClose } = useDisclosure();
   const { isOpen: isCategoryModalOpen, onOpen: onCategoryModalOpen, onClose: onCategoryModalClose } = useDisclosure();
+  
+  // State for Pecunia Chat Modal
+  const { isOpen: isPecuniaChatOpen, onOpen: onPecuniaChatOpen, onClose: onPecuniaChatClose } = useDisclosure();
+  const [askPecuniaQuestion, setAskPecuniaQuestion] = useState("");
 
   // Form states
   const [budgetForm, setBudgetForm] = useState({
@@ -260,13 +266,8 @@ export default function BudgetingPage() {
   };
 
   const handleAskAIAgent = (question: string) => {
-    toast({
-      title: "Pecunia is analyzing your budget",
-      description: `Question: "${question}" - This feature is coming soon!`,
-      status: "info",
-      duration: 5000,
-      isClosable: true,
-    });
+    setAskPecuniaQuestion(question);
+    onPecuniaChatOpen();
   };
 
   const formatCurrency = (amount: string) => {
@@ -686,6 +687,36 @@ export default function BudgetingPage() {
                   </Button>
                 </HStack>
               </VStack>
+            </ModalBody>
+          </ModalContent>
+        </Modal>
+
+        {/* Pecunia Chat Modal */}
+        <Modal isOpen={isPecuniaChatOpen} onClose={onPecuniaChatClose} size="6xl" maxW="90vw">
+          <ModalOverlay />
+          <ModalContent maxH="90vh">
+            <ModalHeader>
+              <HStack>
+                <Icon as={FiDollarSign} color="green.500" />
+                <Text>Chat with Pecunia - Budget Analysis Specialist</Text>
+              </HStack>
+            </ModalHeader>
+            <ModalCloseButton />
+            <ModalBody p={0}>
+              <ContextualAIChat
+                agentId="pecunia"
+                agentName="Pecunia"
+                agentSpecialization="budget_analysis"
+                pageContext="budgeting"
+                pageData={{ 
+                  budgets,
+                  categories,
+                  expenses,
+                  aiAgent,
+                  askPecuniaQuestion 
+                }}
+                onClose={onPecuniaChatClose}
+              />
             </ModalBody>
           </ModalContent>
         </Modal>
