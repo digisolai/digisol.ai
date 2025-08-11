@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from django.core.exceptions import ValidationError
 from django.db import transaction, models
 from django.utils import timezone
+from django.core.management import call_command
 from .models import (
     ContentGenerationRequest, ImageGenerationRequest, AIRecommendation,
     AIProfile, AITask, AIInteractionLog, StructuraInsight, AIEcosystemHealth
@@ -1111,3 +1112,42 @@ class AIEcosystemHealthViewSet(ModelViewSet):
         
         serializer = self.get_serializer(health)
         return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def setup_ai_agents(request):
+    """
+    Set up AI agents for the current tenant.
+    This endpoint creates the necessary AI agents if they don't exist.
+    """
+    try:
+        # Check if agents already exist
+        existing_count = AIProfile.objects.filter(is_global=True).count()
+        if existing_count > 0:
+            return Response({
+                'message': f'✅ {existing_count} AI agents already exist',
+                'status': 'already_setup',
+                'agent_count': existing_count
+            }, status=status.HTTP_200_OK)
+        
+        # Run the setup command
+        call_command('setup_production_ai')
+        
+        # Get updated count
+        total_agents = AIProfile.objects.filter(is_global=True).count()
+        active_agents = AIProfile.objects.filter(is_global=True, is_active=True).count()
+        
+        return Response({
+            'message': '✅ AI agents setup completed successfully!',
+            'status': 'setup_complete',
+            'total_agents': total_agents,
+            'active_agents': active_agents
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Error setting up AI agents: {e}")
+        return Response({
+            'error': f'Failed to setup AI agents: {str(e)}',
+            'status': 'setup_failed'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

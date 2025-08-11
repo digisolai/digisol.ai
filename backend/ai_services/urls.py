@@ -16,7 +16,8 @@ from .views import (
     AIPlanningView,
     StructuraInsightViewSet,
     AIEcosystemHealthViewSet,
-    GeminiChatView
+    GeminiChatView,
+    setup_ai_agents
 )
 
 app_name = 'ai_services'
@@ -46,6 +47,9 @@ urlpatterns = [
     
     # Gemini Chat
     path('gemini-chat/', GeminiChatView.as_view(), name='gemini-chat'),
+    
+    # Setup endpoint
+    path('setup-agents/', setup_ai_agents, name='setup-ai-agents'),
     
     # Router URLs
     path('', include(router.urls)),
