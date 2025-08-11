@@ -7,7 +7,7 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 DATABASE_URL=sqlite:///db.sqlite3
 
 # API Keys (Replace with your NEW keys)
-GEMINI_API_KEY=your-new-gemini-api-key-here  # Regenerate in Google AI Studio
+GOOGLE_GEMINI_API_KEY=your-new-gemini-api-key-here  # Regenerate in Google AI Studio
 STRIPE_SECRET_KEY=sk_test_your-new-stripe-key-here  # Rotate key in Stripe Dashboard
 STRIPE_PUBLISHABLE_KEY=pk_test_your-new-stripe-key-here  # Rotate key in Stripe Dashboard
 

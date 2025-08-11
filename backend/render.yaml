@@ -25,3 +25,5 @@ services:
         value: noreply@digisolai.ca
       - key: RENDER
         value: true
+      - key: GOOGLE_GEMINI_API_KEY
+        sync: false
