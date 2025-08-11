@@ -26,6 +26,7 @@ import {
 import { Layout } from "../components/Layout";
 import { PageLayout, SectionCard, SideCard } from "../components/PageLayout";
 import { useAuth } from "../hooks/useAuth";
+import AuthDebug from "../components/AuthDebug";
 import {
   FiMail,
   FiUsers,
@@ -95,6 +96,11 @@ export default function DashboardPage() {
             Welcome{user?.name ? `, ${user.name}` : user?.email ? `, ${user.email}` : ""}!
           </Heading>
           <Text color="gray.600">Here's what's happening with your marketing today</Text>
+        </Box>
+
+        {/* Auth Debug Component - Remove this after testing */}
+        <Box mb={6}>
+          <AuthDebug />
         </Box>
 
         <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={6}>
