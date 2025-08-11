@@ -14,15 +14,15 @@ class Command(BaseCommand):
         self.stdout.write("🚀 Setting up AI Agents for Production")
         self.stdout.write("=" * 50)
         
-        # Check if agents already exist
-        existing_count = AIProfile.objects.count()
+        # Check if agents already exist (global agents have tenant=None)
+        existing_count = AIProfile.objects.filter(tenant__isnull=True).count()
         if existing_count > 0:
             self.stdout.write(
-                self.style.SUCCESS(f"✅ {existing_count} AI agents already exist")
+                self.style.SUCCESS(f"✅ {existing_count} global AI agents already exist")
             )
             return
         
-        # Define all AI agents for production
+        # Define all AI agents for production (global agents have tenant=None)
         ai_agents = [
             {
                 "name": "Structura",
@@ -30,7 +30,7 @@ class Command(BaseCommand):
                 "personality_description": "Strategic, collaborative, and coordination-focused. Structura orchestrates all your AI agents and marketing activities for maximum impact.",
                 "api_model_name": "gemini-pro",
                 "is_active": True,
-                "is_global": True
+                "tenant": None  # Global agent
             },
             {
                 "name": "Catalyst",
@@ -38,7 +38,7 @@ class Command(BaseCommand):
                 "personality_description": "Dynamic, performance-driven, and adaptive. Catalyst optimizes campaigns in real-time for maximum ROI and engagement.",
                 "api_model_name": "gemini-pro",
                 "is_active": True,
-                "is_global": True
+                "tenant": None  # Global agent
             },
             {
                 "name": "Scriptor",
@@ -46,7 +46,7 @@ class Command(BaseCommand):
                 "personality_description": "Creative, engaging, and brand-conscious. Scriptor excels at creating compelling content that resonates with your target audience.",
                 "api_model_name": "gemini-pro",
                 "is_active": True,
-                "is_global": True
+                "tenant": None  # Global agent
             },
             {
                 "name": "Pecunia",
@@ -54,7 +54,7 @@ class Command(BaseCommand):
                 "personality_description": "Meticulous, cost-conscious, and ROI-focused. Pecunia provides intelligent budget analysis and optimization recommendations.",
                 "api_model_name": "gemini-pro",
                 "is_active": True,
-                "is_global": True
+                "tenant": None  # Global agent
             },
             {
                 "name": "Metrika",
@@ -62,7 +62,7 @@ class Command(BaseCommand):
                 "personality_description": "Analytical, precise, and insight-driven. Metrika excels at complex data analysis and strategic insights.",
                 "api_model_name": "gemini-pro",
                 "is_active": True,
-                "is_global": True
+                "tenant": None  # Global agent
             },
             {
                 "name": "Prospero",
@@ -70,7 +70,7 @@ class Command(BaseCommand):
                 "personality_description": "Patient, strategic, and relationship-focused. Prospero develops personalized lead nurturing strategies.",
                 "api_model_name": "gemini-pro",
                 "is_active": True,
-                "is_global": True
+                "tenant": None  # Global agent
             },
             {
                 "name": "Connectus",
@@ -78,7 +78,7 @@ class Command(BaseCommand):
                 "personality_description": "Technical, bridge-building, and ecosystem-focused. Connectus ensures seamless data flow between all your tools.",
                 "api_model_name": "gemini-pro",
                 "is_active": True,
-                "is_global": True
+                "tenant": None  # Global agent
             },
             {
                 "name": "Mentor",
@@ -86,7 +86,7 @@ class Command(BaseCommand):
                 "personality_description": "Patient, encouraging, and adaptive. Mentor personalizes your learning journey and helps you master new skills.",
                 "api_model_name": "gemini-pro",
                 "is_active": True,
-                "is_global": True
+                "tenant": None  # Global agent
             }
         ]
         
@@ -107,8 +107,8 @@ class Command(BaseCommand):
                         self.style.WARNING(f"⚠️ {agent.name} already exists")
                     )
         
-        total_agents = AIProfile.objects.count()
-        active_agents = AIProfile.objects.filter(is_active=True).count()
+        total_agents = AIProfile.objects.filter(tenant__isnull=True).count()
+        active_agents = AIProfile.objects.filter(tenant__isnull=True, is_active=True).count()
         
         self.stdout.write("=" * 50)
         self.stdout.write(

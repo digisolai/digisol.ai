@@ -52,8 +52,8 @@ class GeminiChatView(APIView):
         Get available AI agents for chat.
         """
         try:
-            # Get available AI agents
-            agents = AIProfile.objects.filter(is_active=True, is_global=True)
+            # Get available AI agents (global agents have tenant=None)
+            agents = AIProfile.objects.filter(is_active=True, tenant__isnull=True)
             agent_list = []
             
             for agent in agents:
@@ -1165,11 +1165,11 @@ def setup_ai_agents(request):
     This endpoint creates the necessary AI agents if they don't exist.
     """
     try:
-        # Check if agents already exist
-        existing_count = AIProfile.objects.filter(is_global=True).count()
+        # Check if agents already exist (global agents have tenant=None)
+        existing_count = AIProfile.objects.filter(tenant__isnull=True).count()
         if existing_count > 0:
             return Response({
-                'message': f'✅ {existing_count} AI agents already exist',
+                'message': f'✅ {existing_count} global AI agents already exist',
                 'status': 'already_setup',
                 'agent_count': existing_count
             }, status=status.HTTP_200_OK)
@@ -1178,8 +1178,8 @@ def setup_ai_agents(request):
         call_command('setup_production_ai')
         
         # Get updated count
-        total_agents = AIProfile.objects.filter(is_global=True).count()
-        active_agents = AIProfile.objects.filter(is_global=True, is_active=True).count()
+        total_agents = AIProfile.objects.filter(tenant__isnull=True).count()
+        active_agents = AIProfile.objects.filter(tenant__isnull=True, is_active=True).count()
         
         return Response({
             'message': '✅ AI agents setup completed successfully!',
