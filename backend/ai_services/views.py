@@ -47,6 +47,39 @@ class GeminiChatView(APIView):
     """
     permission_classes = [permissions.IsAuthenticated]
     
+    def get(self, request):
+        """
+        Get available AI agents for chat.
+        """
+        try:
+            # Get available AI agents
+            agents = AIProfile.objects.filter(is_active=True, is_global=True)
+            agent_list = []
+            
+            for agent in agents:
+                agent_list.append({
+                    'id': agent.id,
+                    'name': agent.name,
+                    'specialization': agent.specialization,
+                    'personality_description': agent.personality_description,
+                    'api_model_name': agent.api_model_name
+                })
+            
+            return Response({
+                'available_agents': agent_list,
+                'message': 'Available AI agents for chat'
+            })
+            
+        except Exception as e:
+            logger.error(f"Error getting AI agents: {str(e)}")
+            return Response(
+                {
+                    'error': 'Failed to get AI agents',
+                    'message': str(e)
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
     def post(self, request):
         """
         Handle chat messages with AI agents using Gemini.
@@ -60,6 +93,16 @@ class GeminiChatView(APIView):
         }
         """
         try:
+            # Check if Gemini API key is configured
+            if not settings.GOOGLE_GEMINI_API_KEY:
+                return Response(
+                    {
+                        'error': 'AI service not configured',
+                        'message': 'Gemini API key is not configured. Please contact support.'
+                    },
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE
+                )
+            
             message = request.data.get('message')
             agent_name = request.data.get('agent_name', 'AI Assistant')
             agent_specialization = request.data.get('agent_specialization', 'general')
