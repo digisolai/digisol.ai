@@ -333,17 +333,17 @@ export default function AboutPage() {
                   <VStack spacing={3} align="center">
                     <Icon as={FiMail} boxSize={6} color="brand.accent" />
                     <Text fontSize="sm" fontWeight="medium">Email</Text>
-                    <Text fontSize="sm" color="brand.neutral.600">hello@digisol.ai</Text>
+                    <Text fontSize="sm" color="brand.neutral.600">admin@digisolai.ca</Text>
                   </VStack>
                   <VStack spacing={3} align="center">
                     <Icon as={FiPhone} boxSize={6} color="brand.accent" />
                     <Text fontSize="sm" fontWeight="medium">Phone</Text>
-                    <Text fontSize="sm" color="brand.neutral.600">+1 (555) 123-4567</Text>
+                    <Text fontSize="sm" color="brand.neutral.600">+1 (587) 577-0782</Text>
                   </VStack>
                   <VStack spacing={3} align="center">
-                    <Icon as={FiGlobe} boxSize={6} color="brand.accent" />
-                    <Text fontSize="sm" fontWeight="medium">Website</Text>
-                    <Text fontSize="sm" color="brand.neutral.600">www.digisol.ai</Text>
+                    <Icon as={FiMapPin} boxSize={6} color="brand.accent" />
+                    <Text fontSize="sm" fontWeight="medium">Address</Text>
+                    <Text fontSize="sm" color="brand.neutral.600" textAlign="center">Box 1764<br />Carstairs, Alberta<br />T0M 0N0</Text>
                   </VStack>
                 </SimpleGrid>
                 <HStack justify="center" pt={4}>
@@ -354,7 +354,7 @@ export default function AboutPage() {
                     _hover={{ bg: "brand.600" }}
                     _active={{ bg: "brand.700" }}
                     size="lg"
-                    onClick={() => window.open('mailto:hello@digisol.ai', '_blank')}
+                    onClick={() => window.open('mailto:admin@digisolai.ca', '_blank')}
                   >
                     Contact Us
                   </Button>

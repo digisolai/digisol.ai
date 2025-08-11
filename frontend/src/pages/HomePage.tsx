@@ -1107,8 +1107,62 @@ export default function HomePage() {
         </Container>
       </Box>
 
+      {/* Contact Section */}
+      <Box py={16} bg="gray.50" id="contact">
+        <Container maxW="container.xl">
+          <VStack spacing={12}>
+            <VStack spacing={4} textAlign="center">
+              <Heading size="2xl" color="brand.primary">
+                Get in Touch
+              </Heading>
+              <Text fontSize="lg" color="gray.600" maxW="2xl">
+                Ready to transform your marketing with AI? Contact us today to learn how DigiSol.AI can help your business grow.
+              </Text>
+            </VStack>
+            
+            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8} w="full">
+              <VStack spacing={4} p={6} bg="white" borderRadius="lg" shadow="md">
+                <Icon as={FiMail} boxSize={8} color="brand.primary" />
+                <Heading size="md" color="brand.primary">Email</Heading>
+                <Text color="gray.600" textAlign="center">admin@digisolai.ca</Text>
+                <Button
+                  leftIcon={<FiMail />}
+                  colorScheme="brand"
+                  onClick={() => window.open('mailto:admin@digisolai.ca', '_blank')}
+                >
+                  Send Email
+                </Button>
+              </VStack>
+              
+              <VStack spacing={4} p={6} bg="white" borderRadius="lg" shadow="md">
+                <Icon as={FiPhone} boxSize={8} color="brand.primary" />
+                <Heading size="md" color="brand.primary">Phone</Heading>
+                <Text color="gray.600" textAlign="center">+1 (587) 577-0782</Text>
+                <Button
+                  leftIcon={<FiPhone />}
+                  colorScheme="brand"
+                  onClick={() => window.open('tel:+15875770782', '_blank')}
+                >
+                  Call Now
+                </Button>
+              </VStack>
+              
+              <VStack spacing={4} p={6} bg="white" borderRadius="lg" shadow="md">
+                <Icon as={FiMapPin} boxSize={8} color="brand.primary" />
+                <Heading size="md" color="brand.primary">Address</Heading>
+                <Text color="gray.600" textAlign="center">
+                  Box 1764<br />
+                  Carstairs, Alberta<br />
+                  T0M 0N0
+                </Text>
+              </VStack>
+            </SimpleGrid>
+          </VStack>
+        </Container>
+      </Box>
+
       {/* Footer */}
-      <Box py={12} bg="gray.900" color="white" id="contact">
+      <Box py={12} bg="gray.900" color="white">
         <Container maxW="container.xl">
           <Grid templateColumns={{ base: "1fr", md: "2fr 1fr 1fr 1fr" }} gap={8}>
             <GridItem>
@@ -1124,11 +1178,20 @@ export default function HomePage() {
                   The complete AI-powered marketing platform for B2B organizations. 
                   Transform your marketing operations with intelligent automation and insights.
                 </Text>
-                <HStack spacing={4}>
-                  <Icon as={FiGlobe} boxSize={5} color="gray.400" />
-                  <Icon as={FiSmartphone} boxSize={5} color="gray.400" />
-                  <Icon as={FiMail} boxSize={5} color="gray.400" />
-                </HStack>
+                <VStack align="start" spacing={2} color="gray.400" fontSize="sm">
+                  <HStack spacing={2}>
+                    <Icon as={FiMail} boxSize={4} />
+                    <Text>admin@digisolai.ca</Text>
+                  </HStack>
+                  <HStack spacing={2}>
+                    <Icon as={FiPhone} boxSize={4} />
+                    <Text>+1 (587) 577-0782</Text>
+                  </HStack>
+                  <HStack spacing={2}>
+                    <Icon as={FiMapPin} boxSize={4} />
+                    <Text>Box 1764, Carstairs, Alberta T0M 0N0</Text>
+                  </HStack>
+                </VStack>
               </VStack>
             </GridItem>
             
