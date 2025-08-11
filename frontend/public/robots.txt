@@ -1,0 +1,23 @@
+User-agent: *
+Allow: /
+
+# Disallow test and development paths
+Disallow: /test/
+Disallow: /dev/
+Disallow: /debug/
+Disallow: /admin/
+Disallow: /api/ai-services/
+Disallow: /ai-overview
+Disallow: /ai-agent-directory
+
+# Allow main pages
+Allow: /
+Allow: /campaigns
+Allow: /analytics
+Allow: /projects
+Allow: /integrations
+Allow: /billing
+Allow: /settings
+
+# Sitemap
+Sitemap: https://digisolai.ca/sitemap.xml

@@ -3,6 +3,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import theme from './theme';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import SEOProtection from './components/SEOProtection';
 
 // Import all pages
 import HomePage from './pages/HomePage';
@@ -40,7 +41,8 @@ function App() {
     <ChakraProvider theme={theme}>
       <AuthProvider>
         <Router>
-          <Routes>
+          <SEOProtection>
+            <Routes>
             {/* Public routes */}
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -177,7 +179,8 @@ function App() {
             
             {/* Fallback route */}
             <Route path="*" element={<HomePage />} />
-          </Routes>
+                      </Routes>
+          </SEOProtection>
         </Router>
       </AuthProvider>
     </ChakraProvider>
