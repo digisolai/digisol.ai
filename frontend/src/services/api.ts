@@ -13,7 +13,7 @@ function sanitizeBaseURL(url: string): string {
 }
 
 // Prefer env; fallback to Netlify proxy via relative /api
-const rawBase = import.meta.env.VITE_BACKEND_URL || "/api";
+const rawBase = import.meta.env.VITE_BACKEND_URL || "https://digisol-backend.onrender.com/api";
 const baseURL = sanitizeBaseURL(rawBase);
 
 const api = axios.create({
