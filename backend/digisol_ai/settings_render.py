@@ -57,6 +57,10 @@ DATABASES = {
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# Override STATICFILES_DIRS for production - don't include frontend build dir
+# since it doesn't exist on the server and frontend is served separately
+STATICFILES_DIRS = []
+
 # Media files - Use local storage for Render free tier
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
