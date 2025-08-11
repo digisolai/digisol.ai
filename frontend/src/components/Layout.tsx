@@ -44,6 +44,7 @@ import {
   FiMenu, // FiMenu icon for mobile menu
   FiLogOut, // FiLogOut icon for logout
   FiUser, // FiUser icon for user menu
+  FiMessageSquare, // FiMessageSquare icon for AI Chat
 } from "react-icons/fi";
 import { Logo } from "./Logo"; // Corrected relative path from Layout to Logo
 import SubscriptionStatus from "./SubscriptionStatus"; // Import the subscription status component
@@ -62,6 +63,7 @@ const getNavLinks = () => {
     { label: "Templates", icon: FiFileText, href: "/marketing-templates" },
     { label: "Analytics", icon: FiBarChart2, href: "/analytics" },
     { label: "AI Overview", icon: FiCpu, href: "/ai-overview" },
+    { label: "AI Chat", icon: FiMessageSquare, href: "/ai-chat" },
     { label: "Project Management", icon: FiFolder, href: "/projects" },
     { label: "Reports", icon: FiBarChart2, href: "/reports" },
     { label: "Integrations", icon: FiLayers, href: "/integrations" },

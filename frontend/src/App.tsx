@@ -17,6 +17,7 @@ import AIOverviewPage from './pages/AIOverviewPage';
 import AIPlanningPage from './pages/AIPlanningPage';
 import AIPlanningStudioPage from './pages/AIPlanningStudioPage';
 import AITaskDetailPage from './pages/AITaskDetailPage';
+import AIChatPage from './pages/AIChatPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import AutomationsPage from './pages/AutomationsPage';
 import BillingPage from './pages/BillingPage';
@@ -73,6 +74,11 @@ function App() {
             <Route path="/ai-overview" element={
               <ProtectedRoute>
                 <AIOverviewPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/ai-chat" element={
+              <ProtectedRoute>
+                <AIChatPage />
               </ProtectedRoute>
             } />
             <Route path="/ai-planning" element={
