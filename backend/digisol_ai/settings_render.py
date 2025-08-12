@@ -182,7 +182,7 @@ CORS_PREFLIGHT_MAX_AGE = 86400  # 24 hours
 CORS_URLS_REGEX = r'^api/.*$'
 
 # Additional settings to ensure proper CORS handling
-CORS_REPLACE_HTTPS_REFERER = True
+# CORS_REPLACE_HTTPS_REFERER = True  # Removed - deprecated setting
 
 # CSRF trusted origins (needed for some auth flows; safe to include wildcards)
 CSRF_TRUSTED_ORIGINS = os.environ.get(
@@ -207,6 +207,10 @@ if REDIS_URL:
 else:
     CELERY_BROKER_URL = 'memory://'
     CELERY_RESULT_BACKEND = 'rpc://'
+
+# Google Analytics Settings
+GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID')
+GOOGLE_ANALYTICS_MEASUREMENT_ID = os.environ.get('GOOGLE_ANALYTICS_MEASUREMENT_ID')
 
 # URL Configuration
 ROOT_URLCONF = 'digisol_ai.urls'
