@@ -107,13 +107,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.log('AuthContext: Making API request to /accounts/token/'); // Debug log
       const response = await api.post('/accounts/token/', { email, password });
       console.log('AuthContext: Login API response received'); // Debug log
-      const { access, refresh } = response.data;
+      const { access, refresh, user: userData } = response.data;
       console.log('AuthContext: Storing tokens in localStorage'); // Debug log
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
       api.defaults.headers.common['Authorization'] = `Bearer ${access}`;
-      console.log('AuthContext: Fetching user profile...'); // Debug log
-      await fetchUserProfile();
+      
+      // Use user data from login response instead of making additional API call
+      if (userData) {
+        console.log('AuthContext: Setting user from login response'); // Debug log
+        setUser({
+          id: userData.id,
+          email: userData.email,
+          name: `${userData.first_name || ''} ${userData.last_name || ''}`.trim(),
+          tenant_id: userData.tenant,
+          is_tenant_admin: userData.is_tenant_admin || false,
+          is_hr_admin: userData.is_hr_admin || false,
+          is_superuser: userData.is_superuser || false,
+          role: userData.role,
+          // Subscription and usage tracking fields
+          has_corporate_suite: userData.has_corporate_suite || false,
+          contacts_used_current_period: userData.contacts_used_current_period || 0,
+          emails_sent_current_period: userData.emails_sent_current_period || 0,
+          ai_text_credits_used_current_period: userData.ai_text_credits_used_current_period || 0,
+          ai_image_credits_used_current_period: userData.ai_image_credits_used_current_period || 0,
+          ai_planning_requests_used_current_period: userData.ai_planning_requests_used_current_period || 0,
+        });
+        setIsAuthenticated(true);
+      } else {
+        console.log('AuthContext: No user data in response, fetching profile...'); // Debug log
+        await fetchUserProfile();
+      }
+      
       console.log('AuthContext: Login process completed successfully'); // Debug log
       return response.data; // Return data so calling component can navigate
     } catch (error: unknown) {

@@ -1,61 +1,128 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
-Script to create a user on the production server
+Script to create a production user via API calls
 """
 import requests
 import json
 
+# Production API configuration
+PRODUCTION_API_URL = "https://digisol-backend.onrender.com/api"
+
 def create_production_user():
-    """Create a user on the production server"""
+    """Create a user in the production environment"""
     
-    backend_url = "https://digisol-backend.onrender.com"
-    register_endpoint = f"{backend_url}/api/accounts/register/"
+    email = "admin@digisolai.ca"
+    password = "admin123"
+    first_name = "Admin"
+    last_name = "User"
     
-    print("🚀 Creating User on Production Server")
-    print("=" * 50)
+    print(f"🔍 Creating production user: {email}")
     
-    user_data = {
-        "email": "admin@digisolai.ca",
-        "password": "DigiSol2024!",
-        "first_name": "Admin",
-        "last_name": "User",
-        "tenant_name": "DigiSol.AI"
+    # Step 1: Try to register the user
+    registration_url = f"{PRODUCTION_API_URL}/accounts/register/"
+    registration_data = {
+        "email": email,
+        "password": password,
+        "confirm_password": password,
+        "first_name": first_name,
+        "last_name": last_name
     }
     
     try:
-        print("📝 Creating user account...")
-        response = requests.post(
-            register_endpoint,
-            json=user_data,
-            headers={'Content-Type': 'application/json'},
-            timeout=30
-        )
-        
-        print(f"📊 Status Code: {response.status_code}")
+        print("📝 Attempting to register user...")
+        response = requests.post(registration_url, json=registration_data)
         
         if response.status_code == 201:
-            data = response.json()
-            print("✅ User created successfully!")
-            print(f"📋 Response: {json.dumps(data, indent=2)}")
-            print("\n💡 You can now use these credentials:")
-            print(f"📧 Email: {user_data['email']}")
-            print(f"🔑 Password: {user_data['password']}")
+            print("✅ User registered successfully!")
+            print(f"📧 Email: {email}")
+            print(f"🔑 Password: {password}")
+            return True
         elif response.status_code == 400:
-            data = response.json()
-            if "email" in data and "already exists" in str(data["email"]):
-                print("✅ User already exists!")
-                print(f"📧 Email: {user_data['email']}")
-                print(f"🔑 Password: {user_data['password']}")
+            error_data = response.json()
+            if "email" in error_data and "already exists" in str(error_data["email"]):
+                print("ℹ️  User already exists, testing login...")
+                return test_production_login(email, password)
             else:
-                print(f"❌ Registration failed: {data}")
+                print(f"❌ Registration failed: {error_data}")
+                return False
         else:
-            print(f"❌ Registration failed: {response.status_code}")
-            print(f"📋 Response: {response.text}")
+            print(f"❌ Registration failed with status {response.status_code}: {response.text}")
+            return False
             
-    except requests.exceptions.RequestException as e:
-        print(f"❌ Request failed: {e}")
     except Exception as e:
-        print(f"❌ Unexpected error: {e}")
+        print(f"❌ Error during registration: {e}")
+        return False
+
+def test_production_login(email, password):
+    """Test login with the provided credentials"""
+    
+    login_url = f"{PRODUCTION_API_URL}/accounts/token/"
+    login_data = {
+        "email": email,
+        "password": password
+    }
+    
+    try:
+        print("🔐 Testing login...")
+        response = requests.post(login_url, json=login_data)
+        
+        if response.status_code == 200:
+            response_data = response.json()
+            print("✅ Login successful!")
+            print(f"📧 Email: {email}")
+            print(f"🔑 Password: {password}")
+            print(f"👤 User: {response_data.get('user', {}).get('first_name', '')} {response_data.get('user', {}).get('last_name', '')}")
+            print(f"🏢 Tenant: {response_data.get('user', {}).get('tenant', {}).get('name', 'N/A')}")
+            return True
+        else:
+            print(f"❌ Login failed with status {response.status_code}")
+            try:
+                error_data = response.json()
+                print(f"Error details: {error_data}")
+            except:
+                print(f"Error text: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Error during login test: {e}")
+        return False
+
+def check_production_status():
+    """Check if the production API is accessible"""
+    
+    try:
+        print("🌐 Checking production API status...")
+        response = requests.get(f"{PRODUCTION_API_URL}/accounts/")
+        
+        if response.status_code == 200:
+            print("✅ Production API is accessible")
+            return True
+        else:
+            print(f"⚠️  Production API returned status {response.status_code}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ Cannot reach production API: {e}")
+        return False
 
 if __name__ == "__main__":
-    create_production_user()
+    print("🚀 Production User Setup")
+    print("=" * 50)
+    
+    # Try to create or verify the user directly
+    success = create_production_user()
+    
+    if success:
+        print("\n" + "=" * 50)
+        print("✅ Production user setup completed!")
+        print("\n💡 You can now use these credentials in your frontend:")
+        print(f"   Email: admin@digisolai.ca")
+        print(f"   Password: admin123")
+    else:
+        print("\n" + "=" * 50)
+        print("❌ Production user setup failed!")
+        print("\n🔧 Troubleshooting:")
+        print("   1. Check if the production backend is running")
+        print("   2. Verify the API endpoints are correct")
+        print("   3. Check if there are any CORS issues")
+        print("   4. Verify the user doesn't already exist with different credentials")

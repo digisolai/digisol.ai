@@ -1,6 +1,7 @@
 from rest_framework import generics, status, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from .permissions import AllowOptionsPermission
 from rest_framework.decorators import action
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from django.contrib.auth import get_user_model
@@ -48,7 +49,7 @@ class UserProfileView(generics.RetrieveUpdateAPIView):
     Retrieve and update user profile information.
     """
     serializer_class = UserProfileSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowOptionsPermission]
 
     def get_object(self):
         return self.request.user

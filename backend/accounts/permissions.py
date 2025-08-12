@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticated
 
 
 class IsTenantUser(permissions.BasePermission):
@@ -28,3 +29,17 @@ class IsTenantUser(permissions.BasePermission):
             return True
         
         return False 
+
+class AllowOptionsPermission(IsAuthenticated):
+    """
+    Custom permission class that allows OPTIONS requests (for CORS preflight)
+    while requiring authentication for other methods.
+    """
+    
+    def has_permission(self, request, view):
+        # Allow OPTIONS requests without authentication (for CORS preflight)
+        if request.method == 'OPTIONS':
+            return True
+        
+        # For all other methods, require authentication
+        return super().has_permission(request, view) 
