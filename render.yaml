@@ -68,7 +68,3 @@ services:
     plan: free
     maxmemoryPolicy: allkeys-lru
     ipAllowList: []
-
-  - type: pserv
-    name: digisol-postgres
-    plan: starter
