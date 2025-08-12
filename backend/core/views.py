@@ -811,6 +811,83 @@ class BrandProfileViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
+    @action(detail=False, methods=['post'])
+    def upload_brand_asset(self, request):
+        """Upload various brand assets (logos, favicons, etc.)."""
+        try:
+            # Get the brand profile for the current tenant
+            brand_profile = self.get_object()
+            if not brand_profile:
+                # Create a new brand profile if it doesn't exist
+                brand_profile = BrandProfile.objects.create(tenant=request.user.tenant)
+            
+            # Get the file and field type
+            uploaded_file = request.FILES.get('file')
+            field = request.data.get('field')
+            
+            if not uploaded_file:
+                return Response(
+                    {'error': 'No file provided'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            if not field:
+                return Response(
+                    {'error': 'No field specified'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Validate file type
+            allowed_types = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/x-icon']
+            if uploaded_file.content_type not in allowed_types:
+                return Response(
+                    {'error': 'Invalid file type. Please upload PNG, JPEG, SVG, or ICO files.'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Validate file size (2MB limit)
+            if uploaded_file.size > 2 * 1024 * 1024:
+                return Response(
+                    {'error': 'File too large. Please upload files smaller than 2MB.'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Map field names to model fields
+            field_mapping = {
+                'main_logo_url': 'logo_url',
+                'dark_mode_logo_url': 'dark_mode_logo_url',
+                'favicon_url': 'favicon_url',
+                'app_icon_url': 'app_icon_url',
+                'email_header_logo': 'email_header_logo',
+                'landing_page_bg_image': 'landing_page_bg_image'
+            }
+            
+            if field not in field_mapping:
+                return Response(
+                    {'error': 'Invalid field specified'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            # Save the file to the appropriate field
+            model_field = field_mapping[field]
+            setattr(brand_profile, model_field, uploaded_file)
+            brand_profile.save()
+            
+            # Return the URL of the uploaded file
+            file_url = getattr(brand_profile, model_field).url if getattr(brand_profile, model_field) else None
+            
+            return Response({
+                'url': file_url,
+                'field': field,
+                'message': f'{field.replace("_", " ")} uploaded successfully'
+            }, status=status.HTTP_200_OK)
+            
+        except Exception as e:
+            return Response(
+                {'error': str(e)}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class BrandAssetViewSet(viewsets.ModelViewSet):
     """
