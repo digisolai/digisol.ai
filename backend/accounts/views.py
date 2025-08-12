@@ -599,52 +599,30 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = [AllowAny]
     
     def post(self, request, *args, **kwargs):
-        # Handle both email and username fields
-        email = request.data.get('email')
-        username = request.data.get('username')
-        password = request.data.get('password')
+        response = super().post(request, *args, **kwargs)
         
-        if not password:
-            return Response({'error': 'Password is required'}, status=status.HTTP_400_BAD_REQUEST)
+        if response.status_code == 200:
+            # Get the user from the request data
+            email = request.data.get('email') or request.data.get('username')
+            if email:
+                try:
+                    user = User.objects.get(email=email)
+                    response.data['user'] = {
+                        'id': user.id,
+                        'email': user.email,
+                        'username': user.username,
+                        'first_name': user.first_name,
+                        'last_name': user.last_name,
+                        'tenant': {
+                            'id': user.tenant.id,
+                            'name': user.tenant.name,
+                            'subdomain': user.tenant.subdomain
+                        } if user.tenant else None
+                    }
+                except User.DoesNotExist:
+                    pass
         
-        # Try to authenticate with email or username
-        user = None
-        if email:
-            try:
-                user = User.objects.get(email=email)
-            except User.DoesNotExist:
-                pass
-        elif username:
-            try:
-                user = User.objects.get(username=username)
-            except User.DoesNotExist:
-                pass
-        
-        if not user or not user.check_password(password):
-            return Response({'error': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-        
-        # Generate tokens manually
-        from rest_framework_simplejwt.tokens import RefreshToken
-        refresh = RefreshToken.for_user(user)
-        
-        response_data = {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-            'user': {
-                'id': user.id,
-                'email': user.email,
-                'username': user.username,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'tenant': {
-                    'id': user.tenant.id,
-                    'name': user.tenant.name,
-                    'subdomain': user.tenant.subdomain
-                } if user.tenant else None
-            }
-        }
-        
-        return Response(response_data, status=status.HTTP_200_OK)
+        return response
 
 class CustomTokenRefreshView(TokenRefreshView):
     """
