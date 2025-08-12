@@ -69,15 +69,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@digisolai.ca')
 
-# CORS Settings
+# CORS Settings - Production only
 CORS_ALLOWED_ORIGINS = [
     'https://www.digisolai.ca',
     'https://digisolai.ca',
     'https://digisolai.netlify.app',
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'http://127.0.0.1:3000',
-    'http://127.0.0.1:5173'
 ]
 
 CORS_ALLOW_CREDENTIALS = True

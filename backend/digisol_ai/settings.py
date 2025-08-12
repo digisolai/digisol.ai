@@ -18,17 +18,21 @@ from datetime import timedelta
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Load environment variables from .env file
-try:
-    from dotenv import load_dotenv
-    # Try to load local environment file first, then fall back to .env
-    if os.path.exists(BASE_DIR / 'env.local'):
-        load_dotenv(BASE_DIR / 'env.local')
-        print("🔧 Loaded local environment from env.local")
-    else:
-        load_dotenv()
-        print("🔧 Loaded default environment")
-except ImportError:
-    pass  # python-dotenv not installed, continue without it
+# Only load local env files in development, not in production
+if os.environ.get('DJANGO_SETTINGS_MODULE') != 'digisol_ai.settings_render':
+    try:
+        from dotenv import load_dotenv
+        # Try to load local environment file first, then fall back to .env
+        if os.path.exists(BASE_DIR / 'env.local'):
+            load_dotenv(BASE_DIR / 'env.local')
+            print("🔧 Loaded local environment from env.local")
+        else:
+            load_dotenv()
+            print("🔧 Loaded default environment")
+    except ImportError:
+        pass  # python-dotenv not installed, continue without it
+else:
+    print("🔧 Production environment - using Render environment variables")
 
 
 # Quick-start development settings - unsuitable for production
