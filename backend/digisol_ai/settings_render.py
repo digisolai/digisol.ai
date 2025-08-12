@@ -45,24 +45,51 @@ CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_AGE = 3600  # 1 hour
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-# Database - Use PostgreSQL in production
-try:
-    import dj_database_url
-    DATABASES = {
-        'default': dj_database_url.config(
-            default=os.environ.get('DATABASE_URL'),
-            conn_max_age=600,
-            conn_health_checks=True,
-        )
-    }
-except ImportError:
-    # Fallback to SQLite if dj-database-url is not available
+# Database - Use AWS RDS PostgreSQL in production
+# Check if AWS RDS environment variables are set
+DB_NAME = os.environ.get('DB_NAME')
+DB_USER = os.environ.get('DB_USER')
+DB_PASSWORD = os.environ.get('DB_PASSWORD')
+DB_HOST = os.environ.get('DB_HOST')
+DB_PORT = os.environ.get('DB_PORT', '5432')
+
+if DB_NAME and DB_USER and DB_PASSWORD and DB_HOST:
+    # Use AWS RDS PostgreSQL
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': DB_NAME,
+            'USER': DB_USER,
+            'PASSWORD': DB_PASSWORD,
+            'HOST': DB_HOST,
+            'PORT': DB_PORT,
+            'OPTIONS': {
+                'sslmode': 'require',
+            },
         }
     }
+    print(f"🔧 Using AWS RDS PostgreSQL: {DB_HOST}:{DB_PORT}/{DB_NAME}")
+else:
+    # Fallback to Render's DATABASE_URL (SQLite)
+    try:
+        import dj_database_url
+        DATABASES = {
+            'default': dj_database_url.config(
+                default=os.environ.get('DATABASE_URL'),
+                conn_max_age=600,
+                conn_health_checks=True,
+            )
+        }
+        print("⚠️  Using Render's DATABASE_URL (fallback)")
+    except ImportError:
+        # Final fallback to SQLite
+        DATABASES = {
+            'default': {
+                'ENGINE': 'django.db.backends.sqlite3',
+                'NAME': BASE_DIR / 'db.sqlite3',
+            }
+        }
+        print("⚠️  Using local SQLite (final fallback)")
 
 # Static files configuration
 STATIC_ROOT = BASE_DIR / 'staticfiles'
