@@ -44,6 +44,14 @@ class TemplateCategoryViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'created_at', 'updated_at']
     ordering = ['name']
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
     def get_queryset(self):
         """Return categories for current tenant plus global categories"""
@@ -100,6 +108,14 @@ class MarketingTemplateViewSet(viewsets.ModelViewSet):
     search_fields = ['name', 'content_json']
     ordering_fields = ['name', 'created_at', 'updated_at']
     ordering = ['-created_at']
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
     def get_serializer_class(self):
         """Use different serializers for list and detail views"""

@@ -418,29 +418,35 @@ class CurrentPlanView(APIView):
     """
     permission_classes = [permissions.IsAuthenticated]
     
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
+    
     def get(self, request, *args, **kwargs):
         try:
             user_tenant = request.user.tenant
             if not user_tenant:
                 return Response({"detail": "User not associated with a tenant."}, status=status.HTTP_400_BAD_REQUEST)
             
-            # Check if tenant has an active subscription
-            if not user_tenant.active_subscription:
-                # Return empty response indicating no active subscription
+            # Special handling for superusers - show unlimited access
+            if request.user.is_superuser:
                 return Response({
-                    "plan_name": None,
-                    "subscription_status": "no_subscription",
+                    "plan_name": "Unlimited Marketing",
+                    "subscription_status": "active",
                     "monthly_cost": "0.00",
                     "annual_cost": "0.00",
-                    "description": "No active subscription",
-                    "contact_limit": 0,
-                    "email_send_limit": 0,
-                    "ai_text_credits_per_month": 0,
-                    "ai_image_credits_per_month": 0,
-                    "ai_planning_requests_per_month": 0,
-                    "user_seats": 0,
-                    "support_level": "none",
-            
+                    "description": "Unlimited access for marketing and demonstration purposes",
+                    "contact_limit": -1,  # Unlimited
+                    "email_send_limit": -1,  # Unlimited
+                    "ai_text_credits_per_month": -1,  # Unlimited
+                    "ai_image_credits_per_month": -1,  # Unlimited
+                    "ai_planning_requests_per_month": -1,  # Unlimited
+                    "user_seats": -1,  # Unlimited
+                    "support_level": "priority",
                     "contacts_used_current_period": 0,
                     "emails_sent_current_period": 0,
                     "ai_text_credits_used_current_period": 0,
@@ -448,17 +454,54 @@ class CurrentPlanView(APIView):
                     "ai_planning_requests_used_current_period": 0,
                     "current_period_end": None,
                     "cancel_at_period_end": False,
-                    "remaining_text_credits": 0,
-                    "remaining_image_credits": 0,
-                    "remaining_planning_requests": 0,
-                    "remaining_contacts": 0,
-                    "remaining_emails": 0
+                    "remaining_text_credits": -1,  # Unlimited
+                    "remaining_image_credits": -1,  # Unlimited
+                    "remaining_planning_requests": -1,  # Unlimited
+                    "remaining_contacts": -1,  # Unlimited
+                    "remaining_emails": -1,  # Unlimited
+                    "is_superuser": True,
+                    "show_upgrade_prompt": False
+                })
+            
+            # Check if tenant has an active subscription
+            if not user_tenant.active_subscription:
+                # Return response with upgrade prompts instead of hiding features
+                return Response({
+                    "plan_name": "Free Trial",
+                    "subscription_status": "trial",
+                    "monthly_cost": "0.00",
+                    "annual_cost": "0.00",
+                    "description": "Explore all features with limited usage. Upgrade for higher limits and priority support.",
+                    "contact_limit": 100,
+                    "email_send_limit": 1000,
+                    "ai_text_credits_per_month": 100,
+                    "ai_image_credits_per_month": 5,
+                    "ai_planning_requests_per_month": 2,
+                    "user_seats": 1,
+                    "support_level": "standard",
+                    "contacts_used_current_period": user_tenant.contacts_used_current_period or 0,
+                    "emails_sent_current_period": user_tenant.emails_sent_current_period or 0,
+                    "ai_text_credits_used_current_period": user_tenant.ai_text_credits_used_current_period or 0,
+                    "ai_image_credits_used_current_period": user_tenant.ai_image_credits_used_current_period or 0,
+                    "ai_planning_requests_used_current_period": user_tenant.ai_planning_requests_used_current_period or 0,
+                    "current_period_end": None,
+                    "cancel_at_period_end": False,
+                    "remaining_text_credits": max(0, 100 - (user_tenant.ai_text_credits_used_current_period or 0)),
+                    "remaining_image_credits": max(0, 5 - (user_tenant.ai_image_credits_used_current_period or 0)),
+                    "remaining_planning_requests": max(0, 2 - (user_tenant.ai_planning_requests_used_current_period or 0)),
+                    "remaining_contacts": max(0, 100 - (user_tenant.contacts_used_current_period or 0)),
+                    "remaining_emails": max(0, 1000 - (user_tenant.emails_sent_current_period or 0)),
+                    "is_superuser": False,
+                    "show_upgrade_prompt": True
                 })
             
             # Try to use the serializer, but catch any errors
             try:
                 serializer = CurrentPlanSerializer(user_tenant) 
-                return Response(serializer.data)
+                data = serializer.data
+                data['is_superuser'] = False
+                data['show_upgrade_prompt'] = False
+                return Response(data)
             except Exception as serializer_error:
                 print(f"Serializer error: {serializer_error}")
                 # Fallback to manual response
@@ -475,7 +518,6 @@ class CurrentPlanView(APIView):
                     "ai_planning_requests_per_month": user_tenant.active_subscription.plan.ai_planning_requests_per_month if user_tenant.active_subscription and user_tenant.active_subscription.plan else 0,
                     "user_seats": user_tenant.active_subscription.plan.user_seats if user_tenant.active_subscription and user_tenant.active_subscription.plan else 0,
                     "support_level": user_tenant.active_subscription.plan.support_level if user_tenant.active_subscription and user_tenant.active_subscription.plan else "none",
-            
                     "contacts_used_current_period": user_tenant.contacts_used_current_period,
                     "emails_sent_current_period": user_tenant.emails_sent_current_period,
                     "ai_text_credits_used_current_period": user_tenant.ai_text_credits_used_current_period,
@@ -487,7 +529,9 @@ class CurrentPlanView(APIView):
                     "remaining_image_credits": 0,  # Simplified for now
                     "remaining_planning_requests": 0,  # Simplified for now
                     "remaining_contacts": 0,  # Simplified for now
-                    "remaining_emails": 0  # Simplified for now
+                    "remaining_emails": 0,  # Simplified for now
+                    "is_superuser": False,
+                    "show_upgrade_prompt": False
                 })
                 
         except Exception as e:

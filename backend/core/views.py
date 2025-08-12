@@ -581,6 +581,14 @@ class AutomationWorkflowViewSet(viewsets.ModelViewSet):
     serializer_class = AutomationWorkflowSerializer
     permission_classes = [permissions.IsAuthenticated]
     
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
+    
     def get_queryset(self):
         """Override to filter automation workflows by user's tenant."""
         if self.request.user.is_superuser:
@@ -686,6 +694,14 @@ class AutomationExecutionViewSet(viewsets.ModelViewSet):
     serializer_class = AutomationExecutionSerializer
     permission_classes = [permissions.IsAuthenticated]
     
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
+    
     def perform_create(self, serializer):
         """Set the workflow and tenant automatically on creation."""
         workflow = self.request.data.get('workflow')
@@ -728,7 +744,15 @@ class BrandProfileViewSet(viewsets.ModelViewSet):
     queryset = BrandProfile.objects.all()
     serializer_class = BrandProfileSerializer
     permission_classes = [permissions.IsAuthenticated]
-    http_method_names = ['get', 'post', 'put', 'patch']  # Enable create
+    http_method_names = ['get', 'post', 'put', 'patch', 'options']  # Enable create and options
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
     
     def get_object(self):
         """Get the brand profile for the current tenant."""

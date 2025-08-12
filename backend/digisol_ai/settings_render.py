@@ -145,7 +145,6 @@ CORS_ALLOW_ALL_ORIGINS = False
 
 # Additional CORS settings for better preflight handling
 CORS_ALLOW_ALL_HEADERS = True
-CORS_ALLOW_CREDENTIALS = True
 
 # Ensure OPTIONS requests are handled properly
 CORS_ALLOW_METHODS = [
@@ -157,7 +156,7 @@ CORS_ALLOW_METHODS = [
     'PUT',
 ]
 
-# Allow all common headers
+# Allow all common headers including preflight headers
 CORS_ALLOW_HEADERS = [
     'accept',
     'accept-encoding',
@@ -171,24 +170,19 @@ CORS_ALLOW_HEADERS = [
     'access-control-request-method',
     'access-control-request-headers',
 ]
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-]
+
 CORS_EXPOSE_HEADERS = [
     'content-type',
     'content-length',
     'content-disposition',
 ]
+
+# Important: Set preflight max age and ensure proper handling
 CORS_PREFLIGHT_MAX_AGE = 86400  # 24 hours
 CORS_URLS_REGEX = r'^api/.*$'
+
+# Additional settings to ensure proper CORS handling
+CORS_REPLACE_HTTPS_REFERER = True
 
 # CSRF trusted origins (needed for some auth flows; safe to include wildcards)
 CSRF_TRUSTED_ORIGINS = os.environ.get(
@@ -305,7 +299,6 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'core.cors_middleware.CustomCORSMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

@@ -408,12 +408,53 @@ class CurrentPlanView(APIView):
     """
     permission_classes = [permissions.IsAuthenticated]
     
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
+    
     def get(self, request, *args, **kwargs):
         user_tenant = request.user.tenant
         if not user_tenant:
             return Response({"detail": "User not associated with a tenant."}, status=status.HTTP_400_BAD_REQUEST)
         
+        # Special handling for superusers - show unlimited access
+        if request.user.is_superuser:
+            return Response({
+                "plan_name": "Unlimited Marketing",
+                "subscription_status": "active",
+                "monthly_cost": "0.00",
+                "annual_cost": "0.00",
+                "description": "Unlimited access for marketing and demonstration purposes",
+                "contact_limit": -1,  # Unlimited
+                "email_send_limit": -1,  # Unlimited
+                "ai_text_credits_per_month": -1,  # Unlimited
+                "ai_image_credits_per_month": -1,  # Unlimited
+                "ai_planning_requests_per_month": -1,  # Unlimited
+                "user_seats": -1,  # Unlimited
+                "support_level": "priority",
+                "contacts_used_current_period": 0,
+                "emails_sent_current_period": 0,
+                "ai_text_credits_used_current_period": 0,
+                "ai_image_credits_used_current_period": 0,
+                "ai_planning_requests_used_current_period": 0,
+                "current_period_end": None,
+                "cancel_at_period_end": False,
+                "remaining_text_credits": -1,  # Unlimited
+                "remaining_image_credits": -1,  # Unlimited
+                "remaining_planning_requests": -1,  # Unlimited
+                "remaining_contacts": -1,  # Unlimited
+                "remaining_emails": -1,  # Unlimited
+                "is_superuser": True,
+                "show_upgrade_prompt": False
+            })
+        
         # We need to pass the tenant object to the serializer for usage fields
         serializer = CurrentPlanSerializer(user_tenant) 
-        
-        return Response(serializer.data)
+        data = serializer.data
+        data['is_superuser'] = False
+        data['show_upgrade_prompt'] = False
+        return Response(data)

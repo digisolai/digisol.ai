@@ -24,9 +24,10 @@ import {
   Icon,
   useToast,
 } from '@chakra-ui/react';
-import { FiCheckCircle, FiAlertCircle, FiAward, FiZap } from 'react-icons/fi';
+import { FiCheckCircle, FiAlertCircle, FiAward, FiZap, FiCrown } from 'react-icons/fi';
 import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
+import UpgradePrompt from './UpgradePrompt';
 
 interface SubscriptionStatus {
   plan_name: string | null;
@@ -48,6 +49,8 @@ interface SubscriptionStatus {
   remaining_planning_requests: number;
   remaining_contacts: number;
   remaining_emails: number;
+  is_superuser?: boolean;
+  show_upgrade_prompt?: boolean;
 }
 
 export default function SubscriptionStatus() {
@@ -83,28 +86,30 @@ export default function SubscriptionStatus() {
       console.error('Failed to fetch subscription status:', err);
       setError('Failed to load subscription information');
       
-      // Set default values for no subscription
-      setSubscription({
-        plan_name: null,
-        subscription_status: 'no_subscription',
-        monthly_cost: '0.00',
-        description: 'No active subscription',
-        contact_limit: 0,
-        email_send_limit: 0,
-        ai_text_credits_per_month: 0,
-        ai_image_credits_per_month: 0,
-        ai_planning_requests_per_month: 0,
-        contacts_used_current_period: 0,
-        emails_sent_current_period: 0,
-        ai_text_credits_used_current_period: 0,
-        ai_image_credits_used_current_period: 0,
-        ai_planning_requests_used_current_period: 0,
-        remaining_text_credits: 0,
-        remaining_image_credits: 0,
-        remaining_planning_requests: 0,
-        remaining_contacts: 0,
-        remaining_emails: 0,
-      });
+              // Set default values for no subscription
+        setSubscription({
+          plan_name: null,
+          subscription_status: 'no_subscription',
+          monthly_cost: '0.00',
+          description: 'No active subscription',
+          contact_limit: 0,
+          email_send_limit: 0,
+          ai_text_credits_per_month: 0,
+          ai_image_credits_per_month: 0,
+          ai_planning_requests_per_month: 0,
+          contacts_used_current_period: 0,
+          emails_sent_current_period: 0,
+          ai_text_credits_used_current_period: 0,
+          ai_image_credits_used_current_period: 0,
+          ai_planning_requests_used_current_period: 0,
+          remaining_text_credits: 0,
+          remaining_image_credits: 0,
+          remaining_planning_requests: 0,
+          remaining_contacts: 0,
+          remaining_emails: 0,
+          is_superuser: false,
+          show_upgrade_prompt: true,
+        });
     } finally {
       setLoading(false);
     }
@@ -192,6 +197,7 @@ export default function SubscriptionStatus() {
 
   const hasSubscription = subscription?.subscription_status && 
                          subscription.subscription_status !== 'no_subscription';
+  const isUnlimited = subscription?.is_superuser || (subscription?.contact_limit === -1);
 
   return (
     <Card bg={cardBg} border="1px solid" borderColor={borderColor}>
@@ -199,20 +205,20 @@ export default function SubscriptionStatus() {
         <HStack justify="space-between" align="center">
           <VStack align="start" spacing={1}>
             <Heading size="md" color="brand.primary">
-              <Icon as={FiAward} mr={2} />
-              Subscription Status
+              <Icon as={isUnlimited ? FiCrown : FiAward} mr={2} />
+              {isUnlimited ? 'Unlimited Access' : 'Subscription Status'}
             </Heading>
             <Text fontSize="sm" color="gray.600">
               {user?.email}
             </Text>
           </VStack>
           <Badge 
-            colorScheme={getStatusColor(subscription?.subscription_status || 'no_subscription')}
+            colorScheme={isUnlimited ? 'purple' : getStatusColor(subscription?.subscription_status || 'no_subscription')}
             fontSize="sm"
             px={3}
             py={1}
           >
-            {getStatusText(subscription?.subscription_status || 'no_subscription')}
+            {isUnlimited ? 'Unlimited' : getStatusText(subscription?.subscription_status || 'no_subscription')}
           </Badge>
         </HStack>
       </CardHeader>
@@ -235,15 +241,12 @@ export default function SubscriptionStatus() {
                 </Text>
               </VStack>
             ) : (
-              <Alert status="info">
-                <AlertIcon />
-                <Box>
-                  <AlertTitle>No Active Subscription</AlertTitle>
-                  <AlertDescription>
-                    You're currently on the free tier. Upgrade to access all features and higher limits.
-                  </AlertDescription>
-                </Box>
-              </Alert>
+              <UpgradePrompt
+                title="Explore All Features"
+                description="You're currently on the free tier. All features are available for exploration with limited usage. Upgrade for higher limits and priority support."
+                variant="info"
+                showUpgradeButton={true}
+              />
             )}
           </Box>
 
@@ -329,6 +332,16 @@ export default function SubscriptionStatus() {
               >
                 Upgrade Plan
               </Button>
+            ) : isUnlimited ? (
+              <Button
+                variant="outline"
+                size="lg"
+                width="full"
+                onClick={handleUpgrade}
+                leftIcon={<FiCrown />}
+              >
+                Manage Unlimited Access
+              </Button>
             ) : (
               <Button
                 variant="outline"
@@ -341,7 +354,10 @@ export default function SubscriptionStatus() {
             )}
             
             <Text fontSize="xs" color="gray.500" textAlign="center">
-              All features are available for exploration. Upgrade for higher limits and priority support.
+              {isUnlimited 
+                ? "You have unlimited access to all features and priority support."
+                : "All features are available for exploration. Upgrade for higher limits and priority support."
+              }
             </Text>
           </VStack>
         </VStack>

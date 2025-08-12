@@ -48,6 +48,14 @@ class GeminiChatView(APIView):
     """
     permission_classes = [permissions.IsAuthenticated]
     
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
+    
     def get(self, request):
         """
         Get available AI agents for chat.
@@ -234,6 +242,14 @@ class ContentGenerationView(APIView):
     """
     permission_classes = [permissions.IsAuthenticated]
     
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
+    
     def post(self, request):
         """
         Create a new content generation request and dispatch async task.
@@ -312,6 +328,14 @@ class ContentGenerationStatusView(APIView):
     API view for checking content generation status.
     """
     permission_classes = [permissions.IsAuthenticated]
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
     
     def get(self, request, request_id):
         """
@@ -428,6 +452,14 @@ def cancel_content_generation(request, request_id):
 
 class GenerateImageView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
     def post(self, request):
         user = request.user
@@ -467,6 +499,14 @@ class GenerateImageView(APIView):
 
 class ImageGenerationStatusView(APIView):
     permission_classes = [permissions.IsAuthenticated]
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
     def get(self, request, request_id):
         req = get_object_or_404(ImageGenerationRequest, id=request_id, tenant=request.user.tenant)
@@ -485,6 +525,14 @@ class AIRecommendationViewSet(ModelViewSet):
     search_fields = ['recommendation_text']
     ordering_fields = ['created_at', 'priority', 'type']
     ordering = ['-created_at']
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
     def get_queryset(self):
         """Return user's recommendations - bypass tenant filtering."""
@@ -536,6 +584,14 @@ class AIPlanningView(APIView):
     Enhanced to incorporate AI agent selection and task delegation.
     """
     permission_classes = [permissions.IsAuthenticated]
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
     
     def post(self, request):
         """
@@ -771,6 +827,14 @@ class AIProfileViewSet(ModelViewSet):
     search_fields = ['name', 'personality_description']
     ordering_fields = ['name', 'specialization', 'created_at']
     ordering = ['specialization', 'name']
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
     def get_queryset(self):
         """Return AI agents based on filters."""
@@ -826,6 +890,14 @@ class AITaskViewSet(ModelViewSet):
     search_fields = ['objective']
     ordering_fields = ['created_at', 'updated_at', 'status']
     ordering = ['-created_at']
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
     def get_queryset(self):
         """Return user's tasks - no tenant restrictions."""
@@ -880,6 +952,14 @@ class AIInteractionLogViewSet(ModelViewSet):
     ordering_fields = ['timestamp']
     ordering = ['-timestamp']
     http_method_names = ['get', 'head', 'options']  # Read-only
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
     def get_queryset(self):
         """
@@ -909,6 +989,14 @@ class ImageGenerationRequestViewSet(ModelViewSet):
     search_fields = ['prompt_text']
     ordering_fields = ['created_at', 'updated_at', 'status']
     ordering = ['-created_at']
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
     def get_queryset(self):
         """
@@ -1027,6 +1115,14 @@ class AIOrchestrationView(APIView):
     Handles complex multi-agent coordination tasks.
     """
     permission_classes = [permissions.IsAuthenticated]
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
     def post(self, request):
         """
@@ -1115,6 +1211,14 @@ class StructuraInsightViewSet(ModelViewSet):
     search_fields = ['title', 'description']
     ordering_fields = ['created_at', 'confidence', 'impact']
     ordering = ['-created_at']
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
     def get_queryset(self):
         """Return tenant's insights."""
@@ -1157,6 +1261,14 @@ class AIEcosystemHealthViewSet(ModelViewSet):
     serializer_class = AIEcosystemHealthSerializer
     permission_classes = [permissions.IsAuthenticated]
     http_method_names = ['get', 'post', 'put', 'patch', 'head', 'options']  # No delete
+    
+    def options(self, request, *args, **kwargs):
+        """Handle preflight OPTIONS requests"""
+        response = Response()
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, PATCH, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
     def get_queryset(self):
         """Return tenant's ecosystem health."""
