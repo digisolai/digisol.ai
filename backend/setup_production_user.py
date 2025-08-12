@@ -15,52 +15,17 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'digisol_ai.settings_render')
 django.setup()
 
-from django.contrib.auth import get_user_model
-from django.db import transaction
-
-User = get_user_model()
+from django.core.management import execute_from_command_line
 
 def setup_production_superuser():
-    """Create or update the production superuser"""
+    """Nuke all users and create a fresh superuser"""
     try:
         print("🔧 Setting up production superuser...")
         
-        # Count existing users
-        user_count = User.objects.count()
-        print(f"🔍 Found {user_count} users in database")
+        # Run the nuke command
+        execute_from_command_line(['manage.py', 'nuke_all_users', '--force'])
         
-        # Delete all existing users to start fresh
-        if user_count > 0:
-            print("🗑️  Deleting all existing users...")
-            with transaction.atomic():
-                User.objects.all().delete()
-                print(f"✅ Deleted {user_count} users")
-        
-        # Create fresh superuser
-        print("📝 Creating fresh superuser...")
-        
-        with transaction.atomic():
-            superuser = User.objects.create_superuser(
-                username='admin',
-                email='admin@digisolai.ca',
-                password='admin123456',
-                first_name='Admin',
-                last_name='User'
-            )
-            print(f"✅ Created superuser: {superuser.email}")
-            print(f"   Username: {superuser.username}")
-            print(f"   Password: admin123456")
-            print(f"   Email: {superuser.email}")
-            print(f"   Active: {superuser.is_active}")
-            print(f"   Staff: {superuser.is_staff}")
-            print(f"   Superuser: {superuser.is_superuser}")
-        
-        # Verify the superuser
-        if superuser.check_password('admin123456'):
-            print("✅ Password verification successful")
-        else:
-            print("❌ Password verification failed")
-            
+        print("🎉 Production superuser setup completed successfully!")
         return True
         
     except Exception as e:
