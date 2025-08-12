@@ -2,7 +2,7 @@ services:
   - type: web
     name: digisol-backend
     env: python
-    plan: professional
+    plan: starter
     rootDir: backend
     buildCommand: pip install -r requirements_render.txt
     startCommand: gunicorn digisol_ai.wsgi:application --bind 0.0.0.0:$PORT --env DJANGO_SETTINGS_MODULE=digisol_ai.settings_render --workers 2 --timeout 120 --max-requests 1000 --max-requests-jitter 100
@@ -35,7 +35,7 @@ services:
           property: connectionString
       - key: DATABASE_URL
         fromService:
-          type: pserv
+          type: postgresql
           name: digisol-postgres
           property: connectionString
 
@@ -65,7 +65,7 @@ services:
           property: connectionString
       - key: DATABASE_URL
         fromService:
-          type: pserv
+          type: postgresql
           name: digisol-postgres
           property: connectionString
 
@@ -73,10 +73,7 @@ services:
     name: digisol-redis
     plan: free
     maxmemoryPolicy: allkeys-lru
-    ipAllowList: []
 
-  - type: pserv
+  - type: postgresql
     name: digisol-postgres
-    env: postgresql
     plan: starter
-    ipAllowList: []
