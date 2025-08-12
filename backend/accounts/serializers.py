@@ -6,8 +6,39 @@ from django.contrib.auth.password_validation import validate_password
 from core.models import Tenant
 from .models import CustomUser
 from core.models import Tenant, BrandProfile # Ensure BrandProfile is imported!
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 import uuid
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+    """
+    Custom token serializer that works with CustomUser model using email as USERNAME_FIELD.
+    """
+    username_field = 'email'
+    
+    def validate(self, attrs):
+        # Ensure we have the email field
+        if 'email' not in attrs:
+            raise serializers.ValidationError({"email": "Email field is required."})
+        
+        # Call the parent validate method
+        data = super().validate(attrs)
+        
+        # Add user information to the response
+        data['user'] = {
+            'id': self.user.id,
+            'email': self.user.email,
+            'username': self.user.username,
+            'first_name': self.user.first_name,
+            'last_name': self.user.last_name,
+            'tenant': {
+                'id': self.user.tenant.id,
+                'name': self.user.tenant.name,
+                'subdomain': self.user.tenant.subdomain
+            } if self.user.tenant else None
+        }
+        
+        return data
 
 class CustomUserSerializer(serializers.ModelSerializer):
     """Basic serializer for CustomUser model."""

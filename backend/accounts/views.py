@@ -596,31 +596,10 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     """
     Custom token obtain view with additional user data.
     """
-    # Ensure login is accessible without prior authentication in production
+    from .serializers import CustomTokenObtainPairSerializer
+    
+    serializer_class = CustomTokenObtainPairSerializer
     permission_classes = [AllowAny]
-    def post(self, request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        
-        if response.status_code == 200:
-            # Get the user from the serializer
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            user = serializer.user
-            
-            response.data['user'] = {
-                'id': user.id,
-                'username': user.username,
-                'email': user.email,
-                'first_name': user.first_name,
-                'last_name': user.last_name,
-                'tenant': {
-                    'id': user.tenant.id,
-                    'name': user.tenant.name,
-                    'subdomain': user.tenant.subdomain
-                } if user.tenant else None
-            }
-        
-        return response
 
 class CustomTokenRefreshView(TokenRefreshView):
     """
