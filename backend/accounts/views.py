@@ -18,8 +18,7 @@ from .serializers import (
     UserRegistrationSerializer, 
     UserProfileSerializer, 
     AdminUserUpdateSerializer,
-    UserInviteSerializer,
-    CustomTokenObtainPairSerializer
+    UserInviteSerializer
 )
 from core.models import Contact, Tenant
 from core.serializers import ContactSerializer
