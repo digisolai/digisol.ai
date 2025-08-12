@@ -235,6 +235,85 @@ export default function BrandHubPage() {
     onIconaChatOpen();
   };
 
+  // File upload handlers
+  const handleFileUpload = async (file: File, field: string) => {
+    if (!file) return;
+    
+    // Validate file size (2MB limit)
+    if (file.size > 2 * 1024 * 1024) {
+      toast({
+        title: "File too large",
+        description: "Please select a file smaller than 2MB",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/svg+xml', 'image/x-icon'];
+    if (!allowedTypes.includes(file.type)) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select a PNG, JPEG, SVG, or ICO file",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('field', field);
+
+      const response = await api.post('/core/upload-brand-asset/', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.data && response.data.url) {
+        setBrandingConfig(prev => ({
+          ...prev,
+          [field]: response.data.url
+        }));
+        
+        toast({
+          title: "Upload successful",
+          description: `${field.replace('_', ' ')} uploaded successfully`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Upload failed:', error);
+      toast({
+        title: "Upload failed",
+        description: "Failed to upload file. Please try again.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const handleLogoUpload = (field: string) => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/png,image/jpeg,image/svg+xml';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        handleFileUpload(file, field);
+      }
+    };
+    input.click();
+  };
+
   async function fetchBrandingData() {
     setLoading(true);
     setError(null);
@@ -563,6 +642,7 @@ export default function BrandHubPage() {
                                   textAlign="center"
                                   cursor="pointer"
                                   _hover={{ borderColor: "brand.primary" }}
+                                  onClick={() => handleLogoUpload('main_logo_url')}
                                 >
                                   {brandingConfig.main_logo_url ? (
                                     <VStack>
@@ -572,7 +652,10 @@ export default function BrandHubPage() {
                                         maxH="100px" 
                                         objectFit="contain"
                                       />
-                                      <Button size="sm" variant="brand">Replace Logo</Button>
+                                      <Button size="sm" variant="brand" onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleLogoUpload('main_logo_url');
+                                      }}>Replace Logo</Button>
                                     </VStack>
                                   ) : (
                                     <VStack>
@@ -596,6 +679,7 @@ export default function BrandHubPage() {
                                   textAlign="center"
                                   cursor="pointer"
                                   _hover={{ borderColor: "brand.primary" }}
+                                  onClick={() => handleLogoUpload('dark_mode_logo_url')}
                                 >
                                   {brandingConfig.dark_mode_logo_url ? (
                                     <VStack>
@@ -605,7 +689,10 @@ export default function BrandHubPage() {
                                         maxH="100px" 
                                         objectFit="contain"
                                       />
-                                      <Button size="sm" variant="brand">Replace Logo</Button>
+                                      <Button size="sm" variant="brand" onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleLogoUpload('dark_mode_logo_url');
+                                      }}>Replace Logo</Button>
                                     </VStack>
                                   ) : (
                                     <VStack>
@@ -631,6 +718,7 @@ export default function BrandHubPage() {
                                   textAlign="center"
                                   cursor="pointer"
                                   _hover={{ borderColor: "brand.primary" }}
+                                  onClick={() => handleLogoUpload('favicon_url')}
                                 >
                                   <VStack>
                                     <FiUpload size={20} />
@@ -652,6 +740,7 @@ export default function BrandHubPage() {
                                   textAlign="center"
                                   cursor="pointer"
                                   _hover={{ borderColor: "brand.primary" }}
+                                  onClick={() => handleLogoUpload('app_icon_url')}
                                 >
                                   <VStack>
                                     <FiUpload size={20} />
@@ -1042,6 +1131,7 @@ export default function BrandHubPage() {
                                 textAlign="center"
                                 cursor="pointer"
                                 _hover={{ borderColor: "brand.primary" }}
+                                onClick={() => handleLogoUpload('email_header_logo')}
                               >
                                 <VStack>
                                   <FiUpload size={20} />
