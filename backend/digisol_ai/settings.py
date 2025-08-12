@@ -25,14 +25,14 @@ if os.environ.get('DJANGO_SETTINGS_MODULE') != 'digisol_ai.settings_render':
         # Try to load local environment file first, then fall back to .env
         if os.path.exists(BASE_DIR / 'env.local'):
             load_dotenv(BASE_DIR / 'env.local')
-            print("🔧 Loaded local environment from env.local")
+            print("Loaded local environment from env.local")
         else:
             load_dotenv()
-            print("🔧 Loaded default environment")
+            print("Loaded default environment")
     except ImportError:
         pass  # python-dotenv not installed, continue without it
 else:
-    print("🔧 Production environment - using Render environment variables")
+    print("Production environment - using Render environment variables")
 
 
 # Quick-start development settings - unsuitable for production
