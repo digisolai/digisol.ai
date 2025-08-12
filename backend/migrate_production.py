@@ -80,6 +80,11 @@ def check_and_fix_database():
     # Run Django migrations to mark them as applied
     print("🔄 Running Django migrations...")
     execute_from_command_line(['manage.py', 'migrate', '--fake'])
+    
+    # Set up superuser
+    print("👤 Setting up superuser...")
+    from setup_production_user import setup_production_user
+    setup_production_user()
 
 if __name__ == "__main__":
     check_and_fix_database()
