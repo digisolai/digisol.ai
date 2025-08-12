@@ -595,15 +595,20 @@ class UserManagementViewSet(viewsets.ModelViewSet):
 class CustomTokenObtainPairView(TokenObtainPairView):
     """
     Custom token obtain view with additional user data.
+    Handles email-based authentication properly.
     """
     permission_classes = [AllowAny]
     
     def post(self, request, *args, **kwargs):
+        # Handle both email and username fields for backward compatibility
+        if 'username' in request.data and 'email' not in request.data:
+            request.data['email'] = request.data['username']
+        
         response = super().post(request, *args, **kwargs)
         
         if response.status_code == 200:
             # Get the user from the request data
-            email = request.data.get('email') or request.data.get('username')
+            email = request.data.get('email')
             if email:
                 try:
                     user = User.objects.get(email=email)
