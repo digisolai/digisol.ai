@@ -34,7 +34,10 @@ services:
           name: digisol-redis
           property: connectionString
       - key: DATABASE_URL
-        sync: false
+        fromService:
+          type: pserv
+          name: digisol-postgres
+          property: connectionString
 
   - type: worker
     name: digisol-celery-worker
@@ -61,7 +64,10 @@ services:
           name: digisol-redis
           property: connectionString
       - key: DATABASE_URL
-        sync: false
+        fromService:
+          type: pserv
+          name: digisol-postgres
+          property: connectionString
 
   - type: redis
     name: digisol-redis
@@ -71,4 +77,6 @@ services:
 
   - type: pserv
     name: digisol-postgres
+    env: postgresql
     plan: starter
+    ipAllowList: []
