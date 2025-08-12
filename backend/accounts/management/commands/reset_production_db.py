@@ -15,6 +15,46 @@ class Command(BaseCommand):
             help='Force reset without confirmation'
         )
 
+    def table_exists(self, table_name):
+        """Check if a table exists in the database"""
+        with connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT EXISTS (
+                    SELECT FROM information_schema.tables 
+                    WHERE table_schema = 'public' 
+                    AND table_name = %s
+                );
+            """, [table_name])
+            return cursor.fetchone()[0]
+
+    def safe_delete_users(self):
+        """Safely delete users by handling missing related tables"""
+        try:
+            # First, try to delete users normally
+            user_count = User.objects.count()
+            if user_count > 0:
+                User.objects.all().delete()
+                self.stdout.write(f"✅ Deleted {user_count} users")
+            else:
+                self.stdout.write("✅ No users to delete")
+        except Exception as e:
+            # If normal deletion fails, try manual deletion
+            self.stdout.write(f"⚠️  Normal user deletion failed: {e}")
+            self.stdout.write("🔧 Attempting manual user deletion...")
+            
+            try:
+                with connection.cursor() as cursor:
+                    # Check if users table exists
+                    if self.table_exists('custom_users'):
+                        cursor.execute("DELETE FROM custom_users")
+                        deleted_count = cursor.rowcount
+                        self.stdout.write(f"✅ Manually deleted {deleted_count} users")
+                    else:
+                        self.stdout.write("✅ No users table found")
+            except Exception as manual_error:
+                self.stdout.write(f"❌ Manual deletion also failed: {manual_error}")
+                # Continue anyway - the user creation will work
+
     def handle(self, *args, **options):
         force = options['force']
         
@@ -42,16 +82,12 @@ class Command(BaseCommand):
                 tables = [row[0] for row in cursor.fetchall()]
                 self.stdout.write(f"Found {len(tables)} tables in database")
             
-            # Step 3: Delete all users
+            # Step 3: Safely delete all users
             self.stdout.write("💥 Deleting all existing users...")
             user_count = User.objects.count()
             self.stdout.write(f"Found {user_count} users to delete")
             
-            if user_count > 0:
-                User.objects.all().delete()
-                self.stdout.write(f"✅ Deleted {user_count} users")
-            else:
-                self.stdout.write("✅ No users to delete")
+            self.safe_delete_users()
             
             # Step 4: Create fresh superuser
             self.stdout.write("👤 Creating fresh superuser...")
