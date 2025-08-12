@@ -47,24 +47,50 @@ export default function AIChatInterface({
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const toast = useToast();
 
   // Check authentication status on component mount
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (token) {
-      setIsAuthenticated(true);
-    } else {
-      setIsAuthenticated(false);
-      toast({
-        title: 'Authentication Required',
-        description: 'Please log in to use the AI chat feature.',
-        status: 'warning',
-        duration: 5000,
-        isClosable: true,
-      });
-    }
+    const checkAuth = async () => {
+      setIsCheckingAuth(true);
+      const token = localStorage.getItem('access_token');
+      if (token) {
+        try {
+          // Verify token is still valid by making a test request
+          await api.get('/accounts/user-profile/');
+          setIsAuthenticated(true);
+        } catch (error: any) {
+          if (error.response?.status === 401) {
+            localStorage.removeItem('access_token');
+            setIsAuthenticated(false);
+            toast({
+              title: 'Session Expired',
+              description: 'Please log in again to use the AI chat feature.',
+              status: 'warning',
+              duration: 5000,
+              isClosable: true,
+            });
+          } else {
+            // If it's not an auth error, assume we're authenticated
+            setIsAuthenticated(true);
+          }
+        }
+      } else {
+        setIsAuthenticated(false);
+        toast({
+          title: 'Authentication Required',
+          description: 'Please log in to use the AI chat feature.',
+          status: 'warning',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+      setIsCheckingAuth(false);
+    };
+
+    checkAuth();
   }, [toast]);
 
   const scrollToBottom = () => {
@@ -76,7 +102,7 @@ export default function AIChatInterface({
   }, [messages]);
 
   const sendMessage = async () => {
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() || isLoading) return;
 
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -86,13 +112,14 @@ export default function AIChatInterface({
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentInput = inputMessage;
     setInputMessage('');
     setIsLoading(true);
 
     try {
       // Call Gemini API directly for chat
       const response = await api.post('/ai-services/gemini-chat/', {
-        message: inputMessage,
+        message: currentInput,
         agent_name: agentName,
         agent_specialization: agentSpecialization,
         conversation_history: messages.map(msg => ({
@@ -101,30 +128,45 @@ export default function AIChatInterface({
         }))
       });
 
-      const aiResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        content: response.data.response,
-        role: 'ai_agent',
-        timestamp: new Date().toISOString(),
-        ai_profile: {
-          name: agentName,
-          specialization: agentSpecialization,
-        },
-      };
+      if (response.data && response.data.response) {
+        const aiResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          content: response.data.response,
+          role: 'ai_agent',
+          timestamp: new Date().toISOString(),
+          ai_profile: {
+            name: agentName,
+            specialization: agentSpecialization,
+          },
+        };
 
-      setMessages(prev => [...prev, aiResponse]);
-      setIsLoading(false);
+        setMessages(prev => [...prev, aiResponse]);
+      } else {
+        throw new Error('Invalid response from AI service');
+      }
 
     } catch (error: any) {
       console.error('Error sending message:', error);
       
       // Handle different types of errors
       let errorMessage = 'Failed to send message. Please try again.';
+      let errorTitle = 'Error';
       
       if (error.response?.status === 401) {
         errorMessage = 'Authentication required. Please log in again.';
+        errorTitle = 'Authentication Required';
+        setIsAuthenticated(false);
+      } else if (error.response?.status === 429) {
+        errorMessage = 'Rate limit exceeded. Please wait a moment before trying again.';
+        errorTitle = 'Rate Limit Exceeded';
+      } else if (error.response?.status === 503) {
+        errorMessage = 'AI service temporarily unavailable. Please check your Gemini API key configuration.';
+        errorTitle = 'Service Unavailable';
       } else if (error.response?.status === 500) {
-        errorMessage = 'AI service error. Please check your Gemini API key configuration.';
+        errorMessage = 'AI service error. Please try again later.';
+        errorTitle = 'Server Error';
+      } else if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
       } else if (error.response?.data?.detail) {
         errorMessage = error.response.data.detail;
       } else if (error.message) {
@@ -132,12 +174,16 @@ export default function AIChatInterface({
       }
       
       toast({
-        title: 'Error',
+        title: errorTitle,
         description: errorMessage,
         status: 'error',
         duration: 5000,
         isClosable: true,
       });
+
+      // Remove the user message if there was an error
+      setMessages(prev => prev.filter(msg => msg.id !== userMessage.id));
+    } finally {
       setIsLoading(false);
     }
   };
@@ -150,6 +196,37 @@ export default function AIChatInterface({
       sendMessage();
     }
   };
+
+  // Show loading state while checking authentication
+  if (isCheckingAuth) {
+    return (
+      <Card h="300px" display="flex" flexDirection="column">
+        <CardBody p={0} display="flex" flexDirection="column">
+          {/* Header */}
+          <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg="brand.50">
+            <HStack>
+              <Avatar size="sm" bg="brand.primary" icon={<Icon as={FiCpu} />} />
+              <VStack align="start" spacing={0}>
+                <Text fontWeight="bold">{agentName}</Text>
+                <Badge colorScheme="blue" size="sm">{agentSpecialization}</Badge>
+              </VStack>
+            </HStack>
+          </Box>
+          
+          {/* Loading State */}
+          <Box p={8} textAlign="center">
+            <Spinner size="lg" color="brand.primary" mb={4} />
+            <Text fontSize="lg" fontWeight="bold" mb={2}>
+              Checking Authentication
+            </Text>
+            <Text color="gray.600">
+              Please wait while we verify your login status...
+            </Text>
+          </Box>
+        </CardBody>
+      </Card>
+    );
+  }
 
   // Show authentication message if not logged in
   if (isAuthenticated === false) {
