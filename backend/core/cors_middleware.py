@@ -22,17 +22,20 @@ class CustomCORSMiddleware:
                 'http://localhost:5173'
             ]
             
+            # Handle preflight requests first
+            if request.method == 'OPTIONS':
+                if origin in allowed_origins:
+                    response['Access-Control-Allow-Origin'] = origin
+                    response['Access-Control-Allow-Credentials'] = 'true'
+                    response['Access-Control-Allow-Methods'] = 'DELETE, GET, OPTIONS, PATCH, POST, PUT'
+                    response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with'
+                    response['Access-Control-Max-Age'] = '86400'
+                    # Return early for preflight requests
+                    return response
+            
             # Add CORS headers for ALL responses, regardless of status code
             if origin in allowed_origins:
                 response['Access-Control-Allow-Origin'] = origin
-                response['Access-Control-Allow-Credentials'] = 'true'
-                response['Access-Control-Allow-Methods'] = 'DELETE, GET, OPTIONS, PATCH, POST, PUT'
-                response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with'
-                response['Access-Control-Max-Age'] = '86400'
-            
-            # Also handle preflight requests
-            if request.method == 'OPTIONS':
-                response['Access-Control-Allow-Origin'] = origin if origin in allowed_origins else ''
                 response['Access-Control-Allow-Credentials'] = 'true'
                 response['Access-Control-Allow-Methods'] = 'DELETE, GET, OPTIONS, PATCH, POST, PUT'
                 response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with'

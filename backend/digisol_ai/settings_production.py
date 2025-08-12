@@ -49,6 +49,8 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 SESSION_COOKIE_AGE = 3600  # 1 hour
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_SAMESITE = 'Lax'  # Changed from 'None' to 'Lax' for CORS compatibility
+CSRF_COOKIE_SAMESITE = 'Lax'  # Changed from 'None' to 'Lax' for CORS compatibility
 
 # Database - Use PostgreSQL in production (AWS RDS)
 DATABASES = {
@@ -133,6 +135,8 @@ CORS_ALLOWED_ORIGINS = os.environ.get(
 ).split(',')
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
+
+# Additional CORS settings for better compatibility
 CORS_ALLOW_METHODS = [
     'DELETE',
     'GET',
@@ -152,14 +156,16 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
-
-# Additional CORS settings for better compatibility
 CORS_EXPOSE_HEADERS = [
     'content-type',
     'content-length',
     'content-disposition',
 ]
 CORS_PREFLIGHT_MAX_AGE = 86400  # 24 hours
+
+# Ensure CORS headers are added to all responses
+CORS_URLS_REGEX = r'^api/.*$'
+CORS_REPLACE_HTTPS_REFERER = True
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     'CSRF_TRUSTED_ORIGINS',
     'https://*.digisolai.ca,https://*.netlify.app,https://*.onrender.com'
