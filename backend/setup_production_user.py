@@ -25,30 +25,35 @@ def setup_production_superuser():
     try:
         print("🔧 Setting up production superuser...")
         
-        # Check if superuser already exists
-        superuser = User.objects.filter(is_superuser=True).first()
+        # Count existing users
+        user_count = User.objects.count()
+        print(f"🔍 Found {user_count} users in database")
         
-        if superuser:
-            print(f"✅ Superuser already exists: {superuser.email}")
-            
-            # Update password to ensure it's correct
-            superuser.set_password('admin123456')
-            superuser.save()
-            print("✅ Password updated successfully")
-            
-        else:
-            print("📝 Creating new superuser...")
-            
-            # Create superuser
+        # Delete all existing users to start fresh
+        if user_count > 0:
+            print("🗑️  Deleting all existing users...")
             with transaction.atomic():
-                superuser = User.objects.create_superuser(
-                    username='admin',
-                    email='admin@digisolai.ca',
-                    password='admin123456',
-                    first_name='Admin',
-                    last_name='User'
-                )
-                print(f"✅ Created superuser: {superuser.email}")
+                User.objects.all().delete()
+                print(f"✅ Deleted {user_count} users")
+        
+        # Create fresh superuser
+        print("📝 Creating fresh superuser...")
+        
+        with transaction.atomic():
+            superuser = User.objects.create_superuser(
+                username='admin',
+                email='admin@digisolai.ca',
+                password='admin123456',
+                first_name='Admin',
+                last_name='User'
+            )
+            print(f"✅ Created superuser: {superuser.email}")
+            print(f"   Username: {superuser.username}")
+            print(f"   Password: admin123456")
+            print(f"   Email: {superuser.email}")
+            print(f"   Active: {superuser.is_active}")
+            print(f"   Staff: {superuser.is_staff}")
+            print(f"   Superuser: {superuser.is_superuser}")
         
         # Verify the superuser
         if superuser.check_password('admin123456'):
