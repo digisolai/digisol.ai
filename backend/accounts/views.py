@@ -18,7 +18,8 @@ from .serializers import (
     UserRegistrationSerializer, 
     UserProfileSerializer, 
     AdminUserUpdateSerializer,
-    UserInviteSerializer
+    UserInviteSerializer,
+    CustomTokenObtainPairSerializer
 )
 from core.models import Contact, Tenant
 from core.serializers import ContactSerializer
@@ -596,8 +597,6 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     """
     Custom token obtain view with additional user data.
     """
-    from .serializers import CustomTokenObtainPairSerializer
-    
     serializer_class = CustomTokenObtainPairSerializer
     permission_classes = [AllowAny]
 
