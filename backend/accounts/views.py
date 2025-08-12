@@ -597,8 +597,33 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     """
     Custom token obtain view with additional user data.
     """
-    serializer_class = CustomTokenObtainPairSerializer
     permission_classes = [AllowAny]
+    
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        
+        if response.status_code == 200:
+            # Get the user from the request data
+            email = request.data.get('email') or request.data.get('username')
+            if email:
+                try:
+                    user = User.objects.get(email=email)
+                    response.data['user'] = {
+                        'id': user.id,
+                        'email': user.email,
+                        'username': user.username,
+                        'first_name': user.first_name,
+                        'last_name': user.last_name,
+                        'tenant': {
+                            'id': user.tenant.id,
+                            'name': user.tenant.name,
+                            'subdomain': user.tenant.subdomain
+                        } if user.tenant else None
+                    }
+                except User.DoesNotExist:
+                    pass
+        
+        return response
 
 class CustomTokenRefreshView(TokenRefreshView):
     """
