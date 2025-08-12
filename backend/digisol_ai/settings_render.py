@@ -70,27 +70,44 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@digisolai.ca')
 
 # CORS Settings
-# Merge env-provided origins with safe defaults to avoid accidentally blocking Netlify
-_default_cors_origins = [
+CORS_ALLOWED_ORIGINS = [
     'https://www.digisolai.ca',
     'https://digisolai.ca',
     'https://digisolai.netlify.app',
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5173'
 ]
-_env_cors_csv = os.environ.get('CORS_ALLOWED_ORIGINS', '').strip()
-_env_cors_list = [o.strip() for o in _env_cors_csv.split(',') if o.strip()]
-
-# Merge and de-duplicate
-_merged_cors = list(dict.fromkeys(_env_cors_list + _default_cors_origins))
-CORS_ALLOWED_ORIGINS = _merged_cors
-
-# Regex origins for Netlify preview deploys (e.g., https://<hash>--site.netlify.app)
-_cors_regex_env = os.environ.get('CORS_ALLOWED_ORIGIN_REGEXES', '').strip()
-if _cors_regex_env:
-    CORS_ALLOWED_ORIGIN_REGEXES = [r.strip() for r in _cors_regex_env.split(',') if r.strip()]
-else:
-    CORS_ALLOWED_ORIGIN_REGEXES = [r"^https://[a-z0-9-]+--digisolai\\.netlify\\.app$"]
 
 CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+]
+CORS_EXPOSE_HEADERS = [
+    'content-type',
+    'content-length',
+    'content-disposition',
+]
+CORS_PREFLIGHT_MAX_AGE = 86400  # 24 hours
+CORS_URLS_REGEX = r'^api/.*$'
 
 # CSRF trusted origins (needed for some auth flows; safe to include wildcards)
 CSRF_TRUSTED_ORIGINS = os.environ.get(
