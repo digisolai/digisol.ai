@@ -24,7 +24,7 @@ import {
   Icon,
   useToast,
 } from '@chakra-ui/react';
-import { FiCheckCircle, FiAlertCircle, FiAward, FiZap, FiCrown } from 'react-icons/fi';
+import { FiCheckCircle, FiAlertCircle, FiAward, FiZap, FiStar } from 'react-icons/fi';
 import { useAuth } from '../hooks/useAuth';
 import api from '../services/api';
 import UpgradePrompt from './UpgradePrompt';
@@ -205,7 +205,7 @@ export default function SubscriptionStatus() {
         <HStack justify="space-between" align="center">
           <VStack align="start" spacing={1}>
             <Heading size="md" color="brand.primary">
-              <Icon as={isUnlimited ? FiCrown : FiAward} mr={2} />
+              <Icon as={isUnlimited ? FiStar : FiAward} mr={2} />
               {isUnlimited ? 'Unlimited Access' : 'Subscription Status'}
             </Heading>
             <Text fontSize="sm" color="gray.600">
@@ -338,7 +338,7 @@ export default function SubscriptionStatus() {
                 size="lg"
                 width="full"
                 onClick={handleUpgrade}
-                leftIcon={<FiCrown />}
+                leftIcon={<FiStar />}
               >
                 Manage Unlimited Access
               </Button>
