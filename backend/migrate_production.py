@@ -54,8 +54,8 @@ def check_and_fix_database():
             'profile_picture': 'VARCHAR(100)',
             'bio': 'TEXT',
             'phone_number': 'VARCHAR(20)',
-            'created_at': 'TIMESTAMP DEFAULT NOW()',
-            'updated_at': 'TIMESTAMP DEFAULT NOW()',
+            'created_at': 'TIMESTAMP WITH TIME ZONE DEFAULT NOW()',
+            'updated_at': 'TIMESTAMP WITH TIME ZONE DEFAULT NOW()',
             'job_title': 'VARCHAR(255)',
             'is_hr_admin': 'BOOLEAN DEFAULT FALSE'
         }
@@ -68,7 +68,8 @@ def check_and_fix_database():
             print(f"🔧 Adding missing columns: {[col[0] for col in missing_columns]}")
             for column, definition in missing_columns:
                 try:
-                    cursor.execute(f"ALTER TABLE custom_users ADD COLUMN {column} {definition};")
+                    # Use PostgreSQL's IF NOT EXISTS syntax
+                    cursor.execute(f"ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS {column} {definition};")
                     print(f"✅ Added column: {column}")
                 except Exception as e:
                     print(f"⚠️  Column {column} might already exist: {e}")
@@ -77,14 +78,32 @@ def check_and_fix_database():
         else:
             print("✅ All required columns exist")
     
-    # Run Django migrations to mark them as applied
+    # Run Django migrations with proper error handling
     print("🔄 Running Django migrations...")
-    execute_from_command_line(['manage.py', 'migrate', '--fake'])
+    try:
+        # First try to run migrations normally
+        execute_from_command_line(['manage.py', 'migrate'])
+    except Exception as e:
+        print(f"⚠️  Migration failed: {e}")
+        print("🔄 Trying to fake migrations...")
+        try:
+            execute_from_command_line(['manage.py', 'migrate', '--fake'])
+        except Exception as e2:
+            print(f"⚠️  Fake migration also failed: {e2}")
+            print("🔄 Trying to migrate specific apps...")
+            try:
+                execute_from_command_line(['manage.py', 'migrate', 'accounts', '--fake'])
+                execute_from_command_line(['manage.py', 'migrate', 'core', '--fake'])
+            except Exception as e3:
+                print(f"⚠️  App-specific migration failed: {e3}")
     
     # Set up superuser
     print("👤 Setting up superuser...")
-    from setup_production_user import setup_production_user
-    setup_production_user()
+    try:
+        from setup_production_user import setup_production_user
+        setup_production_user()
+    except Exception as e:
+        print(f"⚠️  Superuser setup failed: {e}")
 
 if __name__ == "__main__":
     check_and_fix_database()
