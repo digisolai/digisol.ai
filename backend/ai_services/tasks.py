@@ -1018,8 +1018,8 @@ def suggest_task_assignee(task_id: str) -> dict:
         #     agent_personality="A project management expert who specializes in planning, scheduling, resource allocation, and progress tracking.",
         #     specialization="project_management",
         #     context={'task': task.name, 'team_size': len(team_members)}
+        # )
         response = f"Task assignment temporarily disabled to prevent API quota issues. Your request was: {prompt}"
-        )
         
         return parse_assignee_recommendation(response, team_members)
         
