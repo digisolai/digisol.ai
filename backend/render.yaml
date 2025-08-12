@@ -32,6 +32,11 @@ services:
           type: redis
           name: digisol-redis
           property: connectionString
+      - key: DATABASE_URL
+        fromService:
+          type: pserv
+          name: digisol-postgres
+          property: connectionString
 
   - type: worker
     name: digisol-celery-worker
@@ -56,9 +61,20 @@ services:
           type: redis
           name: digisol-redis
           property: connectionString
+      - key: DATABASE_URL
+        fromService:
+          type: pserv
+          name: digisol-postgres
+          property: connectionString
 
   - type: redis
     name: digisol-redis
     plan: free
     maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
+
+  - type: pserv
+    name: digisol-postgres
+    env: postgresql
+    plan: starter
     ipAllowList: []
