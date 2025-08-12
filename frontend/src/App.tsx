@@ -4,6 +4,7 @@ import theme from './theme';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import SEOProtection from './components/SEOProtection';
+import GoogleAnalytics from './components/GoogleAnalytics';
 
 // Import all pages
 import HomePage from './pages/HomePage';
@@ -42,6 +43,7 @@ function App() {
     <ChakraProvider theme={theme}>
       <AuthProvider>
         <Router>
+          <GoogleAnalytics />
           <SEOProtection>
             <Routes>
             {/* Public routes */}
