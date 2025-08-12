@@ -72,4 +72,3 @@ services:
   - type: pserv
     name: digisol-postgres
     plan: starter
-    startCommand: postgres
