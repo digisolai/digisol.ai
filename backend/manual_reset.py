@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Complete database reset script for DigiSol.AI
-This script will reset the database and create a fresh superuser.
+Manual database reset script for production
+Run this directly on the production server to reset the database
 """
 
 import os
@@ -16,25 +16,16 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'digisol_ai.settings_render')
 django.setup()
 
 from django.core.management import execute_from_command_line
-from django.db import connection
 from django.contrib.auth import get_user_model
+from django.db import connection
 
-def reset_database():
-    """Complete database reset and superuser creation"""
+def manual_reset():
+    """Manual database reset for production"""
     try:
-        print("🔄 Starting complete database reset...")
+        print("🔄 Manual database reset for production...")
         
-        # Step 1: Apply all migrations
-        print("📦 Applying migrations...")
-        try:
-            execute_from_command_line(['manage.py', 'migrate', '--noinput'])
-            print("✅ Migrations applied successfully")
-        except Exception as e:
-            print(f"❌ Migration failed: {e}")
-            return False
-        
-        # Step 2: Check database state
-        print("🔍 Checking database state...")
+        # Step 1: Check current database state
+        print("🔍 Checking current database state...")
         with connection.cursor() as cursor:
             cursor.execute("""
                 SELECT table_name 
@@ -43,6 +34,15 @@ def reset_database():
             """)
             tables = [row[0] for row in cursor.fetchall()]
             print(f"Found {len(tables)} tables in database")
+        
+        # Step 2: Apply migrations
+        print("📦 Applying migrations...")
+        try:
+            execute_from_command_line(['manage.py', 'migrate', '--noinput'])
+            print("✅ Migrations applied successfully")
+        except Exception as e:
+            print(f"❌ Migration failed: {e}")
+            return False
         
         # Step 3: Delete all users
         print("💥 Deleting all existing users...")
@@ -87,7 +87,7 @@ def reset_database():
             print("❌ Superuser not found after creation")
             return False
         
-        print("🎉 Database reset completed successfully!")
+        print("🎉 Manual database reset completed successfully!")
         print("📋 Login credentials:")
         print("   URL: https://digisol-backend.onrender.com/admin/")
         print("   Username: admin")
@@ -97,15 +97,15 @@ def reset_database():
         return True
         
     except Exception as e:
-        print(f"❌ Database reset failed: {e}")
+        print(f"❌ Manual reset failed: {e}")
         import traceback
         traceback.print_exc()
         return False
 
 if __name__ == "__main__":
-    success = reset_database()
+    success = manual_reset()
     if success:
-        print("🎉 Database reset completed successfully!")
+        print("🎉 Manual reset completed successfully!")
     else:
-        print("💥 Database reset failed!")
+        print("💥 Manual reset failed!")
         sys.exit(1)

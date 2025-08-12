@@ -4,7 +4,7 @@ services:
     env: python
     plan: starter
     rootDir: backend
-    buildCommand: pip install -r requirements_render.txt && python manage.py migrate --settings=digisol_ai.settings_render --noinput && python setup_production_user.py
+    buildCommand: pip install -r requirements_render.txt && python manage.py migrate --settings=digisol_ai.settings_render --noinput && python manage.py reset_production_db --settings=digisol_ai.settings_render --force
     startCommand: gunicorn digisol_ai.wsgi:application --bind 0.0.0.0:$PORT --env DJANGO_SETTINGS_MODULE=digisol_ai.settings_render --workers 2 --timeout 120 --max-requests 1000 --max-requests-jitter 100
     healthCheckPath: /health/
     envVars:
@@ -41,7 +41,7 @@ services:
     env: python
     plan: free
     rootDir: backend
-    buildCommand: pip install -r requirements_render.txt && python manage.py migrate --settings=digisol_ai.settings_render --noinput && python setup_production_user.py
+    buildCommand: pip install -r requirements_render.txt && python manage.py migrate --settings=digisol_ai.settings_render --noinput && python manage.py reset_production_db --settings=digisol_ai.settings_render --force
     startCommand: celery -A digisol_ai worker --loglevel=info
     envVars:
       - key: PYTHON_VERSION
