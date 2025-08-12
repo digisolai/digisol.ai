@@ -39,6 +39,7 @@ import os
 from datetime import datetime
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import AllowAny
+from django.conf import settings
 
 
 @api_view(['GET'])
@@ -85,13 +86,17 @@ def health_check(request):
     
     # Check Redis connection
     try:
-        redis_url = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
-        r = redis.from_url(redis_url)
-        r.ping()
-        health_status['services']['redis'] = 'healthy'
+        redis_url = getattr(settings, 'REDIS_URL', None)
+        if redis_url and redis_url != 'memory://':
+            r = redis.from_url(redis_url)
+            r.ping()
+            health_status['services']['redis'] = 'healthy'
+        else:
+            health_status['services']['redis'] = 'not_configured'
     except Exception as e:
         health_status['services']['redis'] = f'unhealthy: {str(e)}'
-        health_status['status'] = 'unhealthy'
+        if redis_url and redis_url != 'memory://':
+            health_status['status'] = 'unhealthy'
     
     # Check cache
     try:
@@ -111,6 +116,7 @@ def health_check(request):
         'debug': os.environ.get('DEBUG', 'False'),
         'allowed_hosts': os.environ.get('ALLOWED_HOSTS', ''),
         'database_engine': os.environ.get('DATABASE_ENGINE', 'sqlite3'),
+        'redis_configured': bool(redis_url and redis_url != 'memory://'),
     }
     
     # Return appropriate status code

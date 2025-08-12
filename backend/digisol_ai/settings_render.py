@@ -116,12 +116,19 @@ CSRF_TRUSTED_ORIGINS = os.environ.get(
 ).split(',')
 
 # Redis/Celery configuration
-# If REDIS_URL is provided (e.g., in Render env vars), use it for Celery broker/result backend.
-# Otherwise, fall back to in-memory broker suitable only for basic/free-tier setups (no background worker).
 REDIS_URL = os.environ.get('REDIS_URL')
 if REDIS_URL:
     CELERY_BROKER_URL = REDIS_URL
     CELERY_RESULT_BACKEND = REDIS_URL
+    # Celery configuration for production
+    CELERY_ACCEPT_CONTENT = ['json']
+    CELERY_TASK_SERIALIZER = 'json'
+    CELERY_RESULT_SERIALIZER = 'json'
+    CELERY_TIMEZONE = 'America/Denver'
+    CELERY_TASK_TRACK_STARTED = True
+    CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes
+    CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+    CELERY_WORKER_MAX_TASKS_PER_CHILD = 1000
 else:
     CELERY_BROKER_URL = 'memory://'
     CELERY_RESULT_BACKEND = 'rpc://'

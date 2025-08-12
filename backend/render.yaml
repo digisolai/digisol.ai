@@ -27,3 +27,38 @@ services:
         value: true
       - key: GOOGLE_GEMINI_API_KEY
         sync: false
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: digisol-redis
+          property: connectionString
+
+  - type: worker
+    name: digisol-celery-worker
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements_render.txt
+    startCommand: celery -A digisol_ai worker --loglevel=info
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: DJANGO_SETTINGS_MODULE
+        value: digisol_ai.settings_render
+      - key: DEBUG
+        value: False
+      - key: SECRET_KEY
+        fromService:
+          type: web
+          name: digisol-backend
+          envVarKey: SECRET_KEY
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: digisol-redis
+          property: connectionString
+
+  - type: redis
+    name: digisol-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
