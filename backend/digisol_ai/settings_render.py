@@ -46,15 +46,23 @@ SESSION_COOKIE_AGE = 3600  # 1 hour
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
 # Database - Use PostgreSQL in production
-import dj_database_url
-
-DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL'),
-        conn_max_age=600,
-        conn_health_checks=True,
-    )
-}
+try:
+    import dj_database_url
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=os.environ.get('DATABASE_URL'),
+            conn_max_age=600,
+            conn_health_checks=True,
+        )
+    }
+except ImportError:
+    # Fallback to SQLite if dj-database-url is not available
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
 
 # Static files configuration
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -79,11 +87,16 @@ AWS_QUERYSTRING_AUTH = False
 
 # Use S3 for media files if AWS credentials are configured
 if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY and AWS_STORAGE_BUCKET_NAME:
-    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
-    # Add django-storages to INSTALLED_APPS
-    if 'storages' not in INSTALLED_APPS:
-        INSTALLED_APPS.append('storages')
+    try:
+        DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+        MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
+        # Add django-storages to INSTALLED_APPS
+        if 'storages' not in INSTALLED_APPS:
+            INSTALLED_APPS.append('storages')
+    except ImportError:
+        # Fallback to local storage if django-storages is not available
+        MEDIA_URL = '/media/'
+        MEDIA_ROOT = BASE_DIR / 'media'
 else:
     # Fallback to local storage
     MEDIA_URL = '/media/'
