@@ -195,10 +195,15 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_TIMEZONE = 'America/Denver'
 
 # CORS Headers Settings
-CORS_ALLOWED_ORIGINS = os.environ.get(
-    'CORS_ALLOWED_ORIGINS', 
-    'https://digisolai.ca,https://www.digisolai.ca,https://digisolai.netlify.app,http://localhost:3000,http://localhost:5173'
-).split(',')
+CORS_ALLOWED_ORIGINS = [
+    'https://digisolai.ca',
+    'https://www.digisolai.ca',
+    'https://digisolai.netlify.app',
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5173'
+]
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_METHODS = [
@@ -220,18 +225,13 @@ CORS_ALLOW_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
 ]
-
-# Additional CORS settings for better compatibility
 CORS_EXPOSE_HEADERS = [
     'content-type',
     'content-length',
     'content-disposition',
 ]
 CORS_PREFLIGHT_MAX_AGE = 86400  # 24 hours
-
-# Ensure CORS headers are added to all responses
 CORS_URLS_REGEX = r'^api/.*$'
-CORS_REPLACE_HTTPS_REFERER = True
 
 # AI Services Configuration
 # AI/LLM API Keys (OpenAI not used)

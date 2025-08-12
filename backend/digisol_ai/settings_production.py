@@ -128,44 +128,7 @@ INSTALLED_APPS = [
     'integrations.apps.IntegrationsConfig',
 ]
 
-# CORS/CSRF settings for production
-CORS_ALLOWED_ORIGINS = os.environ.get(
-    'CORS_ALLOWED_ORIGINS', 
-    'https://digisolai.ca,https://www.digisolai.ca,https://digisolai.netlify.app,http://localhost:3000,http://localhost:5173'
-).split(',')
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = False
-
-# Additional CORS settings for better compatibility
-CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
-]
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-]
-CORS_EXPOSE_HEADERS = [
-    'content-type',
-    'content-length',
-    'content-disposition',
-]
-CORS_PREFLIGHT_MAX_AGE = 86400  # 24 hours
-
-# Ensure CORS headers are added to all responses
-CORS_URLS_REGEX = r'^api/.*$'
-CORS_REPLACE_HTTPS_REFERER = True
+# CSRF settings for production
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     'CSRF_TRUSTED_ORIGINS',
     'https://*.digisolai.ca,https://*.netlify.app,https://*.onrender.com'
