@@ -138,10 +138,27 @@ CORS_ALLOWED_ORIGINS = [
     'https://www.digisolai.ca',
     'https://digisolai.ca',
     'https://digisolai.netlify.app',
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5173',
 ]
 
+# Allow credentials for authenticated requests
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_ORIGINS = False
+
+# Additional CORS debugging
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_WHITELIST = [
+    'https://www.digisolai.ca',
+    'https://digisolai.ca',
+    'https://digisolai.netlify.app',
+    'http://localhost:3000',
+    'http://localhost:5173',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:5173',
+]
 
 # Additional CORS settings for better preflight handling
 CORS_ALLOW_ALL_HEADERS = True
@@ -169,6 +186,9 @@ CORS_ALLOW_HEADERS = [
     'x-requested-with',
     'access-control-request-method',
     'access-control-request-headers',
+    'cache-control',
+    'pragma',
+    'expires',
 ]
 
 CORS_EXPOSE_HEADERS = [
