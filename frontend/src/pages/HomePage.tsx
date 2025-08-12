@@ -76,6 +76,8 @@ import {
   FiEye,
   FiCheck,
   FiMenu,
+  FiPhone,
+  FiMapPin,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
