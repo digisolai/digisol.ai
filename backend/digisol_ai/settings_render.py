@@ -141,7 +141,6 @@ CORS_ALLOW_ALL_HEADERS = True
 
 # Force CORS to work for all API endpoints
 CORS_URLS_REGEX = r'^api/.*$'
-CORS_REPLACE_HTTPS_REFERER = True
 
 # Ensure OPTIONS requests are handled properly
 CORS_ALLOW_METHODS = [
