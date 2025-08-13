@@ -37,6 +37,7 @@ import SettingsPage from './pages/SettingsPage';
 import TutorialDetailPage from './pages/TutorialDetailPage';
 import AboutPage from './pages/AboutPage';
 import MyClientsPage from './pages/MyClientsPage';
+import DemoSchedulePage from './pages/DemoSchedulePage';
 
 function App() {
   // Ensure Icon is globally available to prevent "Icon is not defined" errors
@@ -56,6 +57,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/demo-schedule" element={<DemoSchedulePage />} />
             
             {/* Protected routes */}
             <Route path="/dashboard" element={

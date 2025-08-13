@@ -345,13 +345,8 @@ export default function HomePage() {
   };
 
   const handleDemo = () => {
-    toast({
-      title: "Demo Requested",
-      description: "We'll contact you within 24 hours to schedule your personalized demo.",
-      status: "success",
-      duration: 5000,
-      isClosable: true,
-    });
+    // Open demo scheduling modal or redirect to demo page
+    navigate("/demo-schedule");
   };
 
   const handleLearningCenter = () => {

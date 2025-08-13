@@ -150,7 +150,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
            {link.label}
          </NavItem>
        ))}
-       {(user?.is_superuser || user?.is_tenant_admin) && (
+                       {(user?.is_superuser || user?.role === 'admin') && (
          <NavItem
            icon={FiBriefcase}
            href="/my-clients"
