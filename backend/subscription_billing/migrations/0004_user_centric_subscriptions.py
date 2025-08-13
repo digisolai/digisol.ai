@@ -4,6 +4,69 @@ from django.db import migrations, models
 import django.db.models.deletion
 import uuid
 
+def safe_remove_tenant_fields(apps, schema_editor):
+    """
+    Safely remove tenant fields only if they exist.
+    """
+    db_alias = schema_editor.connection.alias
+    with schema_editor.connection.cursor() as cursor:
+        # Check and remove tenant field from customer table
+        cursor.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name = 'subscription_billing_customer' 
+            AND column_name = 'tenant_id'
+        """)
+        if cursor.fetchone():
+            cursor.execute("""
+                ALTER TABLE subscription_billing_customer 
+                DROP COLUMN tenant_id
+            """)
+        
+        # Check and remove tenant field from subscription table
+        cursor.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name = 'subscription_billing_subscription' 
+            AND column_name = 'tenant_id'
+        """)
+        if cursor.fetchone():
+            cursor.execute("""
+                ALTER TABLE subscription_billing_subscription 
+                DROP COLUMN tenant_id
+            """)
+        
+        # Check and remove tenant field from paymenttransaction table
+        cursor.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name = 'subscription_billing_paymenttransaction' 
+            AND column_name = 'tenant_id'
+        """)
+        if cursor.fetchone():
+            cursor.execute("""
+                ALTER TABLE subscription_billing_paymenttransaction 
+                DROP COLUMN tenant_id
+            """)
+        
+        # Check and remove customer field from paymenttransaction table
+        cursor.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name = 'subscription_billing_paymenttransaction' 
+            AND column_name = 'customer_id'
+        """)
+        if cursor.fetchone():
+            cursor.execute("""
+                ALTER TABLE subscription_billing_paymenttransaction 
+                DROP COLUMN customer_id
+            """)
+
+def reverse_safe_remove_tenant_fields(apps, schema_editor):
+    """
+    Reverse operation - not needed for safe removal
+    """
+    pass
 
 class Migration(migrations.Migration):
 
@@ -13,7 +76,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # Update Customer model
+        # Update Customer model - make user field required
         migrations.AlterField(
             model_name='customer',
             name='user',
@@ -23,12 +86,14 @@ class Migration(migrations.Migration):
                 to='accounts.customuser'
             ),
         ),
-        migrations.RemoveField(
-            model_name='customer',
-            name='tenant',
+        
+        # Safely remove tenant fields
+        migrations.RunPython(
+            safe_remove_tenant_fields,
+            reverse_safe_remove_tenant_fields
         ),
         
-        # Update Subscription model
+        # Update Subscription model - add user field
         migrations.AddField(
             model_name='subscription',
             name='user',
@@ -40,12 +105,8 @@ class Migration(migrations.Migration):
             ),
             preserve_default=False,
         ),
-        migrations.RemoveField(
-            model_name='subscription',
-            name='tenant',
-        ),
         
-        # Update PaymentTransaction model
+        # Update PaymentTransaction model - update subscription field
         migrations.AlterField(
             model_name='paymenttransaction',
             name='subscription',
@@ -54,14 +115,6 @@ class Migration(migrations.Migration):
                 related_name='transactions',
                 to='subscription_billing.subscription'
             ),
-        ),
-        migrations.RemoveField(
-            model_name='paymenttransaction',
-            name='tenant',
-        ),
-        migrations.RemoveField(
-            model_name='paymenttransaction',
-            name='customer',
         ),
         
         # Add UsageTracking model
