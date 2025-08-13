@@ -1,7 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from campaigns.models import MarketingCampaign, CampaignStep, CatalystInsight
-from core.models import Tenant
 from accounts.models import CustomUser
 from datetime import timedelta
 import random
@@ -13,26 +12,17 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('Creating sample campaign data...')
         
-        # Get or create tenant and user
-        tenant, created = Tenant.objects.get_or_create(
-            name='Test Tenant',
-            defaults={
-                'subdomain': 'test',
-                'is_active': True
-            }
-        )
+        # Get or create user (no tenant needed)
         
         user, created = CustomUser.objects.get_or_create(
-            email='test@example.com',
+            email='admin@digisolai.ca',
             defaults={
-                'username': 'testuser',
-                'first_name': 'Test',
+                'username': 'admin',
+                'first_name': 'Admin',
                 'last_name': 'User',
-                'tenant': tenant,
                 'is_staff': True,
                 'is_active': True,
-                'is_tenant_admin': True,
-                'role': 'tenant_admin'
+                'role': 'admin'
             }
         )
         
@@ -88,7 +78,6 @@ class Command(BaseCommand):
         created_campaigns = []
         for campaign_data in campaigns_data:
             campaign, created = MarketingCampaign.objects.get_or_create(
-                tenant=tenant,
                 name=campaign_data['name'],
                 defaults={
                     'description': campaign_data['description'],
@@ -142,7 +131,6 @@ class Command(BaseCommand):
         for insight_data in insights_data:
             if insight_data['campaign']:
                 insight, created = CatalystInsight.objects.get_or_create(
-                    tenant=tenant,
                     campaign=insight_data['campaign'],
                     title=insight_data['title'],
                     defaults={

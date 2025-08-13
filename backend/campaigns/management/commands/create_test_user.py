@@ -1,6 +1,5 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
-from core.models import Tenant
 from accounts.models import CustomUser
 
 
@@ -10,40 +9,25 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.stdout.write('Creating test user and tenant...')
         
-        # Create or get a tenant
-        tenant, created = Tenant.objects.get_or_create(
-            name='Test Tenant',
-            defaults={
-                'subdomain': 'test',
-                'is_active': True
-            }
-        )
-        
-        if created:
-            self.stdout.write(f'Created tenant: {tenant.name}')
-        else:
-            self.stdout.write(f'Using existing tenant: {tenant.name}')
+        # No tenant needed for simplified system
         
         # Create or get a test user
         user, created = CustomUser.objects.get_or_create(
-            email='test@example.com',
+            email='admin@digisolai.ca',
             defaults={
-                'username': 'testuser',
-                'first_name': 'Test',
+                'username': 'admin',
+                'first_name': 'Admin',
                 'last_name': 'User',
-                'tenant': tenant,
                 'is_staff': True,
                 'is_active': True,
-                'is_tenant_admin': True,
-                'role': 'tenant_admin'
+                'role': 'admin'
             }
         )
         
         if created:
             self.stdout.write(f'Created test user: {user.email}')
         else:
-            # Update existing user to ensure they have the tenant
-            user.tenant = tenant
+            # Update existing user
             user.save()
             self.stdout.write(f'Updated existing user: {user.email}')
         
@@ -51,7 +35,6 @@ class Command(BaseCommand):
             self.style.SUCCESS(
                 f'Test user created successfully!\n'
                 f'Email: {user.email}\n'
-                f'Password: (use Django admin or create password)\n'
-                f'Tenant: {tenant.name}'
+                f'Password: (use Django admin or create password)'
             )
         ) 

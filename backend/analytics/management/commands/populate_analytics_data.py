@@ -26,8 +26,8 @@ class Command(BaseCommand):
                 'username': 'analytics@example.com',
                 'first_name': 'Analytics',
                 'last_name': 'User',
-                'tenant': tenant,
-                'is_tenant_admin': True
+
+                'role': 'admin'
             }
         )
 

@@ -17,7 +17,7 @@ class Command(BaseCommand):
                 "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS profile_picture VARCHAR(100);",
                 "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS bio TEXT;",
                 "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS phone_number VARCHAR(20);",
-                "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS is_tenant_admin BOOLEAN DEFAULT FALSE;",
+    
                 "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'viewer';",
                 "UPDATE custom_users SET created_at = NOW() WHERE created_at IS NULL;",
                 "UPDATE custom_users SET updated_at = NOW() WHERE updated_at IS NULL;",

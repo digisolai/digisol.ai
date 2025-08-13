@@ -55,11 +55,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 'email': user.email,
                 'first_name': user.first_name,
                 'last_name': user.last_name,
-                'tenant': {
-                    'id': user.tenant.id,
-                    'name': user.tenant.name,
-                    'subdomain': user.tenant.subdomain
-                } if user.tenant else None
+                'role': user.role,
+                'department': user.department,
+                'job_title': user.job_title
             }
         
         return response

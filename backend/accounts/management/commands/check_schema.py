@@ -27,7 +27,7 @@ class Command(BaseCommand):
             column_names = [col[0] for col in columns]
             
             missing_columns = []
-            required_columns = ['profile_picture', 'bio', 'phone_number', 'created_at', 'updated_at', 'is_tenant_admin', 'role']
+            required_columns = ['profile_picture', 'bio', 'phone_number', 'created_at', 'updated_at', 'role']
             
             for col in required_columns:
                 if col not in column_names:

@@ -183,10 +183,9 @@ def setup_production(request):
                     "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS phone_number VARCHAR(20);",
                     "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT NOW();",
                     "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS updated_at TIMESTAMP DEFAULT NOW();",
-                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS is_tenant_admin BOOLEAN DEFAULT FALSE;",
-                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'viewer';",
+                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS role VARCHAR(50) DEFAULT 'user';",
                     "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS department VARCHAR(100);",
-                    "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS is_hr_admin BOOLEAN DEFAULT FALSE;",
+
                     "ALTER TABLE custom_users ADD COLUMN IF NOT EXISTS job_title VARCHAR(255);"
                 ]
                 

@@ -80,10 +80,8 @@ class Command(BaseCommand):
         user.is_superuser = True
         user.is_staff = True
         user.is_active = True
-        user.tenant = tenant
-        # Tenant admin role for app-level permissions
-        user.is_tenant_admin = True
-        user.role = 'tenant_admin'
+        # Set admin role for app-level permissions
+        user.role = 'admin'
         user.save()
         self.stdout.write(self.style.SUCCESS(f"Superuser ready: {user.email}"))
 
