@@ -4,110 +4,6 @@ from django.db import migrations, models
 import django.db.models.deletion
 import uuid
 
-def safe_remove_tenant_fields(apps, schema_editor):
-    """
-    Safely remove tenant fields only if they exist.
-    """
-    db_alias = schema_editor.connection.alias
-    with schema_editor.connection.cursor() as cursor:
-        # Check and remove tenant field from customer table
-        cursor.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name = 'subscription_billing_customer' 
-            AND column_name = 'tenant_id'
-        """)
-        if cursor.fetchone():
-            cursor.execute("""
-                ALTER TABLE subscription_billing_customer 
-                DROP COLUMN tenant_id
-            """)
-        
-        # Check and remove tenant field from subscription table
-        cursor.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name = 'subscription_billing_subscription' 
-            AND column_name = 'tenant_id'
-        """)
-        if cursor.fetchone():
-            cursor.execute("""
-                ALTER TABLE subscription_billing_subscription 
-                DROP COLUMN tenant_id
-            """)
-        
-        # Check and remove tenant field from paymenttransaction table
-        cursor.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name = 'subscription_billing_paymenttransaction' 
-            AND column_name = 'tenant_id'
-        """)
-        if cursor.fetchone():
-            cursor.execute("""
-                ALTER TABLE subscription_billing_paymenttransaction 
-                DROP COLUMN tenant_id
-            """)
-        
-        # Check and remove customer field from paymenttransaction table
-        cursor.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name = 'subscription_billing_paymenttransaction' 
-            AND column_name = 'customer_id'
-        """)
-        if cursor.fetchone():
-            cursor.execute("""
-                ALTER TABLE subscription_billing_paymenttransaction 
-                DROP COLUMN customer_id
-            """)
-
-def reverse_safe_remove_tenant_fields(apps, schema_editor):
-    """
-    Reverse operation - not needed for safe removal
-    """
-    pass
-
-def add_user_field_to_subscription(apps, schema_editor):
-    """
-    Add user field to subscription table with proper UUID handling.
-    """
-    db_alias = schema_editor.connection.alias
-    with schema_editor.connection.cursor() as cursor:
-        # Check if user field already exists
-        cursor.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name = 'subscription_billing_subscription' 
-            AND column_name = 'user_id'
-        """)
-        if not cursor.fetchone():
-            # Add user field
-            cursor.execute("""
-                ALTER TABLE subscription_billing_subscription 
-                ADD COLUMN user_id UUID REFERENCES custom_users(id)
-            """)
-
-def reverse_add_user_field_to_subscription(apps, schema_editor):
-    """
-    Remove user field from subscription table.
-    """
-    db_alias = schema_editor.connection.alias
-    with schema_editor.connection.cursor() as cursor:
-        # Check if user field exists
-        cursor.execute("""
-            SELECT column_name 
-            FROM information_schema.columns 
-            WHERE table_name = 'subscription_billing_subscription' 
-            AND column_name = 'user_id'
-        """)
-        if cursor.fetchone():
-            # Remove user field
-            cursor.execute("""
-                ALTER TABLE subscription_billing_subscription 
-                DROP COLUMN user_id
-            """)
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -127,16 +23,17 @@ class Migration(migrations.Migration):
             ),
         ),
         
-        # Safely remove tenant fields
-        migrations.RunPython(
-            safe_remove_tenant_fields,
-            reverse_safe_remove_tenant_fields
-        ),
-        
-        # Add user field to subscription safely
-        migrations.RunPython(
-            add_user_field_to_subscription,
-            reverse_add_user_field_to_subscription
+        # Add user field to subscription using Django's standard field
+        migrations.AddField(
+            model_name='subscription',
+            name='user',
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name='subscriptions',
+                to='accounts.customuser',
+                null=True,
+                blank=True
+            ),
         ),
         
         # Update PaymentTransaction model - update subscription field
