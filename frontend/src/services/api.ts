@@ -40,6 +40,8 @@ api.interceptors.request.use(
     
     // Debug log for requests
     console.log('API Request:', config.method?.toUpperCase(), config.url);
+    console.log('API Request headers:', config.headers);
+    console.log('API Request data:', config.data);
     
     return config;
   },
@@ -48,8 +50,16 @@ api.interceptors.request.use(
 
 // Response interceptor for handling authentication errors
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('API Response:', response.status, response.config.url);
+    console.log('API Response headers:', response.headers);
+    return response;
+  },
   async (error) => {
+    console.log('API Error:', error.response?.status, error.config?.url);
+    console.log('API Error response:', error.response?.data);
+    console.log('API Error headers:', error.response?.headers);
+    
     // Handle 401 Unauthorized errors - only redirect on actual auth failures
     if (error.response?.status === 401) {
       // Check if this is an authentication endpoint failure

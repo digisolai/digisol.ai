@@ -41,9 +41,10 @@ USE_X_FORWARDED_HOST = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript access for API calls
 SESSION_COOKIE_AGE = 3600  # 1 hour
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_SAMESITE = 'None'  # Allow cross-site requests for CORS
 
 # Database - Use AWS RDS PostgreSQL in production
 # Check if AWS RDS environment variables are set
@@ -134,21 +135,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@digisolai.ca')
 
 # CORS Settings - Production only
-CORS_ALLOWED_ORIGINS = [
-    'https://www.digisolai.ca',
-    'https://digisolai.ca',
-    'https://digisolai.netlify.app',
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'http://127.0.0.1:3000',
-    'http://127.0.0.1:5173',
-]
-
-# Allow credentials for authenticated requests
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for debugging
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True  # Temporarily enable for debugging
-
-# Additional CORS settings for better preflight handling
 CORS_ALLOW_ALL_HEADERS = True
 
 # Ensure OPTIONS requests are handled properly
@@ -189,11 +177,45 @@ CORS_EXPOSE_HEADERS = [
 CORS_PREFLIGHT_MAX_AGE = 86400  # 24 hours
 CORS_URLS_REGEX = r'^api/.*$'
 
+# Ensure proper handling of preflight requests
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
+
+# Allow all common headers including preflight headers
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'access-control-request-method',
+    'access-control-request-headers',
+    'cache-control',
+    'pragma',
+    'expires',
+]
+
 # CSRF trusted origins (needed for some auth flows; safe to include wildcards)
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     'CSRF_TRUSTED_ORIGINS',
     'https://*.digisolai.ca,https://*.netlify.app,https://*.onrender.com'
 ).split(',')
+
+# CSRF settings for API endpoints
+CSRF_COOKIE_SAMESITE = 'None'  # Allow cross-site requests for CORS
+CSRF_COOKIE_HTTPONLY = False  # Allow JavaScript access for API calls
+CSRF_USE_SESSIONS = False
+CSRF_COOKIE_SECURE = True
 
 # Redis/Celery configuration
 REDIS_URL = os.environ.get('REDIS_URL')
@@ -304,7 +326,7 @@ INSTALLED_APPS = [
 
 # Middleware - Add whitenoise for static files
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Must be first
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

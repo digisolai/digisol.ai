@@ -13,6 +13,7 @@ from django.http import HttpResponse
 from datetime import timedelta
 import uuid
 import csv
+from rest_framework.views import APIView
 
 from .serializers import (
     UserRegistrationSerializer, 
@@ -599,6 +600,8 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     permission_classes = [AllowAny]
     
     def post(self, request, *args, **kwargs):
+        print(f"Token obtain view POST request from origin: {request.META.get('HTTP_ORIGIN')}")
+        print(f"Token obtain view POST request data: {request.data}")
         response = super().post(request, *args, **kwargs)
         
         if response.status_code == 200:
@@ -622,6 +625,19 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                 except User.DoesNotExist:
                     pass
         
+        print(f"Token obtain view POST response status: {response.status_code}")
+        return response
+    
+    def options(self, request, *args, **kwargs):
+        """Handle OPTIONS requests for CORS preflight."""
+        print(f"Token obtain view OPTIONS request from origin: {request.META.get('HTTP_ORIGIN')}")
+        response = HttpResponse()
+        response['Access-Control-Allow-Origin'] = request.META.get('HTTP_ORIGIN', '*')
+        response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response['Access-Control-Allow-Credentials'] = 'true'
+        response['Access-Control-Max-Age'] = '86400'
+        print(f"Token obtain view OPTIONS response headers: {dict(response.headers)}")
         return response
 
 class CustomTokenRefreshView(TokenRefreshView):
@@ -633,4 +649,52 @@ class CustomTokenRefreshView(TokenRefreshView):
     
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
+        return response
+    
+    def options(self, request, *args, **kwargs):
+        """Handle OPTIONS requests for CORS preflight."""
+        print(f"Token refresh view OPTIONS request from origin: {request.META.get('HTTP_ORIGIN')}")
+        response = HttpResponse()
+        response['Access-Control-Allow-Origin'] = request.META.get('HTTP_ORIGIN', '*')
+        response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response['Access-Control-Allow-Credentials'] = 'true'
+        response['Access-Control-Max-Age'] = '86400'
+        print(f"Token refresh view OPTIONS response headers: {dict(response.headers)}")
+        return response
+
+
+class CORSTestView(APIView):
+    """
+    Test view to verify CORS is working.
+    """
+    permission_classes = [AllowAny]
+    
+    def get(self, request):
+        print(f"CORS test GET request from origin: {request.META.get('HTTP_ORIGIN')}")
+        return Response({
+            'message': 'CORS test successful',
+            'origin': request.META.get('HTTP_ORIGIN'),
+            'method': request.method
+        })
+    
+    def post(self, request):
+        print(f"CORS test POST request from origin: {request.META.get('HTTP_ORIGIN')}")
+        return Response({
+            'message': 'CORS test successful',
+            'origin': request.META.get('HTTP_ORIGIN'),
+            'method': request.method,
+            'data': request.data
+        })
+    
+    def options(self, request, *args, **kwargs):
+        """Handle OPTIONS requests for CORS preflight."""
+        print(f"CORS test OPTIONS request from origin: {request.META.get('HTTP_ORIGIN')}")
+        response = HttpResponse()
+        response['Access-Control-Allow-Origin'] = request.META.get('HTTP_ORIGIN', '*')
+        response['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response['Access-Control-Allow-Credentials'] = 'true'
+        response['Access-Control-Max-Age'] = '86400'
+        print(f"CORS test OPTIONS response headers: {dict(response.headers)}")
         return response

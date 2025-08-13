@@ -12,15 +12,20 @@ class CustomCORSMiddleware:
         # Add CORS headers for API endpoints if they're missing
         if request.path.startswith('/api/'):
             origin = request.META.get('HTTP_ORIGIN')
+            print(f"CORS Middleware: Request to {request.path} from origin {origin}")
+            
             if origin:
-                # Only add if not already present
-                if 'Access-Control-Allow-Origin' not in response:
-                    response['Access-Control-Allow-Origin'] = origin
-                if 'Access-Control-Allow-Credentials' not in response:
-                    response['Access-Control-Allow-Credentials'] = 'true'
-                if 'Access-Control-Allow-Methods' not in response:
-                    response['Access-Control-Allow-Methods'] = 'DELETE, GET, OPTIONS, PATCH, POST, PUT'
-                if 'Access-Control-Allow-Headers' not in response:
-                    response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with'
+                # Always set CORS headers for API endpoints
+                response['Access-Control-Allow-Origin'] = origin
+                response['Access-Control-Allow-Credentials'] = 'true'
+                response['Access-Control-Allow-Methods'] = 'DELETE, GET, OPTIONS, PATCH, POST, PUT'
+                response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with, access-control-request-method, access-control-request-headers, cache-control, pragma, expires'
+                
+                # Handle preflight requests
+                if request.method == 'OPTIONS':
+                    response['Access-Control-Max-Age'] = '86400'
+                    print(f"CORS Middleware: Handled OPTIONS request for {request.path}")
+            
+            print(f"CORS Middleware: Response headers: {dict(response.headers)}")
         
         return response
