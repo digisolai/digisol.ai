@@ -189,16 +189,6 @@ CORS_EXPOSE_HEADERS = [
 CORS_PREFLIGHT_MAX_AGE = 86400  # 24 hours
 CORS_URLS_REGEX = r'^api/.*$'
 
-# Additional settings to ensure proper CORS handling
-# CORS_REPLACE_HTTPS_REFERER = True  # Removed - deprecated setting
-
-# Secure CORS configuration
-CORS_ORIGIN_ALLOW_ALL = False
-CORS_ALLOW_ALL_ORIGINS = False
-
-# Ensure CORS middleware handles all requests properly
-CORS_ALLOW_CREDENTIALS = True
-
 # CSRF trusted origins (needed for some auth flows; safe to include wildcards)
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     'CSRF_TRUSTED_ORIGINS',
