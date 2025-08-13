@@ -85,7 +85,7 @@ def add_user_field_to_subscription(apps, schema_editor):
             # Add user field
             cursor.execute("""
                 ALTER TABLE subscription_billing_subscription 
-                ADD COLUMN user_id UUID REFERENCES accounts_customuser(id)
+                ADD COLUMN user_id UUID REFERENCES custom_users(id)
             """)
 
 def reverse_add_user_field_to_subscription(apps, schema_editor):
@@ -111,7 +111,7 @@ def reverse_add_user_field_to_subscription(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('subscription_billing', '0003_remove_subscriptionplan_includes_corporate_suite_and_more'),
+        ('subscription_billing', '0005_subscriptionplan_client_portals_limit_and_more'),
         ('accounts', '0007_remove_tenant_fields'),
     ]
 
