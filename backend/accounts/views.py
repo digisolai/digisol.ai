@@ -601,6 +601,11 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         
+        # Add explicit CORS headers for debugging
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        
         if response.status_code == 200:
             # Get the user from the request data
             email = request.data.get('email') or request.data.get('username')
@@ -623,6 +628,16 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                     pass
         
         return response
+    
+    def options(self, request, *args, **kwargs):
+        """
+        Handle OPTIONS requests for CORS preflight.
+        """
+        response = super().options(request, *args, **kwargs)
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
 
 class CustomTokenRefreshView(TokenRefreshView):
     """
@@ -630,3 +645,23 @@ class CustomTokenRefreshView(TokenRefreshView):
     """
     # Allow anonymous access; refresh is validated by the provided refresh token
     permission_classes = [AllowAny]
+    
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        
+        # Add explicit CORS headers for debugging
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        
+        return response
+    
+    def options(self, request, *args, **kwargs):
+        """
+        Handle OPTIONS requests for CORS preflight.
+        """
+        response = super().options(request, *args, **kwargs)
+        response["Access-Control-Allow-Origin"] = "*"
+        response["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        return response
