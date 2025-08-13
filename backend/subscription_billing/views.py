@@ -420,10 +420,11 @@ class CurrentPlanView(APIView):
     
     def options(self, request, *args, **kwargs):
         """Handle preflight OPTIONS requests"""
-        response = Response()
+        response = Response(status=200)
         response["Access-Control-Allow-Origin"] = "*"
         response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
         response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+        response["Access-Control-Max-Age"] = "86400"
         return response
     
     def get(self, request, *args, **kwargs):

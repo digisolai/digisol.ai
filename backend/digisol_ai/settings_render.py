@@ -178,35 +178,6 @@ CORS_EXPOSE_HEADERS = [
 
 # Important: Set preflight max age and ensure proper handling
 CORS_PREFLIGHT_MAX_AGE = 86400  # 24 hours
-CORS_URLS_REGEX = r'^api/.*$'
-
-# Ensure proper handling of preflight requests
-CORS_ALLOW_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
-]
-
-# Allow all common headers including preflight headers
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'access-control-request-method',
-    'access-control-request-headers',
-    'cache-control',
-    'pragma',
-    'expires',
-]
 
 # CSRF trusted origins (needed for some auth flows; safe to include wildcards)
 CSRF_TRUSTED_ORIGINS = os.environ.get(
