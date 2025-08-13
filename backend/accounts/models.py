@@ -5,27 +5,18 @@ from django.utils import timezone
 
 class CustomUser(AbstractUser):
     """
-    Custom User model for multi-tenant DigiSol.AI platform.
-    Uses email as the primary login field and supports tenant-based access.
+    Custom User model for DigiSol.AI platform.
+    Uses email as the primary login field with simplified user-centric approach.
     """
     
     ROLE_CHOICES = [
-        ('tenant_admin', 'Tenant Admin'),
-        ('marketer', 'Marketer'),
-        ('viewer', 'Viewer'),
+        ('admin', 'Admin'),
+        ('manager', 'Manager'),
+        ('user', 'User'),
     ]
     
     # Override email field to make it required and unique
     email = models.EmailField(unique=True, blank=False, null=False)
-    
-    # Tenant relationship
-    tenant = models.ForeignKey(
-        'core.Tenant', 
-        on_delete=models.CASCADE, 
-        null=True, 
-        blank=True,
-        related_name='users'
-    )
     
     # Profile fields
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
@@ -33,16 +24,15 @@ class CustomUser(AbstractUser):
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     
     # Role and permissions
-    is_tenant_admin = models.BooleanField(default=False)
     role = models.CharField(
         max_length=50, 
         choices=ROLE_CHOICES, 
-        default='viewer'
+        default='user'
     )
     
-
+    # Team/Organization fields (optional)
+    department = models.CharField(max_length=255, blank=True, null=True)
     job_title = models.CharField(max_length=255, blank=True, null=True)
-    is_hr_admin = models.BooleanField(default=False)
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
@@ -61,16 +51,16 @@ class CustomUser(AbstractUser):
         return f"{self.email} ({self.get_role_display()})"
     
     @property
-    def is_tenant_owner(self):
-        """Check if user is a tenant admin."""
-        return self.is_tenant_admin or self.role == 'tenant_admin'
+    def is_admin(self):
+        """Check if user is an admin."""
+        return self.role == 'admin' or self.is_superuser
     
-    def get_full_name(self):
-        """Return the full name of the user."""
-        if self.first_name and self.last_name:
-            return f"{self.first_name} {self.last_name}"
-        return self.email
+    @property
+    def is_manager(self):
+        """Check if user is a manager or admin."""
+        return self.role in ['admin', 'manager'] or self.is_superuser
     
-    def get_short_name(self):
-        """Return the short name of the user."""
-        return self.first_name or self.email
+    @property
+    def full_name(self):
+        """Get user's full name."""
+        return f"{self.first_name} {self.last_name}".strip() or self.email

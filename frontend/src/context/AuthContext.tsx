@@ -16,15 +16,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         id: response.data.id,
         email: response.data.email,
         name: `${response.data.first_name || ''} ${response.data.last_name || ''}`.trim(),
-        tenant_id: response.data.tenant,
-        is_tenant_admin: response.data.is_tenant_admin,
-        is_hr_admin: response.data.is_hr_admin || false,
+        role: response.data.role || 'user',
         is_superuser: response.data.is_superuser || false,
-        role: response.data.role,
+        department: response.data.department,
+        job_title: response.data.job_title,
         // Subscription and usage tracking fields
-        has_corporate_suite: response.data.has_corporate_suite || false,
         contacts_used_current_period: response.data.contacts_used_current_period || 0,
         emails_sent_current_period: response.data.emails_sent_current_period || 0,
+        tokens_used_current_period: response.data.tokens_used_current_period || 0,
         ai_text_credits_used_current_period: response.data.ai_text_credits_used_current_period || 0,
         ai_image_credits_used_current_period: response.data.ai_image_credits_used_current_period || 0,
         ai_planning_requests_used_current_period: response.data.ai_planning_requests_used_current_period || 0,
@@ -98,73 +97,46 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLoading(false);
       }
     };
+
     loadUser();
   }, [checkAndRefreshToken]);
 
   const login = useCallback(async (email: string, password: string) => {
-    console.log('AuthContext: Login attempt for', email); // Debug log
     try {
-      console.log('AuthContext: Making API request to /accounts/token/'); // Debug log
-      const response = await api.post('/accounts/token/', { email, password });
-      console.log('AuthContext: Login API response received'); // Debug log
-      const { access, refresh, user: userData } = response.data;
-      console.log('AuthContext: Storing tokens in localStorage'); // Debug log
+      const response = await api.post('/accounts/token/', {
+        email,
+        password
+      });
+      
+      const { access, refresh } = response.data;
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
       api.defaults.headers.common['Authorization'] = `Bearer ${access}`;
       
-      // Use user data from login response instead of making additional API call
-      if (userData) {
-        console.log('AuthContext: Setting user from login response'); // Debug log
-        setUser({
-          id: userData.id,
-          email: userData.email,
-          name: `${userData.first_name || ''} ${userData.last_name || ''}`.trim(),
-          tenant_id: userData.tenant,
-          is_tenant_admin: userData.is_tenant_admin || false,
-          is_hr_admin: userData.is_hr_admin || false,
-          is_superuser: userData.is_superuser || false,
-          role: userData.role,
-          // Subscription and usage tracking fields
-          has_corporate_suite: userData.has_corporate_suite || false,
-          contacts_used_current_period: userData.contacts_used_current_period || 0,
-          emails_sent_current_period: userData.emails_sent_current_period || 0,
-          ai_text_credits_used_current_period: userData.ai_text_credits_used_current_period || 0,
-          ai_image_credits_used_current_period: userData.ai_image_credits_used_current_period || 0,
-          ai_planning_requests_used_current_period: userData.ai_planning_requests_used_current_period || 0,
-        });
-        setIsAuthenticated(true);
-      } else {
-        console.log('AuthContext: No user data in response, fetching profile...'); // Debug log
-        await fetchUserProfile();
-      }
-      
-      console.log('AuthContext: Login process completed successfully'); // Debug log
-      return response.data; // Return data so calling component can navigate
-    } catch (error: unknown) {
-      console.error("AuthContext: Login failed:", error instanceof Error ? error.message : 'Unknown error');
-      console.error("AuthContext: Full error object:", error); // Debug log
+      // Fetch user profile after successful login
+      await fetchUserProfile();
+    } catch (error) {
+      console.error("Login failed:", error);
       throw error;
     }
   }, [fetchUserProfile]);
 
-  const register = useCallback(async (email: string, password: string, firstName: string, lastName: string, confirmPassword: string) => {
+  const register = useCallback(async (userData: any) => {
     try {
-      await api.post('/accounts/register/', {
-        email,
-        password,
-        confirm_password: confirmPassword,
-        first_name: firstName,
-        last_name: lastName,
-      });
-      // Directly call login after successful registration, then return its data
-      const loginResponse = await login(email, password); // Auto-login after register
-      return loginResponse;
-    } catch (error: unknown) {
-      console.error("Registration failed:", error instanceof Error ? error.message : 'Unknown error');
+      const response = await api.post('/accounts/register/', userData);
+      
+      const { access, refresh } = response.data;
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+      api.defaults.headers.common['Authorization'] = `Bearer ${access}`;
+      
+      // Fetch user profile after successful registration
+      await fetchUserProfile();
+    } catch (error) {
+      console.error("Registration failed:", error);
       throw error;
     }
-  }, [login]);
+  }, [fetchUserProfile]);
 
   const logout = useCallback(() => {
     localStorage.removeItem('access_token');
@@ -172,20 +144,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     delete api.defaults.headers.common['Authorization'];
     setUser(null);
     setIsAuthenticated(false);
-    window.location.href = '/login'; // Use window.location for full page redirect
   }, []);
+
+  const refreshUser = useCallback(async () => {
+    await fetchUserProfile();
+  }, [fetchUserProfile]);
 
   const contextValue = useMemo(() => ({
     user,
     isAuthenticated,
     loading,
     login,
-    logout,
     register,
-  }), [user, isAuthenticated, loading, login, logout, register]);
+    logout,
+    refreshUser,
+  }), [user, isAuthenticated, loading, login, register, logout, refreshUser]);
 
-  console.log("AuthProvider rendering - loading:", loading, "isAuthenticated:", isAuthenticated);
-  
   return (
     <AuthContext.Provider value={contextValue}>
       {children}

@@ -1,6 +1,6 @@
 import uuid
 from django.db import models
-from core.models import CustomUser, Tenant, TenantAwareManager # Import CustomUser, Tenant, and TenantAwareManager
+from accounts.models import CustomUser
 
 class SubscriptionPlan(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -11,7 +11,7 @@ class SubscriptionPlan(models.Model):
     stripe_annual_price_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     description = models.TextField(blank=True, null=True)
     
-    # New Token-Based System
+    # Token-Based System
     monthly_tokens = models.IntegerField(default=0, help_text="Number of tokens included per month")
     additional_token_pack_size = models.IntegerField(default=0, help_text="Size of additional token packs")
     additional_token_pack_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, help_text="Cost of additional token pack")
@@ -31,26 +31,15 @@ class SubscriptionPlan(models.Model):
     support_level = models.CharField(max_length=50, choices=(('standard', 'Standard'), ('priority', 'Priority')), default='standard')
     
     # Plan Features
-    includes_design_studio = models.BooleanField(default=False, help_text="Access to full design studio features")
-    includes_advanced_analytics = models.BooleanField(default=False, help_text="Access to advanced analytics and predictive insights")
-    includes_project_management = models.BooleanField(default=False, help_text="Access to project management tools")
-    includes_budgeting = models.BooleanField(default=False, help_text="Access to budgeting and financial tools")
-    includes_learning_center = models.BooleanField(default=False, help_text="Access to personalized learning paths")
-    includes_dedicated_support = models.BooleanField(default=False, help_text="Dedicated account manager and priority support")
-    includes_white_label = models.BooleanField(default=False, help_text="White-label solutions available")
-    includes_custom_integrations = models.BooleanField(default=False, help_text="Custom API development and integration support")
-    
-    # Agency/Client Portal Features
-    includes_client_portals = models.BooleanField(default=False, help_text="Access to client portal management features")
-    client_portals_limit = models.IntegerField(default=0, help_text="Number of client portals allowed")
-    includes_client_billing = models.BooleanField(default=False, help_text="Access to client billing and invoicing")
-    includes_client_analytics = models.BooleanField(default=False, help_text="Access to client-specific analytics")
-    includes_white_label_portals = models.BooleanField(default=False, help_text="White-label client portals with custom branding")
-    includes_client_support = models.BooleanField(default=False, help_text="Dedicated support for client portal management")
-
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    includes_design_studio = models.BooleanField(default=True)
+    includes_ai_agents = models.BooleanField(default=True)
+    includes_analytics = models.BooleanField(default=True)
+    includes_automations = models.BooleanField(default=True)
+    includes_integrations = models.BooleanField(default=True)
+    includes_learning_center = models.BooleanField(default=True)
+    includes_project_management = models.BooleanField(default=True)
+    includes_team_collaboration = models.BooleanField(default=False)
+    includes_white_label = models.BooleanField(default=False)
     
     objects = models.Manager() # Subscription plans are global
 
@@ -59,22 +48,21 @@ class SubscriptionPlan(models.Model):
 
 class Customer(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    user = models.OneToOneField(CustomUser, on_delete=models.SET_NULL, related_name='subscription_billing_customer', null=True, blank=True)
-    tenant = models.OneToOneField(Tenant, on_delete=models.SET_NULL, related_name='subscription_billing_customer_tenant', null=True, blank=True)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='subscription_customer')
     stripe_customer_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    objects = models.Manager() # Not tenant-filtered, as it links to a specific user/tenant but is global for Stripe customer management
+    objects = models.Manager()
 
     def __str__(self):
-        return f"Customer for {self.tenant.name if self.tenant else 'N/A'}"
+        return f"Customer for {self.user.email}"
 
 class Subscription(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    plan = models.ForeignKey(SubscriptionPlan, on_delete=models.PROTECT) # Protect from deleting plans if active subscriptions exist
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='subscription_billing_subscriptions') # Direct link for multi-tenancy
+    plan = models.ForeignKey(SubscriptionPlan, on_delete=models.PROTECT)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='subscription')
     stripe_subscription_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     status = models.CharField(max_length=50, choices=(
         ('active', 'Active'), ('trialing', 'Trialing'), ('past_due', 'Past Due'), 
@@ -86,28 +74,56 @@ class Subscription(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    objects = TenantAwareManager() # Subscriptions are tenant-specific
+    objects = models.Manager()
 
     def __str__(self):
-        return f"Subscription for {self.tenant.name} - Plan: {self.plan.name} - Status: {self.status}"
+        return f"Subscription for {self.user.email} - Plan: {self.plan.name} - Status: {self.status}"
 
 class PaymentTransaction(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, related_name='subscription_billing_payment_transactions')
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    subscription = models.ForeignKey(Subscription, on_delete=models.SET_NULL, null=True, blank=True)
-    stripe_charge_id = models.CharField(max_length=255, null=True, blank=True)
+    subscription = models.ForeignKey(Subscription, on_delete=models.CASCADE, related_name='transactions')
+    stripe_payment_intent_id = models.CharField(max_length=255, unique=True, null=True, blank=True)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    currency = models.CharField(max_length=3, default='usd')
+    currency = models.CharField(max_length=3, default='USD')
     status = models.CharField(max_length=50, choices=(
-        ('succeeded', 'Succeeded'), ('pending', 'Pending'), ('failed', 'Failed')
+        ('pending', 'Pending'), ('succeeded', 'Succeeded'), ('failed', 'Failed'), 
+        ('canceled', 'Canceled')
     ), default='pending')
-    transaction_type = models.CharField(max_length=50, choices=(
-        ('subscription', 'Subscription'), ('credits_purchase', 'Credits Purchase'), ('other', 'Other')
-    ), default='subscription')
+    payment_method = models.CharField(max_length=50, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
-    objects = TenantAwareManager()
+    objects = models.Manager()
 
     def __str__(self):
-        return f"Payment {self.id} for {self.tenant.name} - Amount: {self.amount} - Status: {self.status}"
+        return f"Payment {self.stripe_payment_intent_id} - {self.amount} {self.currency} - {self.status}"
+
+class UsageTracking(models.Model):
+    """Track user usage for billing and limits"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='usage_tracking')
+    
+    # Current period usage
+    contacts_used_current_period = models.IntegerField(default=0)
+    emails_sent_current_period = models.IntegerField(default=0)
+    tokens_used_current_period = models.IntegerField(default=0)
+    
+    # Legacy AI Credits
+    ai_text_credits_used_current_period = models.IntegerField(default=0)
+    ai_image_credits_used_current_period = models.IntegerField(default=0)
+    ai_planning_requests_used_current_period = models.IntegerField(default=0)
+    
+    # Period tracking
+    current_period_start = models.DateTimeField(auto_now_add=True)
+    current_period_end = models.DateTimeField()
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    objects = models.Manager()
+
+    class Meta:
+        unique_together = ['user', 'current_period_start']
+
+    def __str__(self):
+        return f"Usage for {self.user.email} - Period: {self.current_period_start.date()}"

@@ -224,11 +224,11 @@ export default function DashboardPage() {
                   <Text fontSize="sm" color="gray.600">
                     <strong>User:</strong> {user?.name || user?.email}
                   </Text>
-                  {user?.tenant_id && (
-                    <Text fontSize="sm" color="gray.600">
-                      <strong>Tenant:</strong> {user.tenant_id}
-                    </Text>
-                  )}
+                                     {user?.department && (
+                     <Text fontSize="sm" color="gray.600">
+                       <strong>Department:</strong> {user.department}
+                     </Text>
+                   )}
                 </VStack>
               </SideCard>
 
