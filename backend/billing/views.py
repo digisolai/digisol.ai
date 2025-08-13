@@ -419,14 +419,14 @@ class CurrentPlanView(APIView):
         return response
     
     def get(self, request, *args, **kwargs):
-        user_tenant = request.user.tenant
-        if not user_tenant:
-            return Response({"detail": "User not associated with a tenant."}, status=status.HTTP_400_BAD_REQUEST)
-        
         # PERMANENT DIGISOL.AI ADMIN ACCESS - HARD-CODED
         # This bypasses all subscription checks for DigiSol.AI internal users
         if is_digisol_admin(request.user):
             return Response(get_digisol_admin_plan())
+        
+        user_tenant = request.user.tenant
+        if not user_tenant:
+            return Response({"detail": "User not associated with a tenant."}, status=status.HTTP_400_BAD_REQUEST)
         
         # We need to pass the tenant object to the serializer for usage fields
         serializer = CurrentPlanSerializer(user_tenant) 
