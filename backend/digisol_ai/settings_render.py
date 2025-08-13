@@ -146,16 +146,7 @@ CORS_ALLOWED_ORIGINS = [
 
 # Allow credentials for authenticated requests
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = True  # Temporarily enable for debugging
-CORS_ORIGIN_WHITELIST = [
-    'https://www.digisolai.ca',
-    'https://digisolai.ca',
-    'https://digisolai.netlify.app',
-    'http://localhost:3000',
-    'http://localhost:5173',
-    'http://127.0.0.1:3000',
-    'http://127.0.0.1:5173',
-]
+CORS_ALLOW_ALL_ORIGINS = False  # Secure: only allow specific origins
 
 # Additional CORS settings for better preflight handling
 CORS_ALLOW_ALL_HEADERS = True
@@ -201,9 +192,9 @@ CORS_URLS_REGEX = r'^api/.*$'
 # Additional settings to ensure proper CORS handling
 # CORS_REPLACE_HTTPS_REFERER = True  # Removed - deprecated setting
 
-# Debug CORS configuration
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_ALL_ORIGINS = True
+# Secure CORS configuration
+CORS_ORIGIN_ALLOW_ALL = False
+CORS_ALLOW_ALL_ORIGINS = False
 
 # Ensure CORS middleware handles all requests properly
 CORS_ALLOW_CREDENTIALS = True
