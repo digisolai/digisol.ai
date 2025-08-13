@@ -7,6 +7,25 @@ class CustomCORSMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
+        # Handle OPTIONS requests immediately
+        if request.method == 'OPTIONS':
+            from django.http import HttpResponse
+            response = HttpResponse(status=200)
+            origin = request.META.get('HTTP_ORIGIN')
+            
+            if origin:
+                response['Access-Control-Allow-Origin'] = origin
+            else:
+                response['Access-Control-Allow-Origin'] = '*'
+            
+            response['Access-Control-Allow-Credentials'] = 'true'
+            response['Access-Control-Allow-Methods'] = 'DELETE, GET, OPTIONS, PATCH, POST, PUT'
+            response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with, access-control-request-method, access-control-request-headers, cache-control, pragma, expires'
+            response['Access-Control-Max-Age'] = '86400'
+            
+            print(f"CORS Middleware: Handled OPTIONS request for {request.path}")
+            return response
+        
         response = self.get_response(request)
         
         # Add CORS headers for ALL API endpoints
@@ -24,11 +43,6 @@ class CustomCORSMiddleware:
             response['Access-Control-Allow-Credentials'] = 'true'
             response['Access-Control-Allow-Methods'] = 'DELETE, GET, OPTIONS, PATCH, POST, PUT'
             response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with, access-control-request-method, access-control-request-headers, cache-control, pragma, expires'
-            
-            # Handle preflight requests
-            if request.method == 'OPTIONS':
-                response['Access-Control-Max-Age'] = '86400'
-                print(f"CORS Middleware: Handled OPTIONS request for {request.path}")
             
             print(f"CORS Middleware: Response headers: {dict(response.headers)}")
         
