@@ -146,10 +146,10 @@ CORS_ALLOWED_ORIGINS = [
 
 # Allow credentials for authenticated requests
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = False
+CORS_ALLOW_ALL_ORIGINS = True  # Temporarily allow all origins for debugging
 
 # Additional CORS debugging
-CORS_ORIGIN_ALLOW_ALL = False
+CORS_ORIGIN_ALLOW_ALL = True  # Temporarily allow all origins for debugging
 CORS_ORIGIN_WHITELIST = [
     'https://www.digisolai.ca',
     'https://digisolai.ca',
@@ -203,6 +203,13 @@ CORS_URLS_REGEX = r'^api/.*$'
 
 # Additional settings to ensure proper CORS handling
 # CORS_REPLACE_HTTPS_REFERER = True  # Removed - deprecated setting
+
+# Debug CORS issues
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Ensure CORS middleware handles all requests properly
+CORS_ALLOW_CREDENTIALS = True
 
 # CSRF trusted origins (needed for some auth flows; safe to include wildcards)
 CSRF_TRUSTED_ORIGINS = os.environ.get(
