@@ -61,6 +61,16 @@ class GeminiChatView(APIView):
         Get available AI agents for chat.
         """
         try:
+            # Check if Gemini API is configured
+            if not settings.GOOGLE_GEMINI_API_KEY:
+                return Response(
+                    {
+                        'error': 'Gemini API not configured',
+                        'message': 'AI chat features are currently unavailable'
+                    },
+                    status=status.HTTP_503_SERVICE_UNAVAILABLE
+                )
+            
             # Get available AI agents (global agents have tenant=None)
             agents = AIProfile.objects.filter(is_active=True, tenant__isnull=True)
             agent_list = []

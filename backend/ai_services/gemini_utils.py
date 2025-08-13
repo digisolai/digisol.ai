@@ -8,7 +8,10 @@ import time
 logger = logging.getLogger(__name__)
 
 # Configure Gemini
-genai.configure(api_key=settings.GOOGLE_GEMINI_API_KEY)
+if settings.GOOGLE_GEMINI_API_KEY:
+    genai.configure(api_key=settings.GOOGLE_GEMINI_API_KEY)
+else:
+    logger.warning("GOOGLE_GEMINI_API_KEY not configured - Gemini features will be disabled")
 
 # Available Gemini models
 GEMINI_MODELS = {

@@ -18,4 +18,6 @@ app_name = 'subscription_billing'
 
 urlpatterns = [
     path('', include(router.urls)),
+    # Add direct access to current-plan endpoint
+    path('current-plan/', SubscriptionManagementViewSet.as_view({'get': 'current_plan'}), name='current-plan'),
 ] 
