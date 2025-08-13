@@ -14,6 +14,7 @@ from datetime import timedelta
 import uuid
 import csv
 from rest_framework.views import APIView
+from functools import wraps
 
 from .serializers import (
     UserRegistrationSerializer, 
@@ -25,6 +26,29 @@ from core.models import Contact, Tenant
 from core.serializers import ContactSerializer
 
 User = get_user_model()
+
+def add_cors_headers(view_func):
+    """Decorator to add CORS headers to any view response."""
+    @wraps(view_func)
+    def wrapper(self, request, *args, **kwargs):
+        response = view_func(self, request, *args, **kwargs)
+        
+        # Add CORS headers
+        origin = request.META.get('HTTP_ORIGIN')
+        if origin:
+            response['Access-Control-Allow-Origin'] = origin
+        else:
+            response['Access-Control-Allow-Origin'] = '*'
+        
+        response['Access-Control-Allow-Credentials'] = 'true'
+        response['Access-Control-Allow-Methods'] = 'DELETE, GET, OPTIONS, PATCH, POST, PUT'
+        response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with, access-control-request-method, access-control-request-headers, cache-control, pragma, expires'
+        
+        if request.method == 'OPTIONS':
+            response['Access-Control-Max-Age'] = '86400'
+        
+        return response
+    return wrapper
 
 class RegisterView(generics.CreateAPIView):
     """
@@ -599,6 +623,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
     """
     permission_classes = [AllowAny]
     
+    @add_cors_headers
     def post(self, request, *args, **kwargs):
         print(f"Token obtain view POST request from origin: {request.META.get('HTTP_ORIGIN')}")
         print(f"Token obtain view POST request data: {request.data}")
@@ -647,6 +672,7 @@ class CustomTokenRefreshView(TokenRefreshView):
     # Allow anonymous access; refresh is validated by the provided refresh token
     permission_classes = [AllowAny]
     
+    @add_cors_headers
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         return response
@@ -670,6 +696,7 @@ class CORSTestView(APIView):
     """
     permission_classes = [AllowAny]
     
+    @add_cors_headers
     def get(self, request):
         print(f"CORS test GET request from origin: {request.META.get('HTTP_ORIGIN')}")
         return Response({
@@ -678,6 +705,7 @@ class CORSTestView(APIView):
             'method': request.method
         })
     
+    @add_cors_headers
     def post(self, request):
         print(f"CORS test POST request from origin: {request.META.get('HTTP_ORIGIN')}")
         return Response({

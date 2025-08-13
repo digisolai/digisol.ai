@@ -139,6 +139,10 @@ CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for debugging
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_ALL_HEADERS = True
 
+# Force CORS to work for all API endpoints
+CORS_URLS_REGEX = r'^api/.*$'
+CORS_REPLACE_HTTPS_REFERER = True
+
 # Ensure OPTIONS requests are handled properly
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -327,6 +331,8 @@ INSTALLED_APPS = [
 # Middleware - Add whitenoise for static files
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Must be first
+    'core.cors_middleware.CustomCORSMiddleware',  # Add custom CORS middleware
+    'core.token_cors_middleware.TokenCORSMiddleware',  # Specialized token CORS middleware
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
