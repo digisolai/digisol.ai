@@ -26,7 +26,7 @@ import {
 import { Layout } from "../components/Layout";
 import { PageLayout, SectionCard, SideCard } from "../components/PageLayout";
 import { useAuth } from "../hooks/useAuth";
-import AuthDebug from "../components/AuthDebug";
+import { AuthDebug } from "../components/AuthDebug";
 import {
   FiMail,
   FiUsers,
