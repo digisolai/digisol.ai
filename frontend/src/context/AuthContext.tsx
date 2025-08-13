@@ -58,7 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await fetchUserProfile();
       return true;
     } catch (error) {
-      console.log("Token validation failed, attempting refresh...");
+      // Token validation failed, attempting refresh...
       
       try {
         // Try to refresh the token

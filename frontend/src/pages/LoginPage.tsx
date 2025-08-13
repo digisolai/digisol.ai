@@ -45,12 +45,8 @@ export default function LoginPage() {
     setLoading(true);
     setErrors({});
 
-    console.log('Login attempt started for:', email); // Debug log
-
     try {
-      console.log('Calling login function...'); // Debug log
       await login(email, password); // Call login function
-      console.log('Login successful, navigating to dashboard...'); // Debug log
       toast({ title: "Login successful!", status: "success", duration: 2000, isClosable: true });
       navigate("/dashboard"); // Navigate on success
     } catch (err: unknown) {

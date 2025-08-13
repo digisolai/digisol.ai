@@ -50,13 +50,6 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['react', 'react-dom', '@chakra-ui/react'],
-    exclude: ['canvas-browserify'], // Exclude problematic polyfill from optimization
-  },
-  resolve: {
-    alias: {
-      // Use canvas-browserify polyfill instead of native canvas
-      canvas: 'canvas-browserify',
-    },
   },
   define: {
     // Provide fallback for canvas

@@ -60,14 +60,7 @@ class RegisterView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         user = serializer.save()
-        # Create a tenant for the new user
-        tenant = Tenant.objects.create(
-            name=f"{user.username}'s Organization",
-            subdomain=f"{user.username.lower()}-org",
-            is_active=True
-        )
-        user.tenant = tenant
-        user.save()
+        # User is created without tenant assignment in simplified model
 
 class UserProfileView(generics.RetrieveUpdateAPIView):
     """
@@ -610,12 +603,12 @@ class UserManagementViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        """Filter users by tenant."""
-        return User.objects.filter(tenant=self.request.user.tenant)
+        """Return all users for simplified model."""
+        return User.objects.all()
 
     def perform_create(self, serializer):
-        """Create user with tenant assignment."""
-        serializer.save(tenant=self.request.user.tenant)
+        """Create user without tenant assignment."""
+        serializer.save()
 
 class CustomTokenObtainPairView(TokenObtainPairView):
     """
@@ -641,11 +634,9 @@ class CustomTokenObtainPairView(TokenObtainPairView):
                         'username': user.username,
                         'first_name': user.first_name,
                         'last_name': user.last_name,
-                        'tenant': {
-                            'id': user.tenant.id,
-                            'name': user.tenant.name,
-                            'subdomain': user.tenant.subdomain
-                        } if user.tenant else None
+                        'role': user.role,
+                        'department': user.department,
+                        'job_title': user.job_title
                     }
                 except User.DoesNotExist:
                     pass

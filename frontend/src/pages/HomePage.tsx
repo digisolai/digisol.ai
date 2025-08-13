@@ -81,7 +81,6 @@ import {
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { AuthDebug } from '../components/AuthDebug';
 
 interface Feature {
   icon: React.ElementType;
@@ -327,7 +326,6 @@ const clientPortalFeatures = [
 ];
 
 export default function HomePage() {
-  console.log("HomePage component rendering...");
   const navigate = useNavigate();
   const toast = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -462,11 +460,6 @@ export default function HomePage() {
             </HStack>
           </Flex>
         </Container>
-      </Box>
-
-      {/* Debug Component */}
-      <Box p={4} bg="yellow.100">
-        <AuthDebug />
       </Box>
 
              {/* Hero Section */}

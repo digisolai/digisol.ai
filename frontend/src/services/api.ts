@@ -15,12 +15,10 @@ function sanitizeBaseURL(url: string): string {
 }
 
 // Production API configuration
-// Always use the production backend URL for the deployed frontend
-const rawBase = "https://digisol-backend.onrender.com/api";
+// Use environment variable if available, otherwise fallback to production URL
+const rawBase = import.meta.env.VITE_API_BASE_URL || "https://digisol-backend.onrender.com/api";
 
 const baseURL = sanitizeBaseURL(rawBase);
-
-console.log('API Base URL:', baseURL); // Debug log
 
 const api = axios.create({
   baseURL,
@@ -38,11 +36,6 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
     
-    // Debug log for requests
-    console.log('API Request:', config.method?.toUpperCase(), config.url);
-    console.log('API Request headers:', config.headers);
-    console.log('API Request data:', config.data);
-    
     return config;
   },
   (error) => Promise.reject(error)
@@ -51,15 +44,9 @@ api.interceptors.request.use(
 // Response interceptor for handling authentication errors
 api.interceptors.response.use(
   (response) => {
-    console.log('API Response:', response.status, response.config.url);
-    console.log('API Response headers:', response.headers);
     return response;
   },
   async (error) => {
-    console.log('API Error:', error.response?.status, error.config?.url);
-    console.log('API Error response:', error.response?.data);
-    console.log('API Error headers:', error.response?.headers);
-    
     // Handle 401 Unauthorized errors - only redirect on actual auth failures
     if (error.response?.status === 401) {
       // Check if this is an authentication endpoint failure
@@ -80,13 +67,15 @@ api.interceptors.response.use(
                          errorMessage.includes('login');
       
       if ((isAuthEndpoint || isAuthError) && !isAIServiceEndpoint) {
-        console.log('Authentication error detected, redirecting to login');
-        // Clear tokens and redirect to login
+        // Clear tokens and redirect to login only if not on homepage
         localStorage.removeItem('access_token');
         localStorage.removeItem('refresh_token');
-        window.location.href = '/login';
-      } else {
-        console.log('401 error on non-auth endpoint, not redirecting:', error.config?.url);
+        
+        // Only redirect if we're not already on the homepage or login page
+        const currentPath = window.location.pathname;
+        if (currentPath !== '/' && currentPath !== '/login' && currentPath !== '/signup') {
+          window.location.href = '/login';
+        }
       }
     }
     return Promise.reject(error);
