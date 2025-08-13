@@ -68,6 +68,46 @@ def reverse_safe_remove_tenant_fields(apps, schema_editor):
     """
     pass
 
+def add_user_field_to_subscription(apps, schema_editor):
+    """
+    Add user field to subscription table with proper UUID handling.
+    """
+    db_alias = schema_editor.connection.alias
+    with schema_editor.connection.cursor() as cursor:
+        # Check if user field already exists
+        cursor.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name = 'subscription_billing_subscription' 
+            AND column_name = 'user_id'
+        """)
+        if not cursor.fetchone():
+            # Add user field
+            cursor.execute("""
+                ALTER TABLE subscription_billing_subscription 
+                ADD COLUMN user_id UUID REFERENCES accounts_customuser(id)
+            """)
+
+def reverse_add_user_field_to_subscription(apps, schema_editor):
+    """
+    Remove user field from subscription table.
+    """
+    db_alias = schema_editor.connection.alias
+    with schema_editor.connection.cursor() as cursor:
+        # Check if user field exists
+        cursor.execute("""
+            SELECT column_name 
+            FROM information_schema.columns 
+            WHERE table_name = 'subscription_billing_subscription' 
+            AND column_name = 'user_id'
+        """)
+        if cursor.fetchone():
+            # Remove user field
+            cursor.execute("""
+                ALTER TABLE subscription_billing_subscription 
+                DROP COLUMN user_id
+            """)
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -93,17 +133,10 @@ class Migration(migrations.Migration):
             reverse_safe_remove_tenant_fields
         ),
         
-        # Update Subscription model - add user field
-        migrations.AddField(
-            model_name='subscription',
-            name='user',
-            field=models.OneToOneField(
-                default=uuid.uuid4,
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name='subscription',
-                to='accounts.customuser'
-            ),
-            preserve_default=False,
+        # Add user field to subscription safely
+        migrations.RunPython(
+            add_user_field_to_subscription,
+            reverse_add_user_field_to_subscription
         ),
         
         # Update PaymentTransaction model - update subscription field
