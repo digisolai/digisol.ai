@@ -146,7 +146,7 @@ CORS_ALLOWED_ORIGINS = [
 
 # Allow credentials for authenticated requests
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = False  # Secure: only allow specific origins
+CORS_ALLOW_ALL_ORIGINS = True  # Temporarily enable for debugging
 
 # Additional CORS settings for better preflight handling
 CORS_ALLOW_ALL_HEADERS = True
