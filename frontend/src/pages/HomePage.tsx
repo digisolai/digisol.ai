@@ -81,6 +81,7 @@ import {
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { AuthDebug } from '../components/AuthDebug';
 
 interface Feature {
   icon: React.ElementType;
@@ -461,6 +462,11 @@ export default function HomePage() {
             </HStack>
           </Flex>
         </Container>
+      </Box>
+
+      {/* Debug Component */}
+      <Box p={4} bg="yellow.100">
+        <AuthDebug />
       </Box>
 
              {/* Hero Section */}

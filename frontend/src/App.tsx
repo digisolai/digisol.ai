@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ChakraProvider } from '@chakra-ui/react';
+import { ChakraProvider, Icon } from '@chakra-ui/react';
 import theme from './theme';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -39,6 +39,11 @@ import AboutPage from './pages/AboutPage';
 import MyClientsPage from './pages/MyClientsPage';
 
 function App() {
+  // Ensure Icon is globally available to prevent "Icon is not defined" errors
+  if (typeof window !== 'undefined') {
+    (window as any).Icon = Icon;
+  }
+  
   return (
     <ChakraProvider theme={theme}>
       <AuthProvider>
