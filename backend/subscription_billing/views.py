@@ -1,27 +1,22 @@
 import stripe
 from django.conf import settings
-from rest_framework import viewsets, permissions, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.shortcuts import get_object_or_404
 from django.db import transaction
-from django.utils import timezone # Import timezone for current time
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from rest_framework import serializers
-
-from .models import SubscriptionPlan, Customer, Subscription, PaymentTransaction
+from django.utils import timezone
+from datetime import datetime, timedelta
+import stripe
+from django.conf import settings
+from .models import SubscriptionPlan, Customer, Subscription, PaymentTransaction, UsageTracking
 from .serializers import (
-    SubscriptionPlanSerializer, CustomerSerializer, SubscriptionSerializer, 
+    SubscriptionPlanSerializer, CustomerSerializer, SubscriptionSerializer,
     PaymentTransactionSerializer, CurrentPlanSerializer
 )
-from core.models import Tenant # For linking to tenant and CustomUser
-from core.models import CustomUser # For linking to CustomUser
-from core.admin_access import is_digisol_admin, get_digisol_admin_plan
+from accounts.models import CustomUser
 
-
-# Initialize Stripe
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
@@ -30,13 +25,13 @@ class SubscriptionPlanViewSet(viewsets.ReadOnlyModelViewSet):
     API endpoint that allows Subscription Plans to be viewed.
     Only superusers can create, update, or delete plans.
     """
-    queryset = SubscriptionPlan.objects.filter(is_active=True).order_by('monthly_cost')
+    queryset = SubscriptionPlan.objects.all().order_by('monthly_cost')
     serializer_class = SubscriptionPlanSerializer
     permission_classes = [permissions.AllowAny] # Allow anyone to view plans
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['support_level']
     search_fields = ['name', 'description']
-    ordering_fields = ['monthly_cost', 'created_at']
+    ordering_fields = ['monthly_cost']
     ordering = ['monthly_cost']
 
     def get_permissions(self):
@@ -85,14 +80,14 @@ class SubscriptionPlanViewSet(viewsets.ReadOnlyModelViewSet):
 class CustomerViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Customer records to be viewed or edited.
-    Managed internally, mainly for linking Users/Tenants to Stripe Customer IDs.
+    Managed internally, mainly for linking Users to Stripe Customer IDs.
     """
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = [permissions.IsAuthenticated] # Or IsAdminUser for full CRUD
+    permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['user', 'tenant']
-    search_fields = ['user__email', 'tenant__name', 'stripe_customer_id']
+    filterset_fields = ['user']
+    search_fields = ['user__email', 'stripe_customer_id']
     ordering_fields = ['created_at']
     ordering = ['-created_at']
 
@@ -100,99 +95,69 @@ class CustomerViewSet(viewsets.ModelViewSet):
         # Only allow superusers to see all customers
         if self.request.user.is_superuser:
             return Customer.objects.all()
-        # Regular users can only see their own customer record (if linked)
+        # Regular users can only see their own customer record
         return Customer.objects.filter(user=self.request.user)
     
     def perform_create(self, serializer):
-        # When creating a customer, link it to the current user's tenant if not already linked
+        # When creating a customer, link it to the current user
         with transaction.atomic():
             user = self.request.user
-            tenant = user.tenant
             
-            if not tenant:
-                raise serializers.ValidationError("User must be associated with a tenant to create a customer.")
-            
-            # Check if Customer already exists for this tenant
-            if Customer.objects.filter(tenant=tenant).exists():
-                raise serializers.ValidationError("A customer record already exists for this tenant.")
+            # Check if Customer already exists for this user
+            if Customer.objects.filter(user=user).exists():
+                raise serializers.ValidationError("A customer record already exists for this user.")
 
-            customer = serializer.save(user=user, tenant=tenant)
+            customer = serializer.save(user=user)
             
             # Create Stripe Customer
             if not customer.stripe_customer_id:
                 try:
                     stripe_customer = stripe.Customer.create(
+                        name=f"{user.first_name} {user.last_name}",
                         email=user.email,
-                        name=f"{user.first_name} {user.last_name} ({tenant.name})",
-                        metadata={'tenant_id': str(tenant.id), 'user_id': str(user.id)}
+                        metadata={'user_id': str(user.id)}
                     )
                     customer.stripe_customer_id = stripe_customer.id
                     customer.save()
                 except stripe.error.StripeError as e:
-                    raise serializers.ValidationError({'stripe_error': str(e)})
+                    raise serializers.ValidationError(f"Failed to create Stripe customer: {str(e)}")
 
 
-class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
+class SubscriptionViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows Subscriptions to be viewed.
+    API endpoint that allows Subscription records to be viewed or edited.
     """
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['status', 'plan', 'tenant', 'cancel_at_period_end']
-    search_fields = ['tenant__name', 'plan__name', 'stripe_subscription_id']
-    ordering_fields = ['created_at', 'current_period_end']
+    filterset_fields = ['status', 'plan', 'cancel_at_period_end']
+    search_fields = ['plan__name', 'stripe_subscription_id']
+    ordering_fields = ['created_at', 'current_period_start']
     ordering = ['-created_at']
 
     def get_queryset(self):
         # Only allow superusers to see all subscriptions
         if self.request.user.is_superuser:
             return Subscription.objects.all()
-        # Regular users only see subscriptions for their tenant
-        return Subscription.objects.filter(tenant=self.request.user.tenant)
-
-    @action(detail=False, methods=['get'])
-    def my_subscription(self, request):
-        """Get the current user's active subscription"""
-        subscription = Subscription.objects.filter(
-            tenant=request.user.tenant,
-            status__in=['active', 'trialing']
-        ).first()
-        if subscription:
-            serializer = self.get_serializer(subscription)
-            return Response(serializer.data)
-        return Response({'detail': 'No active subscription found'}, status=status.HTTP_404_NOT_FOUND)
-
-    @action(detail=True, methods=['post'])
-    def cancel(self, request, pk=None):
-        """Cancel a subscription at period end"""
-        subscription = self.get_object()
-        subscription.cancel_at_period_end = True
-        subscription.save()
-        serializer = self.get_serializer(subscription)
-        return Response(serializer.data)
-
-    @action(detail=True, methods=['post'])
-    def reactivate(self, request, pk=None):
-        """Reactivate a subscription that was set to cancel"""
-        subscription = self.get_object()
-        subscription.cancel_at_period_end = False
-        subscription.save()
-        serializer = self.get_serializer(subscription)
-        return Response(serializer.data)
+        # Regular users only see their own subscription
+        return Subscription.objects.filter(user=self.request.user)
+    
+    def perform_create(self, serializer):
+        # When creating a subscription, link it to the current user
+        serializer.save(user=self.request.user)
 
 
-class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet):
+class PaymentTransactionViewSet(viewsets.ModelViewSet):
     """
-    API endpoint that allows Payment Transactions to be viewed.
+    API endpoint that allows Payment Transaction records to be viewed.
     """
     queryset = PaymentTransaction.objects.all()
     serializer_class = PaymentTransactionSerializer
     permission_classes = [permissions.IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['status', 'transaction_type', 'currency', 'tenant']
-    search_fields = ['stripe_charge_id', 'tenant__name']
+    filterset_fields = ['status', 'currency']
+    search_fields = ['stripe_payment_intent_id']
     ordering_fields = ['created_at', 'amount']
     ordering = ['-created_at']
 
@@ -200,323 +165,295 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet):
         # Only allow superusers to see all transactions
         if self.request.user.is_superuser:
             return PaymentTransaction.objects.all()
-        # Regular users only see transactions for their tenant
-        return PaymentTransaction.objects.filter(tenant=self.request.user.tenant)
-
-    @action(detail=False, methods=['get'])
-    def my_transactions(self, request):
-        """Get the current user's payment transactions"""
-        transactions = self.get_queryset()
-        serializer = self.get_serializer(transactions, many=True)
-        return Response(serializer.data)
+        # Regular users only see their own transactions
+        return PaymentTransaction.objects.filter(subscription__user=self.request.user)
 
 
-class StripeWebhookView(APIView):
+class StripeWebhookViewSet(viewsets.ViewSet):
     """
-    Handles Stripe Webhook events.
-    This endpoint must be publicly accessible and configured in Stripe.
+    Handle Stripe webhooks for subscription events.
     """
-    permission_classes = [] # No authentication needed for webhooks
-    authentication_classes = [] # No authentication needed for webhooks
+    permission_classes = []  # No authentication for webhooks
 
-    def post(self, request, *args, **kwargs):
+    @action(detail=False, methods=['post'])
+    def stripe_webhook(self, request):
+        """
+        Handle Stripe webhook events for subscription management.
+        """
         payload = request.body
         sig_header = request.META.get('HTTP_STRIPE_SIGNATURE')
-        webhook_secret = settings.STRIPE_WEBHOOK_SECRET
-
-        try:
-            event = stripe.Webhook.construct_event(
-                payload, sig_header, webhook_secret
-            )
-        except ValueError as e:
-            # Invalid payload
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        except stripe.error.SignatureVerificationError as e:
-            # Invalid signature
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        # Handle the event
-        event_type = event['type']
-        event_data = event['data']['object']
         
         try:
-            with transaction.atomic():
-                if event_type == 'customer.created':
-                    customer_id = event_data['id']
-                    # Find or create local Customer object
-                    Customer.objects.update_or_create(
-                        stripe_customer_id=customer_id,
-                        defaults={
-                            'email': event_data.get('email'),
-                            'name': event_data.get('name'),
-                            # Link to user/tenant based on metadata if possible
-                            # For simplicity, handle linking when user subscribes via checkout session
-                        }
-                    )
-                    
-                elif event_type == 'customer.subscription.created' or \
-                     event_type == 'customer.subscription.updated':
-                    subscription_id = event_data['id']
-                    customer_id = event_data['customer']
-                    plan_id = event_data['plan']['id'] # Stripe Price ID
-                    
-                    # Get associated local objects
-                    customer = Customer.objects.get(stripe_customer_id=customer_id)
-                    subscription_plan = SubscriptionPlan.objects.get(stripe_price_id=plan_id)
-                    tenant_id = event_data['metadata'].get('tenant_id') # Get tenant_id from metadata
-                    tenant = Tenant.objects.get(id=tenant_id)
-                    
-                    subscription, created = Subscription.objects.update_or_create(
-                        stripe_subscription_id=subscription_id,
-                        defaults={
-                            'customer': customer,
-                            'plan': subscription_plan,
-                            'tenant': tenant,
-                            'status': event_data['status'],
-                            'current_period_start': timezone.datetime.fromtimestamp(event_data['current_period_start']),
-                            'current_period_end': timezone.datetime.fromtimestamp(event_data['current_period_end']),
-                            'cancel_at_period_end': event_data['cancel_at_period_end'],
-                        }
-                    )
-                    
-                    # Link subscription to tenant if not already linked
-                    if not tenant.active_subscription:
-                        tenant.active_subscription = subscription
-                        tenant.save()
+            event = stripe.Webhook.construct_event(
+                payload, sig_header, settings.STRIPE_WEBHOOK_SECRET
+            )
+        except ValueError as e:
+            return Response({'error': 'Invalid payload'}, status=status.HTTP_400_BAD_REQUEST)
+        except stripe.error.SignatureVerificationError as e:
+            return Response({'error': 'Invalid signature'}, status=status.HTTP_400_BAD_REQUEST)
 
-                elif event_type == 'customer.subscription.deleted':
-                    subscription_id = event_data['id']
-                    subscription = Subscription.objects.get(stripe_subscription_id=subscription_id)
-                    subscription.status = 'canceled'
-                    subscription.save()
-                    # Also unlink from tenant if this was the active subscription
-                    tenant = subscription.tenant
-                    if tenant.active_subscription == subscription:
-                        tenant.active_subscription = None
-                        tenant.save()
+        event_data = event['data']['object']
+        
+        if event['type'] == 'customer.subscription.created':
+            self._handle_subscription_created(event_data)
+        elif event['type'] == 'customer.subscription.updated':
+            self._handle_subscription_updated(event_data)
+        elif event['type'] == 'customer.subscription.deleted':
+            self._handle_subscription_deleted(event_data)
+        elif event['type'] == 'invoice.payment_succeeded':
+            self._handle_payment_succeeded(event_data)
+        elif event['type'] == 'invoice.payment_failed':
+            self._handle_payment_failed(event_data)
 
-                elif event_type == 'invoice.payment_succeeded':
-                    # Record payment transaction
-                    charge_id = event_data['charge']
-                    amount = event_data['amount_paid'] / 100 # In dollars
-                    customer_id = event_data['customer']
-                    subscription_id = event_data.get('subscription')
-                    
-                    customer = Customer.objects.get(stripe_customer_id=customer_id)
-                    subscription = Subscription.objects.get(stripe_subscription_id=subscription_id) if subscription_id else None
-                    tenant = subscription.tenant if subscription else (customer.tenant if customer.tenant else None)
-                    
-                    PaymentTransaction.objects.create(
-                        tenant=tenant,
-                        customer=customer,
-                        subscription=subscription,
-                        stripe_charge_id=charge_id,
-                        amount=amount,
-                        currency=event_data['currency'],
-                        status='succeeded',
-                        transaction_type='subscription' if subscription else 'other'
-                    )
+        return Response({'status': 'success'})
 
-                elif event_type == 'invoice.payment_failed':
-                    # Notify user, etc.
-                    pass
-
-                # Add more event types as needed
-                
-                return Response(status=status.HTTP_200_OK)
-
+    def _handle_subscription_created(self, event_data):
+        """Handle subscription creation event."""
+        try:
+            # Get user from metadata
+            user_id = event_data['metadata'].get('user_id')
+            user = CustomUser.objects.get(id=user_id)
+            
+            # Get or create customer
+            customer, created = Customer.objects.get_or_create(
+                user=user,
+                defaults={'stripe_customer_id': event_data['customer']}
+            )
+            
+            # Get plan
+            plan = SubscriptionPlan.objects.get(stripe_price_id=event_data['items']['data'][0]['price']['id'])
+            
+            # Create subscription
+            subscription = Subscription.objects.create(
+                customer=customer,
+                plan=plan,
+                user=user,
+                stripe_subscription_id=event_data['id'],
+                status=event_data['status'],
+                current_period_start=datetime.fromtimestamp(event_data['current_period_start']),
+                current_period_end=datetime.fromtimestamp(event_data['current_period_end'])
+            )
+            
         except Exception as e:
-            # Log specific errors for debugging
-            print(f"Webhook error: {e}")
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST) # Bad request for unexpected errors
+            print(f"Error handling subscription created: {e}")
+
+    def _handle_subscription_updated(self, event_data):
+        """Handle subscription update event."""
+        try:
+            subscription = Subscription.objects.get(stripe_subscription_id=event_data['id'])
+            subscription.status = event_data['status']
+            subscription.current_period_start = datetime.fromtimestamp(event_data['current_period_start'])
+            subscription.current_period_end = datetime.fromtimestamp(event_data['current_period_end'])
+            subscription.cancel_at_period_end = event_data.get('cancel_at_period_end', False)
+            subscription.save()
+        except Subscription.DoesNotExist:
+            pass
+
+    def _handle_subscription_deleted(self, event_data):
+        """Handle subscription deletion event."""
+        try:
+            subscription = Subscription.objects.get(stripe_subscription_id=event_data['id'])
+            subscription.status = 'canceled'
+            subscription.save()
+        except Subscription.DoesNotExist:
+            pass
+
+    def _handle_payment_succeeded(self, event_data):
+        """Handle successful payment event."""
+        try:
+            subscription = Subscription.objects.get(stripe_subscription_id=event_data['subscription'])
+            
+            # Create payment transaction record
+            PaymentTransaction.objects.create(
+                subscription=subscription,
+                stripe_payment_intent_id=event_data.get('payment_intent'),
+                amount=event_data['amount_paid'] / 100,  # Convert from cents
+                currency=event_data['currency'],
+                status='succeeded',
+                payment_method=event_data.get('payment_method_types', [None])[0]
+            )
+        except Subscription.DoesNotExist:
+            pass
+
+    def _handle_payment_failed(self, event_data):
+        """Handle failed payment event."""
+        try:
+            subscription = Subscription.objects.get(stripe_subscription_id=event_data['subscription'])
+            
+            # Create payment transaction record
+            PaymentTransaction.objects.create(
+                subscription=subscription,
+                stripe_payment_intent_id=event_data.get('payment_intent'),
+                amount=event_data['amount_due'] / 100,  # Convert from cents
+                currency=event_data['currency'],
+                status='failed',
+                payment_method=event_data.get('payment_method_types', [None])[0]
+            )
+        except Subscription.DoesNotExist:
+            pass
 
 
-class CreateCheckoutSessionView(APIView):
+class SubscriptionManagementViewSet(viewsets.ViewSet):
     """
-    Creates a Stripe Checkout Session for a new subscription.
+    API endpoints for subscription management actions.
     """
     permission_classes = [permissions.IsAuthenticated]
 
-    def post(self, request, *args, **kwargs):
+    @action(detail=False, methods=['post'])
+    def create_subscription(self, request):
+        """
+        Create a new subscription for the authenticated user.
+        """
         user = request.user
-        tenant = user.tenant
+        plan_id = request.data.get('plan_id')
         
-        if not tenant:
-            return Response({"detail": "User must belong to a tenant."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        price_id = request.data.get('price_id') # Stripe Price ID from frontend
-        
-        if not price_id:
-            return Response({"detail": "Price ID is required."}, status=status.HTTP_400_BAD_REQUEST)
+        if not plan_id:
+            return Response({"detail": "Plan ID is required."}, status=status.HTTP_400_BAD_REQUEST)
         
         try:
-            # Get or create Stripe Customer
-            customer, created = Customer.objects.get_or_create(tenant=tenant, defaults={'user': user})
-            if not customer.stripe_customer_id:
+            plan = SubscriptionPlan.objects.get(id=plan_id)
+        except SubscriptionPlan.DoesNotExist:
+            return Response({"detail": "Plan not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Get or create customer
+        customer, created = Customer.objects.get_or_create(user=user)
+        
+        if not customer.stripe_customer_id:
+            try:
                 stripe_customer = stripe.Customer.create(
+                    name=f"{user.first_name} {user.last_name}",
                     email=user.email,
-                    name=f"{user.first_name} {user.last_name} ({tenant.name})",
-                    metadata={'tenant_id': str(tenant.id), 'user_id': str(user.id)}
+                    metadata={'user_id': str(user.id)}
                 )
                 customer.stripe_customer_id = stripe_customer.id
                 customer.save()
-            
-            # Create Checkout Session
-            checkout_session = stripe.checkout.Session.create(
+            except stripe.error.StripeError as e:
+                return Response({"detail": f"Failed to create Stripe customer: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Create Stripe subscription
+        try:
+            stripe_subscription = stripe.Subscription.create(
                 customer=customer.stripe_customer_id,
-                line_items=[
-                    {
-                        'price': price_id,
-                        'quantity': 1,
-                    },
-                ],
-                mode='subscription',
-                success_url='http://localhost:5173/dashboard?session_id={CHECKOUT_SESSION_ID}', # Redirect back to frontend
-                cancel_url='http://localhost:5173/billing?canceled=true',
-                metadata={ # Pass tenant_id to webhook for linking
-                    'tenant_id': str(tenant.id),
-                    'user_id': str(user.id)
+                items=[{'price': plan.stripe_price_id}],
+                metadata={ # Pass user_id to webhook for linking
+                    'user_id': str(user.id),
                 }
             )
-            return Response({'session_url': checkout_session.url}, status=status.HTTP_200_OK)
-        
+            
+            return Response({
+                'subscription_id': stripe_subscription.id,
+                'client_secret': stripe_subscription.latest_invoice.payment_intent.client_secret if stripe_subscription.latest_invoice.payment_intent else None
+            }, status=status.HTTP_201_CREATED)
+            
         except stripe.error.StripeError as e:
-            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response({'detail': 'An internal server error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"detail": f"Failed to create subscription: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
-
-class CreateCustomerPortalSessionView(APIView):
-    """
-    Creates a Stripe Customer Portal Session.
-    """
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request, *args, **kwargs):
+    @action(detail=False, methods=['post'])
+    def cancel_subscription(self, request):
+        """
+        Cancel the user's current subscription.
+        """
         user = request.user
-        tenant = user.tenant
-        
-        if not tenant or not tenant.billing_customer_tenant or not tenant.billing_customer_tenant.stripe_customer_id:
-            return Response({"detail": "No Stripe customer found for this tenant."}, status=status.HTTP_400_BAD_REQUEST)
-        
-        customer_id = tenant.billing_customer_tenant.stripe_customer_id
         
         try:
-            portalSession = stripe.billing_portal.Session.create(
-                customer=customer_id,
-                return_url='http://localhost:5173/billing', # Redirect back to frontend
+            subscription = Subscription.objects.get(user=user, status__in=['active', 'trialing'])
+        except Subscription.DoesNotExist:
+            return Response({"detail": "No active subscription found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        try:
+            # Cancel at period end
+            stripe.Subscription.modify(
+                subscription.stripe_subscription_id,
+                cancel_at_period_end=True
             )
-            return Response({'portal_url': portalSession.url}, status=status.HTTP_200_OK)
+            
+            subscription.cancel_at_period_end = True
+            subscription.save()
+            
+            return Response({"detail": "Subscription will be canceled at the end of the current period."}, status=status.HTTP_200_OK)
+            
         except stripe.error.StripeError as e:
-            return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        except Exception as e:
-            return Response({'detail': 'An internal server error occurred.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response({"detail": f"Failed to cancel subscription: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
 
-
-class CurrentPlanView(APIView):
-    """
-    Returns the authenticated tenant's current plan and usage details.
-    """
-    permission_classes = [permissions.IsAuthenticated]
-    
-    def options(self, request, *args, **kwargs):
-        """Handle preflight OPTIONS requests"""
-        response = Response(status=200)
-        response["Access-Control-Allow-Origin"] = "*"
-        response["Access-Control-Allow-Methods"] = "GET, OPTIONS"
-        response["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
-        response["Access-Control-Max-Age"] = "86400"
-        return response
-    
-    def get(self, request, *args, **kwargs):
+    @action(detail=False, methods=['get'])
+    def current_plan(self, request):
+        """
+        Returns the authenticated user's current plan and usage details.
+        """
+        user = request.user
+        
+        # Get or create usage tracking
+        usage_tracking, created = UsageTracking.objects.get_or_create(
+            user=user,
+            defaults={
+                'current_period_end': timezone.now() + timedelta(days=30)
+            }
+        )
+        
+        # Check if user has an active subscription
         try:
-            # PERMANENT DIGISOL.AI ADMIN ACCESS - HARD-CODED
-            # This bypasses all subscription checks for DigiSol.AI internal users
-            if is_digisol_admin(request.user):
-                return Response(get_digisol_admin_plan())
-            
-            user_tenant = request.user.tenant
-            if not user_tenant:
-                return Response({"detail": "User not associated with a tenant."}, status=status.HTTP_400_BAD_REQUEST)
-            
-            # PERMANENT DIGISOL.AI ADMIN ACCESS - HARD-CODED
-            # This bypasses all subscription checks for DigiSol.AI internal users
-            if is_digisol_admin(request.user):
-                return Response(get_digisol_admin_plan())
-            
-            # Check if tenant has an active subscription
-            if not user_tenant.active_subscription:
-                # Return response with upgrade prompts instead of hiding features
-                return Response({
-                    "plan_name": "Free Trial",
-                    "subscription_status": "trial",
-                    "monthly_cost": "0.00",
-                    "annual_cost": "0.00",
-                    "description": "Explore all features with limited usage. Upgrade for higher limits and priority support.",
-                    "contact_limit": 100,
-                    "email_send_limit": 1000,
-                    "ai_text_credits_per_month": 100,
-                    "ai_image_credits_per_month": 5,
-                    "ai_planning_requests_per_month": 2,
-                    "user_seats": 1,
-                    "support_level": "standard",
-                    "contacts_used_current_period": user_tenant.contacts_used_current_period or 0,
-                    "emails_sent_current_period": user_tenant.emails_sent_current_period or 0,
-                    "ai_text_credits_used_current_period": user_tenant.ai_text_credits_used_current_period or 0,
-                    "ai_image_credits_used_current_period": user_tenant.ai_image_credits_used_current_period or 0,
-                    "ai_planning_requests_used_current_period": user_tenant.ai_planning_requests_used_current_period or 0,
-                    "current_period_end": None,
-                    "cancel_at_period_end": False,
-                    "remaining_text_credits": max(0, 100 - (user_tenant.ai_text_credits_used_current_period or 0)),
-                    "remaining_image_credits": max(0, 5 - (user_tenant.ai_image_credits_used_current_period or 0)),
-                    "remaining_planning_requests": max(0, 2 - (user_tenant.ai_planning_requests_used_current_period or 0)),
-                    "remaining_contacts": max(0, 100 - (user_tenant.contacts_used_current_period or 0)),
-                    "remaining_emails": max(0, 1000 - (user_tenant.emails_sent_current_period or 0)),
-                    "is_superuser": False,
-                    "show_upgrade_prompt": True
-                })
-            
-            # Try to use the serializer, but catch any errors
-            try:
-                serializer = CurrentPlanSerializer(user_tenant) 
-                data = serializer.data
-                data['is_superuser'] = False
-                data['show_upgrade_prompt'] = False
-                return Response(data)
-            except Exception as serializer_error:
-                print(f"Serializer error: {serializer_error}")
-                # Fallback to manual response
-                return Response({
-                    "plan_name": user_tenant.active_subscription.plan.name if user_tenant.active_subscription and user_tenant.active_subscription.plan else None,
-                    "subscription_status": user_tenant.active_subscription.status if user_tenant.active_subscription else "no_subscription",
-                    "monthly_cost": str(user_tenant.active_subscription.plan.monthly_cost) if user_tenant.active_subscription and user_tenant.active_subscription.plan else "0.00",
-                    "annual_cost": str(user_tenant.active_subscription.plan.annual_cost) if user_tenant.active_subscription and user_tenant.active_subscription.plan else "0.00",
-                    "description": user_tenant.active_subscription.plan.description if user_tenant.active_subscription and user_tenant.active_subscription.plan else "No active subscription",
-                    "contact_limit": user_tenant.active_subscription.plan.contact_limit if user_tenant.active_subscription and user_tenant.active_subscription.plan else 0,
-                    "email_send_limit": user_tenant.active_subscription.plan.email_send_limit if user_tenant.active_subscription and user_tenant.active_subscription.plan else 0,
-                    "ai_text_credits_per_month": user_tenant.active_subscription.plan.ai_text_credits_per_month if user_tenant.active_subscription and user_tenant.active_subscription.plan else 0,
-                    "ai_image_credits_per_month": user_tenant.active_subscription.plan.ai_image_credits_per_month if user_tenant.active_subscription and user_tenant.active_subscription.plan else 0,
-                    "ai_planning_requests_per_month": user_tenant.active_subscription.plan.ai_planning_requests_per_month if user_tenant.active_subscription and user_tenant.active_subscription.plan else 0,
-                    "user_seats": user_tenant.active_subscription.plan.user_seats if user_tenant.active_subscription and user_tenant.active_subscription.plan else 0,
-                    "support_level": user_tenant.active_subscription.plan.support_level if user_tenant.active_subscription and user_tenant.active_subscription.plan else "none",
-                    "contacts_used_current_period": user_tenant.contacts_used_current_period,
-                    "emails_sent_current_period": user_tenant.emails_sent_current_period,
-                    "ai_text_credits_used_current_period": user_tenant.ai_text_credits_used_current_period,
-                    "ai_image_credits_used_current_period": user_tenant.ai_image_credits_used_current_period,
-                    "ai_planning_requests_used_current_period": user_tenant.ai_planning_requests_used_current_period,
-                    "current_period_end": user_tenant.active_subscription.current_period_end if user_tenant.active_subscription else None,
-                    "cancel_at_period_end": user_tenant.active_subscription.cancel_at_period_end if user_tenant.active_subscription else False,
-                    "remaining_text_credits": 0,  # Simplified for now
-                    "remaining_image_credits": 0,  # Simplified for now
-                    "remaining_planning_requests": 0,  # Simplified for now
-                    "remaining_contacts": 0,  # Simplified for now
-                    "remaining_emails": 0,  # Simplified for now
-                    "is_superuser": False,
-                    "show_upgrade_prompt": False
-                })
-                
-        except Exception as e:
-            print(f"Error in CurrentPlanView: {e}")
-            import traceback
-            print(traceback.format_exc())
-            return Response({"detail": "An error occurred while fetching plan data."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            subscription = Subscription.objects.get(user=user, status__in=['active', 'trialing'])
+            plan = subscription.plan
+        except Subscription.DoesNotExist:
+            # Return free plan details
+            return Response({
+                "plan_name": "Free",
+                "subscription_status": "no_subscription",
+                "features": {
+                    "contacts_limit": 100,
+                    "emails_limit": 1000,
+                    "ai_text_credits": 100,
+                    "ai_image_credits": 5,
+                    "ai_planning_requests": 2,
+                },
+                "usage": {
+                    "contacts_used_current_period": usage_tracking.contacts_used_current_period or 0,
+                    "emails_sent_current_period": usage_tracking.emails_sent_current_period or 0,
+                    "ai_text_credits_used_current_period": usage_tracking.ai_text_credits_used_current_period or 0,
+                    "ai_image_credits_used_current_period": usage_tracking.ai_image_credits_used_current_period or 0,
+                    "ai_planning_requests_used_current_period": usage_tracking.ai_planning_requests_used_current_period or 0,
+                },
+                "remaining": {
+                    "remaining_text_credits": max(0, 100 - (usage_tracking.ai_text_credits_used_current_period or 0)),
+                    "remaining_image_credits": max(0, 5 - (usage_tracking.ai_image_credits_used_current_period or 0)),
+                    "remaining_planning_requests": max(0, 2 - (usage_tracking.ai_planning_requests_used_current_period or 0)),
+                    "remaining_contacts": max(0, 100 - (usage_tracking.contacts_used_current_period or 0)),
+                    "remaining_emails": max(0, 1000 - (usage_tracking.emails_sent_current_period or 0)),
+                }
+            }, status=status.HTTP_200_OK)
+        
+        # Return paid plan details
+        return Response({
+            "plan_name": plan.name,
+            "subscription_status": subscription.status,
+            "features": {
+                "contacts_limit": plan.contact_limit,
+                "emails_limit": plan.email_send_limit,
+                "ai_text_credits": plan.ai_text_credits_per_month,
+                "ai_image_credits": plan.ai_image_credits_per_month,
+                "ai_planning_requests": plan.ai_planning_requests_per_month,
+                "includes_design_studio": plan.includes_design_studio,
+                "includes_ai_agents": plan.includes_ai_agents,
+                "includes_analytics": plan.includes_analytics,
+                "includes_automations": plan.includes_automations,
+                "includes_integrations": plan.includes_integrations,
+                "includes_learning_center": plan.includes_learning_center,
+                "includes_project_management": plan.includes_project_management,
+                "includes_team_collaboration": plan.includes_team_collaboration,
+                "includes_white_label": plan.includes_white_label,
+            },
+            "usage": {
+                "contacts_used_current_period": usage_tracking.contacts_used_current_period or 0,
+                "emails_sent_current_period": usage_tracking.emails_sent_current_period or 0,
+                "ai_text_credits_used_current_period": usage_tracking.ai_text_credits_used_current_period or 0,
+                "ai_image_credits_used_current_period": usage_tracking.ai_image_credits_used_current_period or 0,
+                "ai_planning_requests_used_current_period": usage_tracking.ai_planning_requests_used_current_period or 0,
+            },
+            "remaining": {
+                "remaining_text_credits": max(0, plan.ai_text_credits_per_month - (usage_tracking.ai_text_credits_used_current_period or 0)),
+                "remaining_image_credits": max(0, plan.ai_image_credits_per_month - (usage_tracking.ai_image_credits_used_current_period or 0)),
+                "remaining_planning_requests": max(0, plan.ai_planning_requests_per_month - (usage_tracking.ai_planning_requests_used_current_period or 0)),
+                "remaining_contacts": max(0, plan.contact_limit - (usage_tracking.contacts_used_current_period or 0)) if plan.contact_limit > 0 else -1,
+                "remaining_emails": max(0, plan.email_send_limit - (usage_tracking.emails_sent_current_period or 0)) if plan.email_send_limit > 0 else -1,
+            }
+        }, status=status.HTTP_200_OK)

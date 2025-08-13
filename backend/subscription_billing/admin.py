@@ -1,12 +1,12 @@
 from django.contrib import admin
-from .models import SubscriptionPlan, Customer, Subscription, PaymentTransaction
+from .models import SubscriptionPlan, Customer, Subscription, PaymentTransaction, UsageTracking
 
 @admin.register(SubscriptionPlan)
 class SubscriptionPlanAdmin(admin.ModelAdmin):
-    list_display = ('name', 'monthly_cost', 'annual_cost', 'monthly_tokens', 'is_active', 'created_at')
-    list_filter = ('is_active', 'support_level', 'includes_design_studio', 'includes_advanced_analytics')
+    list_display = ('name', 'monthly_cost', 'annual_cost', 'monthly_tokens', 'support_level')
+    list_filter = ('support_level', 'includes_design_studio', 'includes_ai_agents', 'includes_analytics')
     search_fields = ('name', 'description')
-    readonly_fields = ('id', 'created_at', 'updated_at')
+    readonly_fields = ('id',)
     fieldsets = (
         ('Basic Information', {
             'fields': ('name', 'description', 'monthly_cost', 'annual_cost', 'stripe_price_id', 'stripe_annual_price_id')
@@ -30,42 +30,44 @@ class SubscriptionPlanAdmin(admin.ModelAdmin):
         }),
         ('Plan Features', {
             'fields': (
-                'includes_design_studio', 'includes_advanced_analytics', 'includes_project_management',
-                'includes_budgeting', 'includes_learning_center', 'includes_dedicated_support',
-                'includes_white_label', 'includes_custom_integrations'
+                'includes_design_studio', 'includes_ai_agents', 'includes_analytics',
+                'includes_automations', 'includes_integrations', 'includes_learning_center',
+                'includes_project_management', 'includes_team_collaboration', 'includes_white_label'
             )
-        }),
-        ('Status', {
-            'fields': ('is_active',)
-        }),
-        ('Timestamps', {
-            'fields': ('created_at', 'updated_at'),
-            'classes': ('collapse',)
         })
     )
 
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'tenant', 'stripe_customer_id', 'created_at')
+    list_display = ('id', 'user', 'stripe_customer_id', 'created_at')
     list_filter = ('created_at',)
-    search_fields = ('user__email', 'tenant__name', 'stripe_customer_id')
+    search_fields = ('user__email', 'stripe_customer_id')
     readonly_fields = ('id', 'created_at', 'updated_at')
-    raw_id_fields = ('user', 'tenant')
+    raw_id_fields = ('user',)
 
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'tenant', 'plan', 'status', 'current_period_end', 'cancel_at_period_end')
+    list_display = ('id', 'user', 'plan', 'status', 'current_period_end', 'cancel_at_period_end')
     list_filter = ('status', 'cancel_at_period_end', 'plan', 'created_at')
-    search_fields = ('tenant__name', 'plan__name', 'stripe_subscription_id')
+    search_fields = ('user__email', 'plan__name', 'stripe_subscription_id')
     readonly_fields = ('id', 'created_at', 'updated_at')
-    raw_id_fields = ('customer', 'plan', 'tenant')
+    raw_id_fields = ('customer', 'plan', 'user')
     date_hierarchy = 'created_at'
 
 @admin.register(PaymentTransaction)
 class PaymentTransactionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'tenant', 'amount', 'currency', 'status', 'transaction_type', 'created_at')
-    list_filter = ('status', 'transaction_type', 'currency', 'created_at')
-    search_fields = ('tenant__name', 'stripe_charge_id')
-    readonly_fields = ('id', 'created_at')
-    raw_id_fields = ('tenant', 'customer', 'subscription')
+    list_display = ('id', 'subscription', 'amount', 'currency', 'status', 'payment_method', 'created_at')
+    list_filter = ('status', 'currency', 'created_at')
+    search_fields = ('stripe_payment_intent_id', 'subscription__user__email')
+    readonly_fields = ('id', 'created_at', 'updated_at')
+    raw_id_fields = ('subscription',)
     date_hierarchy = 'created_at'
+
+@admin.register(UsageTracking)
+class UsageTrackingAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'contacts_used_current_period', 'emails_sent_current_period', 'tokens_used_current_period', 'current_period_start')
+    list_filter = ('current_period_start', 'created_at')
+    search_fields = ('user__email',)
+    readonly_fields = ('id', 'created_at', 'updated_at')
+    raw_id_fields = ('user',)
+    date_hierarchy = 'current_period_start'

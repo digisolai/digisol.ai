@@ -75,6 +75,7 @@ class Migration(migrations.Migration):
                 ('ai_text_credits_used_current_period', models.IntegerField(default=0)),
                 ('ai_image_credits_used_current_period', models.IntegerField(default=0)),
                 ('ai_planning_requests_used_current_period', models.IntegerField(default=0)),
+                ('current_period_start', models.DateTimeField(auto_now_add=True)),
                 ('current_period_end', models.DateTimeField()),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
