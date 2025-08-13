@@ -15,6 +15,7 @@ export default defineConfig({
         drop_debugger: true,
       },
     },
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks: {
@@ -28,8 +29,12 @@ export default defineConfig({
         entryFileNames: 'assets/[name]-[hash].js',
         assetFileNames: 'assets/[name]-[hash].[ext]',
       },
+      onwarn(warning, warn) {
+        // Suppress warnings that might cause build to hang
+        if (warning.code === 'CIRCULAR_DEPENDENCY') return;
+        warn(warning);
+      },
     },
-    chunkSizeWarningLimit: 1000,
   },
   server: {
     host: '0.0.0.0',
@@ -45,6 +50,7 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['react', 'react-dom', '@chakra-ui/react'],
+    exclude: ['canvas-browserify'], // Exclude problematic polyfill from optimization
   },
   resolve: {
     alias: {
@@ -55,5 +61,7 @@ export default defineConfig({
   define: {
     // Provide fallback for canvas
     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV),
+    // Add global polyfills
+    global: 'globalThis',
   },
 });

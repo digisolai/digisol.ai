@@ -7,6 +7,9 @@
   NODE_VERSION = "20.11.1"
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
   NPM_FLAGS = "--prefer-offline --no-audit"
+  # Add build timeout and optimization flags
+  NPM_CONFIG_CACHE = ".npm-cache"
+  NPM_CONFIG_PREFER_OFFLINE = "true"
 
 [build.processing]
   skip_processing = false
