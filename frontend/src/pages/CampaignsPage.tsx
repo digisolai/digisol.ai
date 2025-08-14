@@ -101,6 +101,7 @@ import { AIAgentSection } from '../components/AIAgentSection';
 import ContextualAIChat from '../components/ContextualAIChat';
 import CampaignAnalytics from '../components/CampaignAnalytics';
 import type { AIProfile } from '../types/ai';
+import { getAgentConfig, AI_BRAND_COLORS } from '../utils/aiAgentConfig';
 
 const CAMPAIGN_TYPES = {
   email: { label: 'Email Campaign', icon: FiMail, color: 'brand.primary' },
@@ -157,22 +158,24 @@ export default function CampaignsPage() {
       if (res.data && res.data.length > 0) {
         setCatalystAgent(res.data[0]);
       } else {
+        const catalystConfig = getAgentConfig('Catalyst');
         setCatalystAgent({
           id: "catalyst",
           name: "Catalyst",
           specialization: "campaign_optimization",
-          personality_description: "Your intelligent campaign optimization assistant. Catalyst analyzes campaign performance, identifies optimization opportunities, and provides data-driven recommendations to improve your marketing ROI. Whether you need help with audience targeting, budget optimization, content strategy, or performance analysis, Catalyst is here to guide you with actionable insights.",
+          personality_description: catalystConfig.personality_description,
           is_active: true
         });
       }
     } catch (err: unknown) {
       console.error("Failed to fetch Catalyst agent:", err);
       setAgentError("Failed to load AI assistant");
+      const catalystConfig = getAgentConfig('Catalyst');
       setCatalystAgent({
         id: "catalyst",
         name: "Catalyst",
         specialization: "campaign_optimization",
-        personality_description: "Your intelligent campaign optimization assistant. Catalyst analyzes campaign performance, identifies optimization opportunities, and provides data-driven recommendations to improve your marketing ROI. Whether you need help with audience targeting, budget optimization, content strategy, or performance analysis, Catalyst is here to guide you with actionable insights.",
+        personality_description: catalystConfig.personality_description,
         is_active: true
       });
     } finally {
@@ -767,7 +770,7 @@ export default function CampaignsPage() {
          <ModalContent maxH="70vh">
            <ModalHeader>
              <HStack>
-               <Icon as={FiTrendingUp} color="brand.primary" />
+               <Icon as={getAgentConfig('Catalyst').icon} color={AI_BRAND_COLORS.primary} />
                <Text>Chat with Catalyst AI</Text>
              </HStack>
            </ModalHeader>

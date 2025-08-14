@@ -22,33 +22,19 @@ import {
   Alert,
   AlertIcon,
   Spinner,
+  Flex,
 } from '@chakra-ui/react';
 import { Layout } from '../components/Layout';
 import AIChatInterface from '../components/AIChatInterface';
 import api from '../services/api';
 import type { AIProfile } from '../types/ai';
-import {
-  FiCpu,
-  FiZap,
-  FiMessageSquare,
-  FiTarget,
-  FiTrendingUp,
-  FiUsers,
-  FiDollarSign,
-  FiBarChart,
-  FiImage,
-  FiBook,
-  FiSettings,
-  FiGlobe,
-  FiEdit3,
-  FiBookOpen,
-  FiLink,
-  FiGrid,
-  FiLayers,
-  FiAward,
-  FiBriefcase,
-  FiPieChart,
-} from 'react-icons/fi';
+import { FiMessageSquare } from 'react-icons/fi';
+import { 
+  getAgentConfig, 
+  getSpecializationLabel, 
+  AI_BRAND_COLORS,
+  type AIAgentConfig 
+} from '../utils/aiAgentConfig';
 
 interface AIAgent extends AIProfile {
   icon: any;
@@ -64,25 +50,6 @@ export default function AIChatPage() {
   const [error, setError] = useState<string | null>(null);
   const toast = useToast();
 
-  // Agent configuration with icons, colors, and page assignments
-  const agentConfig = {
-    'Automatix': { icon: FiSettings, color: 'blue', page: 'Automation Workflows' },
-    'Scriptor': { icon: FiEdit3, color: 'purple', page: 'Content Creation' },
-    'Prospero': { icon: FiUsers, color: 'green', page: 'Lead Nurturing' },
-    'Pecunia': { icon: FiDollarSign, color: 'orange', page: 'Budget Analysis' },
-    'Metrika': { icon: FiBarChart, color: 'teal', page: 'Data Analytics' },
-    'Quantia': { icon: FiPieChart, color: 'cyan', page: 'Reporting & Insights' },
-    'Structura': { icon: FiGrid, color: 'indigo', page: 'Organizational Planning' },
-    'Icona': { icon: FiImage, color: 'pink', page: 'Brand Identity' },
-    'Connectus': { icon: FiGlobe, color: 'blue', page: 'Integrations' },
-    'Mentor': { icon: FiBookOpen, color: 'green', page: 'Learning & Training' },
-    'Orchestra': { icon: FiLayers, color: 'purple', page: 'AI Orchestration' },
-    'Curator': { icon: FiAward, color: 'yellow', page: 'Template Curation' },
-    'Planner': { icon: FiBriefcase, color: 'gray', page: 'Project Management' },
-    'Strategist': { icon: FiTarget, color: 'red', page: 'Marketing Strategy' },
-    'Catalyst': { icon: FiTrendingUp, color: 'green', page: 'Campaign Optimization' },
-  };
-
   useEffect(() => {
     fetchAgents();
   }, []);
@@ -97,17 +64,13 @@ export default function AIChatPage() {
       
       // Transform fetched agents to include UI configuration
       const configuredAgents: AIAgent[] = fetchedAgents.map((agent: AIProfile) => {
-        const config = agentConfig[agent.name as keyof typeof agentConfig] || {
-          icon: FiCpu,
-          color: 'gray',
-          page: 'General Assistance'
-        };
+        const config = getAgentConfig(agent.name);
         
         return {
           ...agent,
           icon: config.icon,
           color: config.color,
-          assignedPage: config.page,
+          assignedPage: config.assignedPage,
         };
       });
       
@@ -133,16 +96,12 @@ export default function AIChatPage() {
     onOpen();
   };
 
-  const getSpecializationLabel = (specialization: string) => {
-    return specialization.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-  };
-
   return (
     <Layout>
       <Box py={4} px={{ base: 0, md: 4 }}>
         {/* Header */}
         <Box mb={6}>
-          <Heading size="lg" color="brand.primary" mb={2}>
+          <Heading size="lg" color={AI_BRAND_COLORS.primary} mb={2}>
             AI Chat Center
           </Heading>
           <Text color="gray.600">
@@ -159,7 +118,9 @@ export default function AIChatPage() {
               <Text fontSize="sm">{error}</Text>
               <Button 
                 size="sm" 
-                variant="brandSolid" 
+                bg={AI_BRAND_COLORS.primary}
+                color={AI_BRAND_COLORS.accent}
+                _hover={{ bg: AI_BRAND_COLORS.hover }}
                 mt={2}
                 onClick={fetchAgents}
               >
@@ -172,7 +133,7 @@ export default function AIChatPage() {
         {/* Loading State */}
         {isLoading && (
           <Box textAlign="center" py={8}>
-            <Spinner size="lg" color="brand.primary" />
+            <Spinner size="lg" color={AI_BRAND_COLORS.primary} />
             <Text mt={4} color="gray.600">Loading AI agents...</Text>
           </Box>
         )}
@@ -191,14 +152,24 @@ export default function AIChatPage() {
                 <CardBody>
                   <VStack spacing={4} align="stretch">
                     <HStack>
-                      <Icon
-                        as={agent.icon}
-                        boxSize={8}
-                        color={`${agent.color}.500`}
-                      />
+                      <Flex
+                        w={10}
+                        h={10}
+                        bg={AI_BRAND_COLORS.primary}
+                        borderRadius="full"
+                        align="center"
+                        justify="center"
+                        boxShadow="md"
+                      >
+                        <Icon
+                          as={agent.icon}
+                          boxSize={5}
+                          color={AI_BRAND_COLORS.accent}
+                        />
+                      </Flex>
                       <VStack align="start" spacing={0} flex={1}>
-                        <Heading size="md">{agent.name}</Heading>
-                        <Badge colorScheme={agent.color} variant="subtle" mb={1}>
+                        <Heading size="md" color={AI_BRAND_COLORS.primary}>{agent.name}</Heading>
+                        <Badge colorScheme="blue" variant="subtle" mb={1}>
                           {getSpecializationLabel(agent.specialization)}
                         </Badge>
                         <Text fontSize="xs" color="gray.500">
@@ -208,13 +179,15 @@ export default function AIChatPage() {
                     </HStack>
                     
                     <Text fontSize="sm" color="gray.600">
-                      {agent.personality_description}
+                      {getAgentConfig(agent.name).personality_description}
                     </Text>
                     
                     <Button
                       leftIcon={<Icon as={FiMessageSquare} />}
-                      colorScheme={agent.color}
-                      variant="outline"
+                      bg={AI_BRAND_COLORS.primary}
+                      color={AI_BRAND_COLORS.accent}
+                      _hover={{ bg: AI_BRAND_COLORS.hover }}
+                      variant="solid"
                       size="sm"
                       onClick={(e) => {
                         e.stopPropagation();
@@ -236,27 +209,31 @@ export default function AIChatPage() {
             <Card>
               <CardBody>
                 <VStack spacing={4} align="stretch">
-                  <Heading size="md" color="brand.primary">
+                  <Heading size="md" color={AI_BRAND_COLORS.primary}>
                     Quick Actions
                   </Heading>
                   
                   <SimpleGrid columns={{ base: 1, md: 2 }} spacing={4}>
                     <Button
-                      leftIcon={<Icon as={FiTrendingUp} />}
-                      colorScheme="green"
-                      variant="outline"
+                      leftIcon={<Icon as={getAgentConfig('Catalyst').icon} />}
+                      bg={AI_BRAND_COLORS.primary}
+                      color={AI_BRAND_COLORS.accent}
+                      _hover={{ bg: AI_BRAND_COLORS.hover }}
+                      variant="solid"
                       onClick={() => {
-                            const catalyst = agents.find(a => a.name === 'Catalyst');
-    if (catalyst) handleAgentSelect(catalyst);
+                        const catalyst = agents.find(a => a.name === 'Catalyst');
+                        if (catalyst) handleAgentSelect(catalyst);
                       }}
                     >
                       Optimize Campaigns
                     </Button>
                     
                     <Button
-                      leftIcon={<Icon as={FiGrid} />}
-                      colorScheme="indigo"
-                      variant="outline"
+                      leftIcon={<Icon as={getAgentConfig('Structura').icon} />}
+                      bg={AI_BRAND_COLORS.primary}
+                      color={AI_BRAND_COLORS.accent}
+                      _hover={{ bg: AI_BRAND_COLORS.hover }}
+                      variant="solid"
                       onClick={() => {
                         const structura = agents.find(a => a.name === 'Structura');
                         if (structura) handleAgentSelect(structura);
@@ -266,9 +243,11 @@ export default function AIChatPage() {
                     </Button>
                     
                     <Button
-                      leftIcon={<Icon as={FiTarget} />}
-                      colorScheme="red"
-                      variant="outline"
+                      leftIcon={<Icon as={getAgentConfig('Strategist').icon} />}
+                      bg={AI_BRAND_COLORS.primary}
+                      color={AI_BRAND_COLORS.accent}
+                      _hover={{ bg: AI_BRAND_COLORS.hover }}
+                      variant="solid"
                       onClick={() => {
                         const strategist = agents.find(a => a.name === 'Strategist');
                         if (strategist) handleAgentSelect(strategist);
@@ -278,9 +257,11 @@ export default function AIChatPage() {
                     </Button>
                     
                     <Button
-                      leftIcon={<Icon as={FiBarChart} />}
-                      colorScheme="teal"
-                      variant="outline"
+                      leftIcon={<Icon as={getAgentConfig('Metrika').icon} />}
+                      bg={AI_BRAND_COLORS.primary}
+                      color={AI_BRAND_COLORS.accent}
+                      _hover={{ bg: AI_BRAND_COLORS.hover }}
+                      variant="solid"
                       onClick={() => {
                         const metrika = agents.find(a => a.name === 'Metrika');
                         if (metrika) handleAgentSelect(metrika);
@@ -302,13 +283,23 @@ export default function AIChatPage() {
             <ModalHeader>
               <HStack>
                 {selectedAgent && (
-                  <Icon
-                    as={selectedAgent.icon}
-                    color={`${selectedAgent.color}.500`}
-                  />
+                  <Flex
+                    w={8}
+                    h={8}
+                    bg={AI_BRAND_COLORS.primary}
+                    borderRadius="full"
+                    align="center"
+                    justify="center"
+                  >
+                    <Icon
+                      as={selectedAgent.icon}
+                      color={AI_BRAND_COLORS.accent}
+                      boxSize={4}
+                    />
+                  </Flex>
                 )}
                 <VStack align="start" spacing={0}>
-                  <Text>
+                  <Text color={AI_BRAND_COLORS.primary}>
                     Chat with {selectedAgent?.name} - {selectedAgent?.assignedPage}
                   </Text>
                   <Text fontSize="sm" color="gray.500">

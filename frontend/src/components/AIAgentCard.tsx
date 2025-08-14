@@ -18,20 +18,14 @@ import {
   ModalCloseButton,
   Textarea,
   useToast,
+  Flex,
 } from '@chakra-ui/react';
-import {
-  FiCpu,
-  FiTarget,
-  FiDollarSign,
-  FiEdit3,
-  FiTrendingUp,
-  FiUsers,
-  FiGrid,
-  FiBarChart,
-  FiUserCheck,
-  FiLink,
-  FiBookOpen,
-} from 'react-icons/fi';
+import { FiCpu } from 'react-icons/fi';
+import { 
+  getAgentConfig, 
+  getSpecializationLabel, 
+  AI_BRAND_COLORS 
+} from '../utils/aiAgentConfig';
 
 interface AIAgent {
   id: string;
@@ -46,54 +40,6 @@ interface AIAgentCardProps {
   onAskQuestion?: (question: string) => void;
 }
 
-const getAgentIcon = (specialization: string) => {
-  const iconMap: { [key: string]: React.ElementType } = {
-    'marketing_strategy': FiTarget,
-    'budget_analysis': FiDollarSign,
-    'content_creation': FiEdit3,
-    'campaign_optimization': FiTrendingUp,
-    'lead_nurturing': FiUsers,
-    'general_orchestration': FiGrid,
-    'data_analysis': FiBarChart,
-    'hr_management': FiUserCheck,
-    'integrations_management': FiLink,
-    'learning_guidance': FiBookOpen,
-  };
-  return iconMap[specialization] || FiCpu;
-};
-
-const getSpecializationLabel = (specialization: string) => {
-  const labelMap: { [key: string]: string } = {
-    'marketing_strategy': 'Marketing Strategy',
-    'budget_analysis': 'Budget Analysis',
-    'content_creation': 'Content Creation',
-    'campaign_optimization': 'Campaign Optimization',
-    'lead_nurturing': 'Lead Nurturing',
-    'general_orchestration': 'General Orchestration',
-    'data_analysis': 'Data Analysis',
-    'hr_management': 'HR Management',
-    'integrations_management': 'Integrations Management',
-    'learning_guidance': 'Learning Guidance',
-  };
-  return labelMap[specialization] || specialization;
-};
-
-const getAgentGreeting = (name: string, specialization: string) => {
-  const greetings: { [key: string]: string } = {
-  
-    'Pecunia': "Let me analyze your budget and optimize for maximum ROI. What financial data should we review?",
-    'Scriptor': "I'll help you create compelling content that resonates. What message do you want to convey?",
-    'Catalyst': "Let's optimize your campaigns for better performance. What metrics are you tracking?",
-    'Prospero': "I'll guide your leads through the perfect nurturing journey. What's your target audience?",
-  
-    'Metrika': "I'll analyze your data to uncover hidden insights. What metrics should we examine?",
-  
-    'Connectus': "I'll ensure seamless integration between all your tools. What systems need connecting?",
-    'Mentor': "I'll guide you through mastering the DigiSol.AI platform. What would you like to learn?",
-  };
-  return greetings[name] || `Hello! I'm ${name}, your ${getSpecializationLabel(specialization)} specialist. How can I help you today?`;
-};
-
 export const AIAgentCard: React.FC<AIAgentCardProps> = ({ 
   agent, 
   onAskQuestion
@@ -104,7 +50,8 @@ export const AIAgentCard: React.FC<AIAgentCardProps> = ({
   
   const bgColor = useColorModeValue('white', 'gray.800');
   const borderColor = useColorModeValue('gray.200', 'gray.700');
-  const IconComponent = getAgentIcon(agent.specialization);
+  const agentConfig = getAgentConfig(agent.name);
+  const AgentIcon = agentConfig.icon;
 
   // Debug logging
   React.useEffect(() => {
@@ -155,25 +102,29 @@ export const AIAgentCard: React.FC<AIAgentCardProps> = ({
         <VStack align="start" spacing={3}>
           <HStack justify="space-between" w="full">
             <HStack spacing={3}>
-              <Box
-                p={2}
-                bg="brand.50"
+              <Flex
+                w={10}
+                h={10}
+                bg={AI_BRAND_COLORS.primary}
                 borderRadius="full"
+                align="center"
+                justify="center"
+                boxShadow="md"
               >
-                <Icon as={IconComponent} boxSize={5} color="brand.primary" />
-              </Box>
+                <Icon as={AgentIcon} boxSize={5} color={AI_BRAND_COLORS.accent} />
+              </Flex>
               <VStack align="start" spacing={0}>
-                <Text fontWeight="bold" fontSize="lg">
+                <Text fontWeight="bold" fontSize="lg" color={AI_BRAND_COLORS.primary}>
                   {agent.name}
                 </Text>
-                <Badge bg="brand.accent" color="brand.primary" variant="subtle">
+                <Badge bg="blue.100" color="blue.800" variant="subtle">
                   {getSpecializationLabel(agent.specialization)}
                 </Badge>
               </VStack>
             </HStack>
             <Badge
-              bg={agent.is_active ? 'brand.accent' : 'gray.300'}
-              color={agent.is_active ? 'brand.primary' : 'gray.600'}
+              bg={agent.is_active ? 'green.100' : 'gray.100'}
+              color={agent.is_active ? 'green.800' : 'gray.600'}
               variant="subtle"
             >
               {agent.is_active ? 'Active' : 'Inactive'}
@@ -181,24 +132,24 @@ export const AIAgentCard: React.FC<AIAgentCardProps> = ({
           </HStack>
 
           <Text fontSize="sm" color={useColorModeValue('gray.600', 'gray.300')}>
-            {getAgentGreeting(agent.name, agent.specialization)}
+            {agentConfig.personality_description}
           </Text>
 
           {/* Always show the Ask Question button */}
           <HStack spacing={2} w="full">
             <Button
               size="sm"
-              bg="brand.primary"
-              color="white"
-              variant="outline"
+              bg={AI_BRAND_COLORS.primary}
+              color={AI_BRAND_COLORS.accent}
+              variant="solid"
               onClick={onOpen}
               flex={1}
-              _hover={{ bg: 'brand.600' }}
+              _hover={{ bg: AI_BRAND_COLORS.hover }}
             >
               Ask Question
             </Button>
             <Tooltip label="View detailed profile">
-              <Button size="sm" variant="ghost" color="brand.primary">
+              <Button size="sm" variant="ghost" color={AI_BRAND_COLORS.primary}>
                 <Icon as={FiCpu} />
               </Button>
             </Tooltip>
@@ -209,12 +160,26 @@ export const AIAgentCard: React.FC<AIAgentCardProps> = ({
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Ask {agent.name}</ModalHeader>
+          <ModalHeader>
+            <HStack>
+              <Flex
+                w={8}
+                h={8}
+                bg={AI_BRAND_COLORS.primary}
+                borderRadius="full"
+                align="center"
+                justify="center"
+              >
+                <Icon as={AgentIcon} boxSize={4} color={AI_BRAND_COLORS.accent} />
+              </Flex>
+              <Text>Ask {agent.name}</Text>
+            </HStack>
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             <VStack spacing={4}>
               <Text fontSize="sm" color="gray.600">
-                {getAgentGreeting(agent.name, agent.specialization)}
+                {agentConfig.personality_description}
               </Text>
               <Textarea
                 placeholder="What would you like to ask?"
@@ -226,7 +191,13 @@ export const AIAgentCard: React.FC<AIAgentCardProps> = ({
                 <Button onClick={onClose} variant="ghost">
                   Cancel
                 </Button>
-                <Button bg="brand.primary" color="white" onClick={handleAskQuestion} flex={1} _hover={{ bg: 'brand.600' }}>
+                <Button 
+                  bg={AI_BRAND_COLORS.primary} 
+                  color={AI_BRAND_COLORS.accent} 
+                  onClick={handleAskQuestion} 
+                  flex={1} 
+                  _hover={{ bg: AI_BRAND_COLORS.hover }}
+                >
                   Ask {agent.name}
                 </Button>
               </HStack>

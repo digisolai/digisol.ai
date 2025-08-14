@@ -24,6 +24,7 @@ import {
 } from '@chakra-ui/react';
 import { FiSend, FiUser, FiCpu, FiZap, FiMessageSquare } from 'react-icons/fi';
 import api from '../services/api';
+import { getAgentConfig, getSpecializationLabel, AI_BRAND_COLORS } from '../utils/aiAgentConfig';
 
 interface Message {
   id: string;
@@ -64,6 +65,10 @@ export default function ContextualAIChat({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const toast = useToast();
   const { isOpen, onOpen, onClose: onModalClose } = useDisclosure();
+
+  // Get agent configuration
+  const agentConfig = getAgentConfig(agentName);
+  const AgentIcon = agentConfig.icon;
 
   // Check authentication status on component mount
   useEffect(() => {
@@ -170,19 +175,19 @@ export default function ContextualAIChat({
       <Card h="300px" display="flex" flexDirection="column">
         <CardBody p={0} display="flex" flexDirection="column">
           {/* Header */}
-          <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg="brand.50">
+          <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg={AI_BRAND_COLORS.light}>
             <HStack>
-              <Avatar size="sm" bg="brand.primary" icon={<Icon as={FiCpu} />} />
+              <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={AgentIcon} color={AI_BRAND_COLORS.accent} />} />
               <VStack align="start" spacing={0}>
-                <Text fontWeight="bold">{agentName}</Text>
-                <Badge colorScheme="blue" size="sm">{agentSpecialization}</Badge>
+                <Text fontWeight="bold" color={AI_BRAND_COLORS.primary}>{agentName}</Text>
+                <Badge colorScheme="blue" size="sm">{getSpecializationLabel(agentSpecialization)}</Badge>
               </VStack>
             </HStack>
           </Box>
           
           {/* Authentication Required Message */}
           <Box p={8} textAlign="center">
-            <Icon as={FiZap} boxSize={12} color="brand.primary" mb={4} />
+            <Icon as={FiZap} boxSize={12} color={AI_BRAND_COLORS.primary} mb={4} />
             <Text fontSize="lg" fontWeight="bold" mb={2}>
               Authentication Required
             </Text>
@@ -190,7 +195,9 @@ export default function ContextualAIChat({
               Please log in to use the AI chat feature.
             </Text>
             <Button
-              colorScheme="brand"
+              bg={AI_BRAND_COLORS.primary}
+              color={AI_BRAND_COLORS.accent}
+              _hover={{ bg: AI_BRAND_COLORS.hover }}
               onClick={() => window.location.href = '/login'}
             >
               Go to Login
@@ -205,12 +212,12 @@ export default function ContextualAIChat({
     <Card h="300px" display="flex" flexDirection="column">
       <CardBody p={0} display="flex" flexDirection="column">
         {/* Header */}
-        <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg="brand.50">
+        <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg={AI_BRAND_COLORS.light}>
           <HStack>
-            <Avatar size="sm" bg="brand.primary" icon={<Icon as={FiCpu} />} />
+            <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={AgentIcon} color={AI_BRAND_COLORS.accent} />} />
             <VStack align="start" spacing={0}>
-              <Text fontWeight="bold">{agentName}</Text>
-              <Badge colorScheme="blue" size="sm">{agentSpecialization}</Badge>
+              <Text fontWeight="bold" color={AI_BRAND_COLORS.primary}>{agentName}</Text>
+              <Badge colorScheme="blue" size="sm">{getSpecializationLabel(agentSpecialization)}</Badge>
               {pageContext !== 'general' && (
                 <Badge colorScheme="green" size="xs" mt={1}>
                   {pageContext} context
@@ -230,9 +237,9 @@ export default function ContextualAIChat({
         >
           {messages.length === 0 && (
             <Box textAlign="center" py={8}>
-              <Icon as={FiZap} boxSize={8} color="brand.primary" mb={2} />
+              <Icon as={FiZap} boxSize={8} color={AI_BRAND_COLORS.primary} mb={2} />
               <Text color="gray.600">
-                Start a conversation with {agentName} about {agentSpecialization}!
+                Start a conversation with {agentName} about {getSpecializationLabel(agentSpecialization)}!
                 {pageContext !== 'general' && (
                   <Text as="span" fontWeight="bold"> I have context about your {pageContext} page.</Text>
                 )}
@@ -248,11 +255,11 @@ export default function ContextualAIChat({
             >
               <HStack spacing={2} align="start">
                 {message.role === 'ai_agent' && (
-                  <Avatar size="sm" bg="brand.primary" icon={<Icon as={FiCpu} />} />
+                  <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={AgentIcon} color={AI_BRAND_COLORS.accent} />} />
                 )}
                 <Box
-                  bg={message.role === 'user' ? 'brand.primary' : 'gray.100'}
-                  color={message.role === 'user' ? 'white' : 'black'}
+                  bg={message.role === 'user' ? AI_BRAND_COLORS.primary : 'gray.100'}
+                  color={message.role === 'user' ? AI_BRAND_COLORS.accent : 'black'}
                   p={3}
                   borderRadius="lg"
                   maxW="100%"
@@ -272,10 +279,10 @@ export default function ContextualAIChat({
           {isLoading && (
             <Box alignSelf="flex-start">
               <HStack spacing={2}>
-                <Avatar size="sm" bg="brand.primary" icon={<Icon as={FiCpu} />} />
+                <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={AgentIcon} color={AI_BRAND_COLORS.accent} />} />
                 <Box bg="gray.100" p={3} borderRadius="lg">
                   <HStack>
-                    <Spinner size="sm" color="brand.primary" />
+                    <Spinner size="sm" color={AI_BRAND_COLORS.primary} />
                     <Text fontSize="sm">Thinking...</Text>
                   </HStack>
                 </Box>
@@ -293,11 +300,13 @@ export default function ContextualAIChat({
               value={inputMessage}
               onChange={(e) => setInputMessage(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder={`Ask ${agentName} about ${agentSpecialization}...`}
+              placeholder={`Ask ${agentName} about ${getSpecializationLabel(agentSpecialization)}...`}
               disabled={isLoading}
             />
             <Button
-              colorScheme="brand"
+              bg={AI_BRAND_COLORS.primary}
+              color={AI_BRAND_COLORS.accent}
+              _hover={{ bg: AI_BRAND_COLORS.hover }}
               onClick={sendMessage}
               disabled={!inputMessage.trim() || isLoading}
               leftIcon={<Icon as={FiSend} />}
@@ -317,7 +326,9 @@ export default function ContextualAIChat({
         {triggerButton || (
           <Button
             leftIcon={<Icon as={FiMessageSquare} />}
-            colorScheme="brand"
+            bg={AI_BRAND_COLORS.primary}
+            color={AI_BRAND_COLORS.accent}
+            _hover={{ bg: AI_BRAND_COLORS.hover }}
             onClick={onOpen}
           >
             Ask {agentName}
@@ -329,7 +340,7 @@ export default function ContextualAIChat({
           <ModalContent maxH="70vh" maxW="90vw">
             <ModalHeader>
               <HStack>
-                <Icon as={FiCpu} color="brand.primary" />
+                <Icon as={AgentIcon} color={AI_BRAND_COLORS.primary} />
                 <Text>Chat with {agentName}</Text>
               </HStack>
             </ModalHeader>

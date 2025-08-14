@@ -21,25 +21,10 @@ import {
 import ContextualAIChat from './ContextualAIChat';
 import { 
   FiMessageCircle,
-  FiTarget,
-  FiDollarSign,
-  FiEdit3,
-  FiTrendingUp,
-  FiUsers,
-  FiZap,
-  FiBarChart,
-  FiUserCheck,
-  FiSettings,
-  FiBookOpen,
-  FiPieChart,
-  FiGrid,
-  FiCpu,
-  FiImage,
-  FiFileText,
-  FiFolder,
-  FiActivity
+  FiCpu
 } from 'react-icons/fi';
 import type { AIProfile } from '../types/ai';
+import { getAgentConfig, AI_BRAND_COLORS } from '../utils/aiAgentConfig';
 
 interface AIAgentSectionProps {
   agent: AIProfile | null;
@@ -47,86 +32,6 @@ interface AIAgentSectionProps {
   error: string | null;
   onAskQuestion?: (question: string) => void;
 }
-
-// Icon mapping for AI agent specializations
-const getAgentIcon = (specialization: string) => {
-  switch (specialization) {
-    case 'marketing_strategy':
-      return FiTarget;
-    case 'budget_analysis':
-      return FiDollarSign;
-    case 'content_creation':
-      return FiEdit3;
-    case 'campaign_optimization':
-      return FiTrendingUp;
-    case 'lead_nurturing':
-      return FiUsers;
-    case 'general_orchestration':
-      return FiZap;
-    case 'data_analysis':
-      return FiBarChart;
-    case 'hr_management':
-      return FiUserCheck;
-    case 'integrations_management':
-      return FiSettings;
-    case 'learning_guidance':
-      return FiBookOpen;
-    case 'reporting_insights':
-      return FiPieChart;
-    case 'organizational_planning':
-      return FiGrid;
-    case 'automation_design':
-      return FiCpu;
-    case 'brand_identity':
-      return FiImage;
-    case 'template_curation':
-      return FiFileText;
-    case 'project_management':
-      return FiFolder;
-    default:
-      return FiActivity;
-  }
-};
-
-// Color mapping for AI agent specializations
-const getAgentColor = (specialization: string) => {
-  switch (specialization) {
-    case 'marketing_strategy':
-      return 'brand.primary';
-    case 'budget_analysis':
-      return 'brand.accent';
-    case 'content_creation':
-      return 'brand.primary';
-    case 'campaign_optimization':
-      return 'brand.primary';
-    case 'lead_nurturing':
-      return 'brand.accent';
-    case 'general_orchestration':
-      return 'brand.primary';
-    case 'data_analysis':
-      return 'brand.primary';
-    case 'hr_management':
-      return 'brand.accent';
-    case 'integrations_management':
-      return 'brand.primary';
-    case 'learning_guidance':
-      return 'brand.accent';
-    case 'reporting_insights':
-      return 'brand.primary';
-    case 'organizational_planning':
-      return 'brand.primary';
-    case 'automation_design':
-      return 'brand.accent';
-    case 'brand_identity':
-      return 'brand.accent';
-    case 'template_curation':
-      return 'brand.primary';
-    case 'project_management':
-      return 'brand.accent';
-    default:
-      return 'brand.primary';
-  }
-};
 
 export const AIAgentSection: React.FC<AIAgentSectionProps> = ({
   agent,
@@ -145,7 +50,7 @@ export const AIAgentSection: React.FC<AIAgentSectionProps> = ({
     return (
       <Box p={4} bg="white" borderRadius="lg" shadow="sm" mb={6}>
         <Flex align="center" justify="center" py={8}>
-          <Spinner size="md" color="brand.primary" mr={3} />
+          <Spinner size="md" color={AI_BRAND_COLORS.primary} mr={3} />
           <Text>Loading AI assistant...</Text>
         </Flex>
       </Box>
@@ -167,8 +72,8 @@ export const AIAgentSection: React.FC<AIAgentSectionProps> = ({
     return null;
   }
 
-  const AgentIcon = getAgentIcon(agent.specialization);
-  const agentColor = getAgentColor(agent.specialization);
+  const agentConfig = getAgentConfig(agent.name);
+  const AgentIcon = agentConfig.icon;
 
   return (
     <Box p={6} bg="white" borderRadius="lg" shadow="sm" mb={6} _hover={{ shadow: "md" }} transition="all 0.2s">
@@ -177,38 +82,35 @@ export const AIAgentSection: React.FC<AIAgentSectionProps> = ({
           <Flex
             w={12}
             h={12}
-            bg={agentColor}
+            bg={AI_BRAND_COLORS.primary}
             borderRadius="full"
             align="center"
             justify="center"
             boxShadow="md"
           >
-            <Icon as={AgentIcon} color="white" boxSize={6} />
+            <Icon as={AgentIcon} color={AI_BRAND_COLORS.accent} boxSize={6} />
           </Flex>
           <Box>
-            <Heading size="md" color="brand.primary">
+            <Heading size="md" color={AI_BRAND_COLORS.primary}>
               {agent.name}
             </Heading>
-            <Text fontSize="sm" color="brand.neutral.600" textTransform="capitalize" fontWeight="medium">
-              {agent.specialization.replace('_', ' ')} Specialist
+            <Text fontSize="sm" color="gray.600" textTransform="capitalize" fontWeight="medium">
+              {agentConfig.assignedPage}
             </Text>
           </Box>
         </Flex>
         
-        <Text color="brand.neutral.600" fontSize="md" lineHeight="1.6" maxW="600px">
-          {agent.name === "Prospero" 
-            ? "Your intelligent lead nurturing assistant. Prospero analyzes contact data, identifies engagement opportunities, and provides personalized recommendations to help you convert prospects into loyal customers. Ask me anything about your contacts, lead strategies, or sales processes."
-            : agent.personality_description
-          }
+        <Text color="gray.600" fontSize="md" lineHeight="1.6" maxW="600px">
+          {agentConfig.personality_description}
         </Text>
         
         <Button
-          leftIcon={<Icon as={FiMessageCircle} color="brand.accent" />}
-          bg="brand.primary"
-          color="brand.accent"
+          leftIcon={<Icon as={FiMessageCircle} color={AI_BRAND_COLORS.accent} />}
+          bg={AI_BRAND_COLORS.primary}
+          color={AI_BRAND_COLORS.accent}
           fontWeight="bold"
-          _hover={{ bg: "brand.600" }}
-          _active={{ bg: "brand.700" }}
+          _hover={{ bg: AI_BRAND_COLORS.hover }}
+          _active={{ bg: AI_BRAND_COLORS.hover }}
           onClick={handleAskQuestion}
           size="lg"
           px={8}
@@ -223,7 +125,7 @@ export const AIAgentSection: React.FC<AIAgentSectionProps> = ({
         <ModalOverlay />
         <ModalContent maxW="800px" h="500px">
           <ModalHeader>
-            Chat with {agent?.name} - {agent?.specialization.replace('_', ' ')} Specialist
+            Chat with {agent?.name} - {agentConfig.assignedPage}
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody p={0}>

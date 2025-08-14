@@ -51,6 +51,7 @@ import {
 import { Layout } from "../components/Layout";
 import { AIAgentSection } from "../components/AIAgentSection";
 import api from "../services/api";
+import { getAgentConfig, AI_BRAND_COLORS } from '../utils/aiAgentConfig';
 import {
   FiCpu, 
   FiEye, 

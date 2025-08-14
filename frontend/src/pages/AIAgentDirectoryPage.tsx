@@ -31,6 +31,7 @@ import {
 import { Layout } from "../components/Layout";
 import api from "../services/api";
 import { AIAgentCard } from "../components/AIAgentCard";
+import { getAgentConfig, getSpecializationLabel, AI_BRAND_COLORS } from '../utils/aiAgentConfig';
 
 interface AIAgent {
   id: string;
