@@ -80,7 +80,7 @@ export default function AIChatPage() {
     'Curator': { icon: FiAward, color: 'yellow', page: 'Template Curation' },
     'Planner': { icon: FiBriefcase, color: 'gray', page: 'Project Management' },
     'Strategist': { icon: FiTarget, color: 'red', page: 'Marketing Strategy' },
-    'Optimizer': { icon: FiTrendingUp, color: 'green', page: 'Campaign Optimization' },
+    'Catalyst': { icon: FiTrendingUp, color: 'green', page: 'Campaign Optimization' },
   };
 
   useEffect(() => {
@@ -246,8 +246,8 @@ export default function AIChatPage() {
                       colorScheme="green"
                       variant="outline"
                       onClick={() => {
-                        const optimizer = agents.find(a => a.name === 'Optimizer');
-                        if (optimizer) handleAgentSelect(optimizer);
+                            const catalyst = agents.find(a => a.name === 'Catalyst');
+    if (catalyst) handleAgentSelect(catalyst);
                       }}
                     >
                       Optimize Campaigns
