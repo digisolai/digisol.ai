@@ -47,11 +47,8 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         try:
-            # Save campaign without tenant since we removed tenant model
-            if hasattr(self.request, 'user') and self.request.user.is_authenticated:
-                serializer.save(created_by=self.request.user)
-            else:
-                serializer.save(created_by=None)
+            # Save campaign - the serializer will handle user assignment
+            serializer.save()
         except Exception as e:
             raise Exception(f"Error creating campaign: {str(e)}")
     
