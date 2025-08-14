@@ -17,10 +17,10 @@ from django.views.static import serve
 
 @csrf_exempt
 def health_check(request):
-    """Simple health check endpoint"""
+    """Simple health check endpoint - Updated for campaigns deployment"""
     return JsonResponse({
         'status': 'healthy',
-        'message': 'DigiSol.AI backend is running',
+        'message': 'DigiSol.AI backend is running with campaigns fixes',
         'timestamp': timezone.now().isoformat()
     })
 
