@@ -1170,11 +1170,11 @@ export default function HomePage() {
                      <Text as="span" color="brand.accent">.AI</Text>
                    </Heading>
                  </HStack>
-                <Text color="gray.400" maxW="md">
+                <Text color="brand.accent" maxW="md">
                   The complete AI-powered marketing platform for B2B organizations. 
                   Transform your marketing operations with intelligent automation and insights.
                 </Text>
-                <VStack align="start" spacing={2} color="gray.400" fontSize="sm">
+                <VStack align="start" spacing={2} color="brand.accent" fontSize="sm">
                   <HStack spacing={2}>
                     <Icon as={FiMail} boxSize={4} />
                     <Text>admin@digisolai.ca</Text>
@@ -1196,7 +1196,7 @@ export default function HomePage() {
                 <Heading size="md">Product</Heading>
                 <VStack align="start" spacing={2}>
                   <Link 
-                    color="gray.400" 
+                    color="brand.accent" 
                     _hover={{ color: "white" }}
                     onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })}
                     cursor="pointer"
@@ -1204,7 +1204,7 @@ export default function HomePage() {
                     Features
                   </Link>
                   <Link 
-                    color="gray.400" 
+                    color="brand.accent" 
                     _hover={{ color: "white" }}
                     onClick={() => document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' })}
                     cursor="pointer"
@@ -1212,7 +1212,7 @@ export default function HomePage() {
                     Pricing
                   </Link>
                   <Link 
-                    color="gray.400" 
+                    color="brand.accent" 
                     _hover={{ color: "white" }}
                     onClick={() => navigate('/integrations')}
                     cursor="pointer"
@@ -1220,7 +1220,7 @@ export default function HomePage() {
                     Integrations
                   </Link>
                   <Link 
-                    color="gray.400" 
+                    color="brand.accent" 
                     _hover={{ color: "white" }}
                     cursor="pointer"
                   >
@@ -1235,7 +1235,7 @@ export default function HomePage() {
                 <Heading size="md">Company</Heading>
                 <VStack align="start" spacing={2}>
                   <Link 
-                    color="gray.400" 
+                    color="brand.accent" 
                     _hover={{ color: "white" }}
                     onClick={() => navigate('/about')}
                     cursor="pointer"
@@ -1243,21 +1243,21 @@ export default function HomePage() {
                     About
                   </Link>
                   <Link 
-                    color="gray.400" 
+                    color="brand.accent" 
                     _hover={{ color: "white" }}
                     cursor="pointer"
                   >
                     Blog
                   </Link>
                   <Link 
-                    color="gray.400" 
+                    color="brand.accent" 
                     _hover={{ color: "white" }}
                     cursor="pointer"
                   >
                     Careers
                   </Link>
                   <Link 
-                    color="gray.400" 
+                    color="brand.accent" 
                     _hover={{ color: "white" }}
                     onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
                     cursor="pointer"
@@ -1273,28 +1273,28 @@ export default function HomePage() {
                 <Heading size="md">Support</Heading>
                 <VStack align="start" spacing={2}>
                   <Link 
-                    color="gray.400" 
+                    color="brand.accent" 
                     _hover={{ color: "white" }}
                     cursor="pointer"
                   >
                     Help Center
                   </Link>
                   <Link 
-                    color="gray.400" 
+                    color="brand.accent" 
                     _hover={{ color: "white" }}
                     cursor="pointer"
                   >
                     Documentation
                   </Link>
                   <Link 
-                    color="gray.400" 
+                    color="brand.accent" 
                     _hover={{ color: "white" }}
                     cursor="pointer"
                   >
                     Community
                   </Link>
                   <Link 
-                    color="gray.400" 
+                    color="brand.accent" 
                     _hover={{ color: "white" }}
                     cursor="pointer"
                   >
@@ -1313,17 +1313,17 @@ export default function HomePage() {
             align={{ base: "start", md: "center" }}
             gap={4}
           >
-            <Text color="gray.400" fontSize="sm">
+            <Text color="brand.accent" fontSize="sm">
               © 2024 DigiSol.AI. All rights reserved.
             </Text>
             <HStack spacing={6} mt={{ base: 4, md: 0 }}>
-              <Link color="gray.400" fontSize="sm" _hover={{ color: "white" }} cursor="pointer">
+              <Link color="brand.accent" fontSize="sm" _hover={{ color: "white" }} cursor="pointer">
                 Privacy Policy
               </Link>
-              <Link color="gray.400" fontSize="sm" _hover={{ color: "white" }} cursor="pointer">
+              <Link color="brand.accent" fontSize="sm" _hover={{ color: "white" }} cursor="pointer">
                 Terms of Service
               </Link>
-              <Link color="gray.400" fontSize="sm" _hover={{ color: "white" }} cursor="pointer">
+              <Link color="brand.accent" fontSize="sm" _hover={{ color: "white" }} cursor="pointer">
                 Cookie Policy
               </Link>
             </HStack>
