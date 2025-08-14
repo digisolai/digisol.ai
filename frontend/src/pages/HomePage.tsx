@@ -628,7 +628,7 @@ export default function HomePage() {
               {features.slice(0, 6).map((feature, index) => (
                 <Card
                   key={index}
-                  bg={cardBg}
+                  bg="gray.50"
                   border="1px solid"
                   borderColor={borderColor}
                   _hover={{ transform: "translateY(-4px)", boxShadow: "xl" }}
@@ -661,7 +661,7 @@ export default function HomePage() {
               {features.slice(6).map((feature, index) => (
                 <Card
                   key={index + 6}
-                  bg={cardBg}
+                  bg="gray.50"
                   border="1px solid"
                   borderColor={borderColor}
                   _hover={{ transform: "translateY(-4px)", boxShadow: "xl" }}
