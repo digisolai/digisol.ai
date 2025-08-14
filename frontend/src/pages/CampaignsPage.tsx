@@ -97,8 +97,10 @@ import { useAuth } from '../hooks/useAuth';
 import { useFeatureAccess } from '../hooks/useFeatureAccess';
 import { Layout } from '../components/Layout';
 import { PageLayout, SectionCard, SideCard } from '../components/PageLayout';
+import { AIAgentSection } from '../components/AIAgentSection';
 import ContextualAIChat from '../components/ContextualAIChat';
 import CampaignAnalytics from '../components/CampaignAnalytics';
+import type { AIProfile } from '../types/ai';
 
 const CAMPAIGN_TYPES = {
   email: { label: 'Email Campaign', icon: FiMail, color: 'brand.primary' },
@@ -135,11 +137,52 @@ export default function CampaignsPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState('all');
   
+  // AI Agent State
+  const [catalystAgent, setCatalystAgent] = useState<AIProfile | null>(null);
+  const [loadingAgent, setLoadingAgent] = useState(false);
+  const [agentError, setAgentError] = useState<string | null>(null);
+
   // Modals
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
   const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
   const { isOpen: isViewOpen, onOpen: onViewOpen, onClose: onViewClose } = useDisclosure();
-  const { isOpen: isAIChatOpen, onOpen: onAIChatOpen, onClose: onAIChatClose } = useDisclosure();
+  const { isOpen: isCatalystChatOpen, onOpen: onCatalystChatOpen, onClose: onCatalystChatClose } = useDisclosure();
+
+  // Load Catalyst AI Agent
+  const loadCatalystAgent = useCallback(async () => {
+    setLoadingAgent(true);
+    setAgentError(null);
+    try {
+      const res = await api.get('/ai-services/profiles/?specialization=campaign_optimization&is_global=true');
+      if (res.data && res.data.length > 0) {
+        setCatalystAgent(res.data[0]);
+      } else {
+        setCatalystAgent({
+          id: "catalyst",
+          name: "Catalyst",
+          specialization: "campaign_optimization",
+          personality_description: "Your intelligent campaign optimization assistant. Catalyst analyzes campaign performance, identifies optimization opportunities, and provides data-driven recommendations to improve your marketing ROI. Whether you need help with audience targeting, budget optimization, content strategy, or performance analysis, Catalyst is here to guide you with actionable insights.",
+          is_active: true
+        });
+      }
+    } catch (err: unknown) {
+      console.error("Failed to fetch Catalyst agent:", err);
+      setAgentError("Failed to load AI assistant");
+      setCatalystAgent({
+        id: "catalyst",
+        name: "Catalyst",
+        specialization: "campaign_optimization",
+        personality_description: "Your intelligent campaign optimization assistant. Catalyst analyzes campaign performance, identifies optimization opportunities, and provides data-driven recommendations to improve your marketing ROI. Whether you need help with audience targeting, budget optimization, content strategy, or performance analysis, Catalyst is here to guide you with actionable insights.",
+        is_active: true
+      });
+    } finally {
+      setLoadingAgent(false);
+    }
+  }, []);
+
+  const handleAskCatalyst = (question: string) => {
+    onCatalystChatOpen();
+  };
 
   // Load campaigns
   const loadCampaigns = useCallback(async () => {
@@ -209,7 +252,8 @@ export default function CampaignsPage() {
   useEffect(() => {
     loadCampaigns();
     loadStats();
-  }, [loadCampaigns, loadStats]);
+    loadCatalystAgent();
+  }, [loadCampaigns, loadStats, loadCatalystAgent]);
 
   // Create campaign
   const handleCreateCampaign = async (data: CampaignCreateData) => {
@@ -456,35 +500,14 @@ export default function CampaignsPage() {
     </Card>
   );
 
-  // Left Column - AI Assistant
+  // Left Column - Catalyst AI Assistant
   const leftColumn = (
-    <Card>
-      <CardHeader bg="brand.primary" color="white" borderTopRadius="md" py={3}>
-        <HStack>
-          <Icon as={FiZap} />
-          <Heading size="md">Campaign AI Assistant</Heading>
-        </HStack>
-      </CardHeader>
-      <CardBody>
-        <VStack spacing={4} align="stretch">
-          <Text fontSize="sm" color="gray.600">
-            Get AI-powered insights and recommendations for your campaigns.
-          </Text>
-          <Button
-            leftIcon={<FiZap />}
-            bg="brand.primary"
-            color="brand.accent"
-            fontWeight="bold"
-            _hover={{ bg: "brand.600" }}
-            _active={{ bg: "brand.700" }}
-            onClick={onAIChatOpen}
-            size="sm"
-          >
-            Chat with AI
-          </Button>
-        </VStack>
-      </CardBody>
-    </Card>
+    <AIAgentSection
+      agent={catalystAgent}
+      loading={loadingAgent}
+      error={agentError}
+      onAskQuestion={handleAskCatalyst}
+    />
   );
 
   // Center Column - Main Content
@@ -738,36 +761,36 @@ export default function CampaignsPage() {
         />
       )}
 
-      {/* AI Chat Modal */}
-      <Modal isOpen={isAIChatOpen} onClose={onAIChatClose} size="6xl" maxW="90vw">
-        <ModalOverlay />
-        <ModalContent maxH="70vh">
-          <ModalHeader>
-            <HStack>
-              <Icon as={FiZap} color="brand.primary" />
-              <Text>Chat with Campaign AI Assistant</Text>
-            </HStack>
-          </ModalHeader>
-          <ModalCloseButton />
-          <ModalBody p={0}>
-            <ContextualAIChat
-              agentId="campaign_optimizer"
-              agentName="Campaign Optimizer"
-              agentSpecialization="campaign_optimization"
-              pageContext="campaigns"
-              pageData={{ 
-                campaigns,
-                selectedCampaign,
-                stats
-              }}
-              onClose={onAIChatClose}
-            />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
-    </Layout>
-  );
-}
+             {/* Catalyst AI Chat Modal */}
+       <Modal isOpen={isCatalystChatOpen} onClose={onCatalystChatClose} size="6xl">
+         <ModalOverlay />
+         <ModalContent maxH="70vh">
+           <ModalHeader>
+             <HStack>
+               <Icon as={FiTrendingUp} color="brand.primary" />
+               <Text>Chat with Catalyst AI</Text>
+             </HStack>
+           </ModalHeader>
+           <ModalCloseButton />
+           <ModalBody p={0}>
+             <ContextualAIChat
+               agentId="catalyst"
+               agentName="Catalyst"
+               agentSpecialization="campaign_optimization"
+               pageContext="campaigns"
+               pageData={{ 
+                 campaigns,
+                 selectedCampaign,
+                 stats
+               }}
+               onClose={onCatalystChatClose}
+             />
+           </ModalBody>
+         </ModalContent>
+       </Modal>
+     </Layout>
+   );
+ }
 
 // Modal Components
 function CreateCampaignModal({ isOpen, onClose, onSubmit }: {
