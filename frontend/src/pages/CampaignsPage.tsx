@@ -139,7 +139,7 @@ export default function CampaignsPage() {
   const [activeTab, setActiveTab] = useState('all');
   
   // AI Agent State
-  const [catalystAgent, setCatalystAgent] = useState<AIProfile | null>(null);
+  const [optimizerAgent, setOptimizerAgent] = useState<AIProfile | null>(null);
   const [loadingAgent, setLoadingAgent] = useState(false);
   const [agentError, setAgentError] = useState<string | null>(null);
 
@@ -147,35 +147,35 @@ export default function CampaignsPage() {
   const { isOpen: isCreateOpen, onOpen: onCreateOpen, onClose: onCreateClose } = useDisclosure();
   const { isOpen: isEditOpen, onOpen: onEditOpen, onClose: onEditClose } = useDisclosure();
   const { isOpen: isViewOpen, onOpen: onViewOpen, onClose: onViewClose } = useDisclosure();
-  const { isOpen: isCatalystChatOpen, onOpen: onCatalystChatOpen, onClose: onCatalystChatClose } = useDisclosure();
+  const { isOpen: isOptimizerChatOpen, onOpen: onOptimizerChatOpen, onClose: onOptimizerChatClose } = useDisclosure();
 
-  // Load Catalyst AI Agent
-  const loadCatalystAgent = useCallback(async () => {
+  // Load Optimizer AI Agent
+  const loadOptimizerAgent = useCallback(async () => {
     setLoadingAgent(true);
     setAgentError(null);
     try {
       const res = await api.get('/ai-services/profiles/?specialization=campaign_optimization&is_global=true');
       if (res.data && res.data.length > 0) {
-        setCatalystAgent(res.data[0]);
+        setOptimizerAgent(res.data[0]);
       } else {
-        const catalystConfig = getAgentConfig('Catalyst');
-        setCatalystAgent({
-          id: "catalyst",
-          name: "Catalyst",
+        const optimizerConfig = getAgentConfig('Optimizer');
+        setOptimizerAgent({
+          id: "optimizer",
+          name: "Optimizer",
           specialization: "campaign_optimization",
-          personality_description: catalystConfig.personality_description,
+          personality_description: optimizerConfig.personality_description,
           is_active: true
         });
       }
     } catch (err: unknown) {
-      console.error("Failed to fetch Catalyst agent:", err);
+      console.error("Failed to fetch Optimizer agent:", err);
       setAgentError("Failed to load AI assistant");
-      const catalystConfig = getAgentConfig('Catalyst');
-      setCatalystAgent({
-        id: "catalyst",
-        name: "Catalyst",
+      const optimizerConfig = getAgentConfig('Optimizer');
+      setOptimizerAgent({
+        id: "optimizer",
+        name: "Optimizer",
         specialization: "campaign_optimization",
-        personality_description: catalystConfig.personality_description,
+        personality_description: optimizerConfig.personality_description,
         is_active: true
       });
     } finally {
@@ -183,8 +183,8 @@ export default function CampaignsPage() {
     }
   }, []);
 
-  const handleAskCatalyst = (question: string) => {
-    onCatalystChatOpen();
+  const handleAskOptimizer = (question: string) => {
+    onOptimizerChatOpen();
   };
 
   // Load campaigns
@@ -255,8 +255,8 @@ export default function CampaignsPage() {
   useEffect(() => {
     loadCampaigns();
     loadStats();
-    loadCatalystAgent();
-  }, [loadCampaigns, loadStats, loadCatalystAgent]);
+    loadOptimizerAgent();
+  }, [loadCampaigns, loadStats, loadOptimizerAgent]);
 
   // Create campaign
   const handleCreateCampaign = async (data: CampaignCreateData) => {
@@ -503,13 +503,13 @@ export default function CampaignsPage() {
     </Card>
   );
 
-  // Left Column - Catalyst AI Assistant
+  // Left Column - Optimizer AI Assistant
   const leftColumn = (
     <AIAgentSection
-      agent={catalystAgent}
+      agent={optimizerAgent}
       loading={loadingAgent}
       error={agentError}
-      onAskQuestion={handleAskCatalyst}
+      onAskQuestion={handleAskOptimizer}
     />
   );
 
@@ -764,21 +764,21 @@ export default function CampaignsPage() {
         />
       )}
 
-             {/* Catalyst AI Chat Modal */}
-       <Modal isOpen={isCatalystChatOpen} onClose={onCatalystChatClose} size="6xl">
+             {/* Optimizer AI Chat Modal */}
+       <Modal isOpen={isOptimizerChatOpen} onClose={onOptimizerChatClose} size="6xl">
          <ModalOverlay />
          <ModalContent maxH="70vh">
            <ModalHeader>
              <HStack>
-               <Icon as={getAgentConfig('Catalyst').icon} color={AI_BRAND_COLORS.primary} />
-               <Text>Chat with Catalyst AI</Text>
+               <Icon as={getAgentConfig('Optimizer').icon} color={AI_BRAND_COLORS.primary} />
+               <Text>Chat with Optimizer AI</Text>
              </HStack>
            </ModalHeader>
            <ModalCloseButton />
            <ModalBody p={0}>
              <ContextualAIChat
-               agentId="catalyst"
-               agentName="Catalyst"
+               agentId="optimizer"
+               agentName="Optimizer"
                agentSpecialization="campaign_optimization"
                pageContext="campaigns"
                pageData={{ 
@@ -786,7 +786,7 @@ export default function CampaignsPage() {
                  selectedCampaign,
                  stats
                }}
-               onClose={onCatalystChatClose}
+               onClose={onOptimizerChatClose}
              />
            </ModalBody>
          </ModalContent>

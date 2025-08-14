@@ -98,12 +98,12 @@ class Command(BaseCommand):
                 "personality_description": "Strategic, market-aware, and growth-focused. Strategist develops comprehensive marketing strategies that drive business growth.",
                 "is_active": True
             },
-            {
-                    "name": "Catalyst",
-    "specialization": "campaign_optimization",
-    "personality_description": "Data-driven, performance-focused, and continuously improving. Catalyst analyzes campaign performance and suggests optimizations for better results.",
-                "is_active": True
-            }
+                         {
+                 "name": "Optimizer",
+                 "specialization": "campaign_optimization",
+                 "personality_description": "Data-driven, performance-focused, and continuously improving. Optimizer analyzes campaign performance and suggests optimizations for better results.",
+                 "is_active": True
+             }
         ]
         
         created_count = 0
