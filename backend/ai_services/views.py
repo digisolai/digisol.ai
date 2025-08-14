@@ -65,10 +65,19 @@ class GeminiChatView(APIView):
             if not settings.GOOGLE_GEMINI_API_KEY:
                 return Response(
                     {
-                        'error': 'Gemini API not configured',
-                        'message': 'AI chat features are currently unavailable'
+                        'available_agents': [
+                            {
+                                'id': 1,
+                                'name': 'Marketing Assistant',
+                                'specialization': 'Marketing Strategy',
+                                'personality_description': 'Professional marketing expert',
+                                'api_model_name': 'gemini-1.5-pro',
+                                'status': 'demo_mode'
+                            }
+                        ],
+                        'message': 'Demo mode - AI features will be available once API key is configured'
                     },
-                    status=status.HTTP_503_SERVICE_UNAVAILABLE
+                    status=status.HTTP_200_OK
                 )
             
             # Get available AI agents (global agents have tenant=None)
@@ -116,10 +125,12 @@ class GeminiChatView(APIView):
             if not settings.GOOGLE_GEMINI_API_KEY:
                 return Response(
                     {
-                        'error': 'Gemini API not configured',
-                        'message': 'Please configure the Gemini API key in settings'
+                        'response': 'I\'m currently in demo mode. To enable full AI chat functionality, please configure the Gemini API key in the backend settings.',
+                        'agent_name': agent_name or 'Demo Assistant',
+                        'demo_mode': True,
+                        'message': 'Demo mode - AI features will be available once API key is configured'
                     },
-                    status=status.HTTP_503_SERVICE_UNAVAILABLE
+                    status=status.HTTP_200_OK
                 )
             
             # Check quota status

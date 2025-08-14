@@ -4,7 +4,7 @@ services:
     env: python
     plan: starter
     rootDir: backend
-    buildCommand: pip install -r requirements_render.txt && python manage.py migrate --settings=digisol_ai.settings_render --noinput && python manage.py reset_production_db --settings=digisol_ai.settings_render --force
+    buildCommand: pip install -r requirements_render.txt && python manage.py migrate --settings=digisol_ai.settings_render --noinput
     startCommand: gunicorn digisol_ai.wsgi:application --bind 0.0.0.0:$PORT --env DJANGO_SETTINGS_MODULE=digisol_ai.settings_render --workers 2 --timeout 120 --max-requests 1000 --max-requests-jitter 100
     healthCheckPath: /health/
     envVars:
@@ -17,7 +17,7 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: ALLOWED_HOSTS
-        value: digisol-backend.onrender.com
+        value: digisol-backend.onrender.com,www.digisolai.ca,digisolai.ca
       - key: CORS_ALLOWED_ORIGINS
         value: https://www.digisolai.ca,https://digisolai.ca,https://digisolai.netlify.app
       - key: CORS_ALLOW_CREDENTIALS
@@ -41,8 +41,6 @@ services:
           type: redis
           name: digisol-redis
           property: connectionString
-      - key: DATABASE_URL
-        sync: false
       - key: DB_NAME
         sync: false
       - key: DB_USER
@@ -53,23 +51,41 @@ services:
         sync: false
       - key: DB_PORT
         value: 5432
-      - key: DB_NAME
+      - key: AWS_ACCESS_KEY_ID
         sync: false
-      - key: DB_USER
+      - key: AWS_SECRET_ACCESS_KEY
         sync: false
-      - key: DB_PASSWORD
+      - key: AWS_STORAGE_BUCKET_NAME
         sync: false
-      - key: DB_HOST
+      - key: AWS_S3_REGION_NAME
+        value: us-east-1
+      - key: EMAIL_HOST
+        value: smtp.gmail.com
+      - key: EMAIL_PORT
+        value: 587
+      - key: EMAIL_HOST_USER
         sync: false
-      - key: DB_PORT
-        value: 5432
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: EMAIL_USE_TLS
+        value: true
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLIC_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: GOOGLE_ANALYTICS_ID
+        value: G-LMPEPV6KES
+      - key: GOOGLE_ANALYTICS_MEASUREMENT_ID
+        value: G-LMPEPV6KES
 
   - type: worker
     name: digisol-celery-worker
     env: python
     plan: free
     rootDir: backend
-    buildCommand: pip install -r requirements_render.txt && python manage.py migrate --settings=digisol_ai.settings_render --noinput && python manage.py reset_production_db --settings=digisol_ai.settings_render --force
+    buildCommand: pip install -r requirements_render.txt && python manage.py migrate --settings=digisol_ai.settings_render --noinput
     startCommand: celery -A digisol_ai worker --loglevel=info
     envVars:
       - key: PYTHON_VERSION
@@ -88,8 +104,31 @@ services:
           type: redis
           name: digisol-redis
           property: connectionString
-      - key: DATABASE_URL
-        sync: false
+      - key: DB_NAME
+        fromService:
+          type: web
+          name: digisol-backend
+          envVarKey: DB_NAME
+      - key: DB_USER
+        fromService:
+          type: web
+          name: digisol-backend
+          envVarKey: DB_USER
+      - key: DB_PASSWORD
+        fromService:
+          type: web
+          name: digisol-backend
+          envVarKey: DB_PASSWORD
+      - key: DB_HOST
+        fromService:
+          type: web
+          name: digisol-backend
+          envVarKey: DB_HOST
+      - key: DB_PORT
+        fromService:
+          type: web
+          name: digisol-backend
+          envVarKey: DB_PORT
 
   - type: redis
     name: digisol-redis
