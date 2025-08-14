@@ -801,7 +801,7 @@ export default function HomePage() {
               {testimonials.map((testimonial, index) => (
                 <Card
                   key={index}
-                  bg={cardBg}
+                  bg="gray.50"
                   border="1px solid"
                   borderColor={borderColor}
                   p={6}
