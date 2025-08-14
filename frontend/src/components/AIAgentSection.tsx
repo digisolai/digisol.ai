@@ -92,37 +92,37 @@ const getAgentIcon = (specialization: string) => {
 const getAgentColor = (specialization: string) => {
   switch (specialization) {
     case 'marketing_strategy':
-      return 'blue.500';
+      return 'brand.primary';
     case 'budget_analysis':
-      return 'green.500';
+      return 'brand.accent';
     case 'content_creation':
-      return 'purple.500';
+      return 'brand.primary';
     case 'campaign_optimization':
-      return 'orange.500';
+      return 'brand.primary';
     case 'lead_nurturing':
-      return 'teal.500';
+      return 'brand.accent';
     case 'general_orchestration':
       return 'brand.primary';
     case 'data_analysis':
-      return 'cyan.500';
+      return 'brand.primary';
     case 'hr_management':
-      return 'pink.500';
+      return 'brand.accent';
     case 'integrations_management':
-      return 'gray.500';
+      return 'brand.primary';
     case 'learning_guidance':
-      return 'yellow.500';
+      return 'brand.accent';
     case 'reporting_insights':
-      return 'indigo.500';
+      return 'brand.primary';
     case 'organizational_planning':
       return 'brand.primary';
     case 'automation_design':
-      return 'red.500';
+      return 'brand.accent';
     case 'brand_identity':
       return 'brand.accent';
     case 'template_curation':
-      return 'blue.400';
+      return 'brand.primary';
     case 'project_management':
-      return 'green.400';
+      return 'brand.accent';
     default:
       return 'brand.primary';
   }
@@ -203,9 +203,9 @@ export const AIAgentSection: React.FC<AIAgentSectionProps> = ({
         </Text>
         
         <Button
-          leftIcon={<Icon as={FiMessageCircle} />}
+          leftIcon={<Icon as={FiMessageCircle} color="brand.accent" />}
           bg="brand.primary"
-          color="white"
+          color="brand.accent"
           fontWeight="bold"
           _hover={{ bg: "brand.600" }}
           _active={{ bg: "brand.700" }}
