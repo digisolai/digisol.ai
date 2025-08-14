@@ -18,6 +18,7 @@ import {
 } from '@chakra-ui/react';
 import { FiSend, FiUser, FiCpu, FiZap } from 'react-icons/fi';
 import api from '../services/api';
+import { getAgentConfig, AI_BRAND_COLORS } from '../utils/aiAgentConfig';
 
 interface Message {
   id: string;
@@ -43,6 +44,8 @@ export default function AIChatInterface({
   agentSpecialization = 'general',
   onClose
 }: AIChatInterfaceProps) {
+  // Get agent configuration from centralized config
+  const agentConfig = getAgentConfig(agentName);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -203,14 +206,21 @@ export default function AIChatInterface({
       <Card h="300px" display="flex" flexDirection="column">
         <CardBody p={0} display="flex" flexDirection="column">
           {/* Header */}
-          <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg="brand.50">
-            <HStack>
-              <Avatar size="sm" bg="brand.primary" icon={<Icon as={FiCpu} />} />
-              <VStack align="start" spacing={0}>
-                <Text fontWeight="bold">{agentName}</Text>
-                <Badge colorScheme="blue" size="sm">{agentSpecialization}</Badge>
-              </VStack>
-            </HStack>
+          <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg={AI_BRAND_COLORS.light}>
+            <VStack align="start" spacing={2}>
+              <HStack>
+                <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={agentConfig.icon} color={AI_BRAND_COLORS.accent} />} />
+                <VStack align="start" spacing={0}>
+                  <Text fontWeight="bold" color={AI_BRAND_COLORS.primary}>{agentName}</Text>
+                  <Badge colorScheme="blue" variant="subtle" size="sm">
+                    {agentConfig.assignedPage}
+                  </Badge>
+                </VStack>
+              </HStack>
+              <Text fontSize="sm" color="gray.600" lineHeight="1.4">
+                {agentConfig.personality_description}
+              </Text>
+            </VStack>
           </Box>
           
           {/* Loading State */}
@@ -234,14 +244,21 @@ export default function AIChatInterface({
       <Card h="300px" display="flex" flexDirection="column">
         <CardBody p={0} display="flex" flexDirection="column">
           {/* Header */}
-          <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg="brand.50">
-            <HStack>
-              <Avatar size="sm" bg="brand.primary" icon={<Icon as={FiCpu} />} />
-              <VStack align="start" spacing={0}>
-                <Text fontWeight="bold">{agentName}</Text>
-                <Badge colorScheme="blue" size="sm">{agentSpecialization}</Badge>
-              </VStack>
-            </HStack>
+          <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg={AI_BRAND_COLORS.light}>
+            <VStack align="start" spacing={2}>
+              <HStack>
+                <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={agentConfig.icon} color={AI_BRAND_COLORS.accent} />} />
+                <VStack align="start" spacing={0}>
+                  <Text fontWeight="bold" color={AI_BRAND_COLORS.primary}>{agentName}</Text>
+                  <Badge colorScheme="blue" variant="subtle" size="sm">
+                    {agentConfig.assignedPage}
+                  </Badge>
+                </VStack>
+              </HStack>
+              <Text fontSize="sm" color="gray.600" lineHeight="1.4">
+                {agentConfig.personality_description}
+              </Text>
+            </VStack>
           </Box>
           
           {/* Authentication Required Message */}
@@ -269,14 +286,21 @@ export default function AIChatInterface({
     <Card h="300px" display="flex" flexDirection="column">
       <CardBody p={0} display="flex" flexDirection="column">
         {/* Header */}
-        <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg="brand.50">
-          <HStack>
-            <Avatar size="sm" bg="brand.primary" icon={<Icon as={FiCpu} />} />
-            <VStack align="start" spacing={0}>
-              <Text fontWeight="bold">{agentName}</Text>
-              <Badge colorScheme="blue" size="sm">{agentSpecialization}</Badge>
-            </VStack>
-          </HStack>
+        <Box p={4} borderBottom="1px solid" borderColor="gray.200" bg={AI_BRAND_COLORS.light}>
+          <VStack align="start" spacing={2}>
+            <HStack>
+              <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={agentConfig.icon} color={AI_BRAND_COLORS.accent} />} />
+              <VStack align="start" spacing={0}>
+                <Text fontWeight="bold" color={AI_BRAND_COLORS.primary}>{agentName}</Text>
+                <Badge colorScheme="blue" variant="subtle" size="sm">
+                  {agentConfig.assignedPage}
+                </Badge>
+              </VStack>
+            </HStack>
+            <Text fontSize="sm" color="gray.600" lineHeight="1.4">
+              {agentConfig.personality_description}
+            </Text>
+          </VStack>
         </Box>
 
         {/* Messages */}
@@ -304,11 +328,11 @@ export default function AIChatInterface({
             >
               <HStack spacing={2} align="start">
                 {message.role === 'ai_agent' && (
-                  <Avatar size="sm" bg="brand.primary" icon={<Icon as={FiCpu} />} />
+                  <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={agentConfig.icon} color={AI_BRAND_COLORS.accent} />} />
                 )}
                 <Box
-                  bg={message.role === 'user' ? 'brand.primary' : 'gray.100'}
-                  color={message.role === 'user' ? 'white' : 'black'}
+                  bg={message.role === 'user' ? AI_BRAND_COLORS.primary : 'gray.100'}
+                  color={message.role === 'user' ? AI_BRAND_COLORS.accent : 'black'}
                   p={3}
                   borderRadius="lg"
                   maxW="100%"
@@ -328,10 +352,10 @@ export default function AIChatInterface({
           {isLoading && (
             <Box alignSelf="flex-start">
               <HStack spacing={2}>
-                <Avatar size="sm" bg="brand.primary" icon={<Icon as={FiCpu} />} />
+                <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={agentConfig.icon} color={AI_BRAND_COLORS.accent} />} />
                 <Box bg="gray.100" p={3} borderRadius="lg">
                   <HStack>
-                    <Spinner size="sm" color="brand.primary" />
+                    <Spinner size="sm" color={AI_BRAND_COLORS.primary} />
                     <Text fontSize="sm">Thinking...</Text>
                   </HStack>
                 </Box>

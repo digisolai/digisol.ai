@@ -201,7 +201,7 @@ class GeminiChatView(APIView):
             agent_personalities = {
                 'lead_nurturing': 'A lead nurturing specialist who develops personalized engagement strategies to convert prospects into customers through targeted communication.',
                 'brand_identity': 'Creative, visually-driven, and brand-conscious. Helps develop and maintain a cohesive brand identity across all touchpoints.',
-                'campaign_optimization': 'Data-driven campaign optimizer who analyzes performance metrics and provides actionable recommendations to improve ROI.',
+                'campaign_optimization': 'Data-driven campaign optimization assistant who analyzes performance metrics and provides actionable recommendations to improve ROI.',
                 'budget_analysis': 'Financial expert who provides insights on budget allocation, cost optimization, and ROI analysis.',
                 'content_creation': 'Creative content specialist who crafts engaging, brand-aligned content across all channels.',
                 'general': 'A helpful AI assistant specializing in marketing and business strategy.'

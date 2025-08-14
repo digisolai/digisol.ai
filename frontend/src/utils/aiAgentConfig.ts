@@ -184,10 +184,10 @@ export const getSpecializationLabel = (specialization: string) => {
   return specialization.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 };
 
-// AI brand colors (blue background, yellow text)
+// AI brand colors (deep sapphire background, yellow text)
 export const AI_BRAND_COLORS = {
-  primary: '#1E40AF', // Blue background
+  primary: '#1F4287', // Deep sapphire background (same as sidebar)
   accent: '#FCD34D',  // Yellow text
-  hover: '#1D4ED8',   // Darker blue for hover
+  hover: '#1E3A8A',   // Darker sapphire for hover
   light: '#DBEAFE'    // Light blue for backgrounds
 };

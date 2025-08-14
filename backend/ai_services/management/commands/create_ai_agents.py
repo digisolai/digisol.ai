@@ -99,9 +99,9 @@ class Command(BaseCommand):
                 "is_active": True
             },
             {
-                "name": "Optimizer",
-                "specialization": "campaign_optimization",
-                "personality_description": "Data-driven, performance-focused, and continuously improving. Optimizer analyzes campaign performance and suggests optimizations for better results.",
+                    "name": "Catalyst",
+    "specialization": "campaign_optimization",
+    "personality_description": "Data-driven, performance-focused, and continuously improving. Catalyst analyzes campaign performance and suggests optimizations for better results.",
                 "is_active": True
             }
         ]
