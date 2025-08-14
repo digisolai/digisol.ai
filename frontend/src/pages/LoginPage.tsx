@@ -135,7 +135,7 @@ export default function LoginPage() {
             type="submit"
             colorScheme="brand"
             bg="brand.primary"
-            color="white"
+            color="brand.accent"
             isLoading={loading}
             _hover={{ bg: "#163166" }}
             size="lg"
