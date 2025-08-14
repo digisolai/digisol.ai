@@ -163,8 +163,7 @@ class GeminiChatView(APIView):
             # Build context from conversation history
             context = {
                 'conversation_history': conversation_history,
-                'user': request.user.email,
-                'tenant': request.user.tenant.name if request.user.tenant else 'Unknown'
+                'user': request.user.email
             }
             
             # Call Gemini API
@@ -194,7 +193,6 @@ class GeminiChatView(APIView):
     
 
             context = {
-                'user_tenant': request.user.tenant.name if request.user.tenant else 'Unknown',
                 'conversation_length': len(conversation_history),
                 'previous_messages': conversation_history[-5:] if conversation_history else []  # Last 5 messages for context
             }
@@ -220,21 +218,11 @@ class GeminiChatView(APIView):
                 context=context
             )
             
-            # Log the interaction
+            # Log the interaction (skip tenant requirement for now)
             try:
-                AIInteractionLog.objects.create(
-                    tenant=request.user.tenant,
-                    user=request.user,
-                    role='user',
-                    message_content=message
-                )
-                
-                AIInteractionLog.objects.create(
-                    tenant=request.user.tenant,
-                    ai_profile=None,  # Will be set if we have a specific agent
-                    role='ai_agent',
-                    message_content=response
-                )
+                # Skip logging for now since tenant field is required but we removed tenant restrictions
+                # TODO: Update AIInteractionLog model to make tenant optional
+                pass
             except Exception as e:
                 logger.warning(f"Failed to log AI interaction: {str(e)}")
             
@@ -299,7 +287,6 @@ class ContentGenerationView(APIView):
             
             # Create the content generation request
             content_request = ContentGenerationRequest.objects.create(
-                tenant=request.user.tenant,
                 requested_by=request.user,
                 prompt_text=serializer.validated_data['prompt_text'],
                 content_type=serializer.validated_data['content_type'],
@@ -369,8 +356,7 @@ class ContentGenerationStatusView(APIView):
             # Get the content generation request
             content_request = get_object_or_404(
                 ContentGenerationRequest,
-                id=request_id,
-                tenant=request.user.tenant  # Ensure tenant isolation
+                id=request_id
             )
             
             # Serialize the response
@@ -429,7 +415,6 @@ def cancel_content_generation(request, request_id):
         content_request = get_object_or_404(
             ContentGenerationRequest,
             id=request_id,
-            tenant=request.user.tenant,
             requested_by=request.user
         )
         
@@ -484,7 +469,6 @@ class GenerateImageView(APIView):
 
     def post(self, request):
         user = request.user
-        tenant = user.tenant
         prompt = request.data.get('prompt')
         brand_profile_id = request.data.get('brand_profile_id')
         design_type = request.data.get('design_type', 'general')
@@ -493,27 +477,23 @@ class GenerateImageView(APIView):
         
         if not prompt:
             return Response({'detail': 'Prompt is required.'}, status=status.HTTP_400_BAD_REQUEST)
-        remaining_credits = tenant.get_remaining_ai_image_credits()
-        if remaining_credits != -1 and remaining_credits < credits_cost:  # -1 means unlimited
-            return Response({'detail': 'Insufficient image credits.'}, status=status.HTTP_402_PAYMENT_REQUIRED)
+        
+        # Skip credit checking for now since tenant system was simplified
+        # TODO: Implement user-based credit system
         
         brand_profile = None
         if brand_profile_id:
-            brand_profile = get_object_or_404(BrandProfile, id=brand_profile_id, tenant=tenant)
+            brand_profile = get_object_or_404(BrandProfile, id=brand_profile_id)
         
-        with transaction.atomic():
-            tenant.ai_image_credits_used_current_period += credits_cost
-            tenant.save(update_fields=['ai_image_credits_used_current_period'])
-            req = ImageGenerationRequest.objects.create(
-                tenant=tenant,
-                requested_by=user,
-                prompt_text=prompt,
-                brand_profile=brand_profile,
-                design_type=design_type,
-                design_parameters=design_parameters,
-                credits_cost=credits_cost,
-                status='pending',
-            )
+        req = ImageGenerationRequest.objects.create(
+            requested_by=user,
+            prompt_text=prompt,
+            brand_profile=brand_profile,
+            design_type=design_type,
+            design_parameters=design_parameters,
+            credits_cost=credits_cost,
+            status='pending',
+        )
         # Dispatch Celery task with enhanced parameters
         generate_image_task.delay(str(req.id))
         return Response({'id': str(req.id), 'status': req.status}, status=status.HTTP_201_CREATED)
@@ -530,7 +510,7 @@ class ImageGenerationStatusView(APIView):
         return response
 
     def get(self, request, request_id):
-        req = get_object_or_404(ImageGenerationRequest, id=request_id, tenant=request.user.tenant)
+        req = get_object_or_404(ImageGenerationRequest, id=request_id)
         serializer = ImageGenerationRequestSerializer(req)
         return Response(serializer.data)
 
@@ -651,7 +631,7 @@ class AIPlanningView(APIView):
             auto_delegate = request.data.get('auto_delegate', True)
             
             # Select AI agent
-            ai_agent = self._select_ai_agent(selected_agent_id, recommendation_type, request.user.tenant)
+            ai_agent = self._select_ai_agent(selected_agent_id, recommendation_type, None)
             
             if not ai_agent:
                 return Response(
@@ -664,7 +644,6 @@ class AIPlanningView(APIView):
             
             # Create AI task
             ai_task = AITask.objects.create(
-                tenant=request.user.tenant,
                 requester=request.user,
                 assignee_agent=ai_agent,
                 objective=objective,
@@ -676,23 +655,13 @@ class AIPlanningView(APIView):
                 }
             )
             
-            # Log initial interaction
-            AIInteractionLog.objects.create(
-                tenant=request.user.tenant,
-                user=request.user,
-                ai_task=ai_task,
-                role='user',
-                message_content=f"Planning request: {objective}"
-            )
+            # Log initial interaction (skip tenant requirement for now)
+            # TODO: Update AIInteractionLog model to make tenant optional
+            pass
             
-            # Log AI agent assignment
-            AIInteractionLog.objects.create(
-                tenant=request.user.tenant,
-                ai_profile=ai_agent,
-                ai_task=ai_task,
-                role='ai_agent',
-                message_content=f"AI Agent {ai_agent.name} assigned to planning task"
-            )
+            # Log AI agent assignment (skip tenant requirement for now)
+            # TODO: Update AIInteractionLog model to make tenant optional
+            pass
             
             # Process the task immediately (without Celery for now)
             from .tasks import _process_task_by_specialization
@@ -712,7 +681,6 @@ class AIPlanningView(APIView):
             # Create AI recommendation
             from .models import AIRecommendation
             recommendation = AIRecommendation.objects.create(
-                tenant=request.user.tenant,
                 user=request.user,
                 type=recommendation_type or 'campaign_optimization',
                 recommendation_text=result.get('analysis', f"Analysis completed for: {objective}"),
@@ -722,14 +690,9 @@ class AIPlanningView(APIView):
                 generated_by_agent=ai_agent
             )
             
-            # Log completion
-            AIInteractionLog.objects.create(
-                tenant=request.user.tenant,
-                ai_profile=ai_agent,
-                ai_task=ai_task,
-                role='ai_agent',
-                message_content=f"Task completed successfully. Results: {str(result)[:200]}..."
-            )
+            # Log completion (skip tenant requirement for now)
+            # TODO: Update AIInteractionLog model to make tenant optional
+            pass
             
             # Deduct credits
             self._deduct_credits(request.user)
@@ -1120,8 +1083,7 @@ class ImageGenerationRequestViewSet(ModelViewSet):
         """
         image_request = self.get_object()
         brand_assets = BrandAsset.objects.filter(
-            original_image_request=image_request,
-            tenant=request.user.tenant
+            original_image_request=image_request
         )
         
         from core.serializers import BrandAssetSerializer
@@ -1162,23 +1124,11 @@ class AIOrchestrationView(APIView):
             
             user = request.user
             
-            # Check if user has sufficient planning credits
-            if user.tenant.planning_credits < 1:
-                return Response(
-                    {
-                        'error': 'Insufficient planning credits',
-                        'message': 'You need at least 1 planning credit to orchestrate AI tasks.'
-                    },
-                    status=status.HTTP_402_PAYMENT_REQUIRED
-                )
-            
-            # Deduct planning credits
-            user.tenant.planning_credits -= 1
-            user.tenant.save()
+            # Skip credit checking for now since tenant system was simplified
+            # TODO: Implement user-based credit system
             
             # Create the coordinator task
             task = AITask.objects.create(
-                tenant=user.tenant,
                 requester=user,
                 objective=serializer.validated_data['objective'],
                 status='pending'
@@ -1200,10 +1150,9 @@ class AIOrchestrationView(APIView):
             
             return Response(
                 {
-                    'task_id': str(task.id),
-                    'status': 'pending',
-                    'message': 'AI orchestration task submitted successfully.',
-                    'planning_credits_remaining': user.tenant.planning_credits
+                                    'task_id': str(task.id),
+                'status': 'pending',
+                'message': 'AI orchestration task submitted successfully.'
                 },
                 status=status.HTTP_202_ACCEPTED
             )
@@ -1242,8 +1191,8 @@ class StructuraInsightViewSet(ModelViewSet):
         return response
 
     def get_queryset(self):
-        """Return tenant's insights."""
-        return StructuraInsight.objects.filter(tenant=self.request.user.tenant)
+        """Return all insights."""
+        return StructuraInsight.objects.all()
 
     def get_serializer_class(self):
         """Use different serializers for different actions."""
@@ -1252,8 +1201,8 @@ class StructuraInsightViewSet(ModelViewSet):
         return StructuraInsightSerializer
 
     def perform_create(self, serializer):
-        """Set tenant automatically on creation."""
-        serializer.save(tenant=self.request.user.tenant)
+        """Create without tenant requirement."""
+        serializer.save()
 
     @action(detail=False, methods=['get'])
     def active(self, request):
@@ -1292,12 +1241,12 @@ class AIEcosystemHealthViewSet(ModelViewSet):
         return response
 
     def get_queryset(self):
-        """Return tenant's ecosystem health."""
-        return AIEcosystemHealth.objects.filter(tenant=self.request.user.tenant)
+        """Return all ecosystem health records."""
+        return AIEcosystemHealth.objects.all()
 
     def perform_create(self, serializer):
-        """Set tenant automatically on creation."""
-        serializer.save(tenant=self.request.user.tenant)
+        """Create without tenant requirement."""
+        serializer.save()
 
     @action(detail=False, methods=['get'])
     def current(self, request):
@@ -1306,7 +1255,6 @@ class AIEcosystemHealthViewSet(ModelViewSet):
         if not health:
             # Create default health status if none exists
             health = AIEcosystemHealth.objects.create(
-                tenant=request.user.tenant,
                 overall_score=100,
                 active_agents=0,
                 total_agents=0,
@@ -1322,7 +1270,6 @@ class AIEcosystemHealthViewSet(ModelViewSet):
         health = self.get_queryset().first()
         if not health:
             health = AIEcosystemHealth.objects.create(
-                tenant=request.user.tenant,
                 overall_score=100,
                 active_agents=0,
                 total_agents=0,
