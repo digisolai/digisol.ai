@@ -60,12 +60,12 @@ class MarketingCampaign(models.Model):
     target_roi = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     
     # AI and Optimization
-    catalyst_health_score = models.IntegerField(
+    optimizer_health_score = models.IntegerField(
         validators=[MinValueValidator(0), MaxValueValidator(100)],
         null=True, blank=True,
         help_text="AI-generated health score (0-100)"
     )
-    catalyst_recommendations = JSONField(default=list, blank=True)
+    optimizer_recommendations = JSONField(default=list, blank=True)
     auto_optimization_enabled = models.BooleanField(default=False)
     last_optimized = models.DateTimeField(null=True, blank=True)
     
@@ -165,8 +165,8 @@ class CampaignStep(models.Model):
     )
     
     # AI Integration
-    catalyst_optimized = models.BooleanField(default=False)
-    catalyst_suggestions = JSONField(default=list, blank=True)
+    optimizer_optimized = models.BooleanField(default=False)
+    optimizer_suggestions = JSONField(default=list, blank=True)
     performance_score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     
     # Execution Status
@@ -187,9 +187,9 @@ class CampaignStep(models.Model):
         return f"{self.name} ({self.campaign.name})"
 
 
-class CatalystInsight(models.Model):
+class OptimizerInsight(models.Model):
     """
-    Model for storing Catalyst AI insights and recommendations for campaigns
+    Model for storing Optimizer AI insights and recommendations for campaigns
     """
     INSIGHT_TYPE_CHOICES = [
         ('performance_alert', 'Performance Alert'),
@@ -212,18 +212,17 @@ class CatalystInsight(models.Model):
 
     # Core Fields
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
     campaign = models.ForeignKey(
         MarketingCampaign,
         on_delete=models.CASCADE,
-        related_name='catalyst_insights'
+        related_name='optimizer_insights'
     )
     step = models.ForeignKey(
         CampaignStep,
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        related_name='catalyst_insights'
+        related_name='optimizer_insights'
     )
     
     # Insight Details
@@ -256,8 +255,8 @@ class CatalystInsight(models.Model):
 
     class Meta:
         ordering = ['-priority', '-created_at']
-        verbose_name = 'Catalyst Insight'
-        verbose_name_plural = 'Catalyst Insights'
+        verbose_name = 'Optimizer Insight'
+        verbose_name_plural = 'Optimizer Insights'
 
     def __str__(self):
         return f"{self.title} - {self.campaign.name}"
@@ -360,7 +359,6 @@ class CampaignAudience(models.Model):
 
     # Core Fields
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     segment_type = models.CharField(max_length=20, choices=SEGMENT_TYPE_CHOICES, default='static')
@@ -378,8 +376,8 @@ class CampaignAudience(models.Model):
     conversion_rate = models.DecimalField(max_digits=5, decimal_places=4, null=True, blank=True)
     
     # AI Insights
-    catalyst_score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
-    catalyst_recommendations = JSONField(default=list, blank=True)
+    optimizer_score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    optimizer_recommendations = JSONField(default=list, blank=True)
     
     # Status
     is_active = models.BooleanField(default=True)
@@ -395,7 +393,7 @@ class CampaignAudience(models.Model):
         verbose_name_plural = 'Campaign Audiences'
 
     def __str__(self):
-        return f"{self.name} ({self.tenant.name})"
+        return f"{self.name}"
 
 
 class CampaignTemplate(models.Model):
@@ -415,7 +413,6 @@ class CampaignTemplate(models.Model):
 
     # Core Fields
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE, null=True, blank=True)  # null for global templates
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     category = models.CharField(max_length=50, choices=TEMPLATE_CATEGORY_CHOICES)
@@ -444,9 +441,8 @@ class CampaignTemplate(models.Model):
         verbose_name_plural = 'Campaign Templates'
 
     def __str__(self):
-        tenant_name = self.tenant.name if self.tenant else "Global"
-        return f"{self.name} ({tenant_name})"
+        return f"{self.name}"
 
     @property
     def is_global(self):
-        return self.tenant is None 
+        return True 

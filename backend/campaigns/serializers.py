@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import (
-    MarketingCampaign, CampaignStep, CatalystInsight, 
+    MarketingCampaign, CampaignStep, OptimizerInsight,
     CampaignPerformance, CampaignAudience, CampaignTemplate
 )
 from accounts.serializers import UserProfileSerializer as CustomUserSerializer
@@ -55,13 +55,13 @@ class CampaignStepSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at', 'execution_count', 'last_executed']
 
 
-class CatalystInsightSerializer(serializers.ModelSerializer):
-    """Serializer for Catalyst AI insights"""
+class OptimizerInsightSerializer(serializers.ModelSerializer):
+    """Serializer for Optimizer AI insights"""
     campaign_name = serializers.CharField(source='campaign.name', read_only=True)
     step_name = serializers.CharField(source='step.name', read_only=True)
     
     class Meta:
-        model = CatalystInsight
+        model = OptimizerInsight
         fields = [
             'id', 'campaign', 'campaign_name', 'step', 'step_name',
             'insight_type', 'title', 'description', 'recommendation', 'priority',
@@ -91,9 +91,8 @@ class CampaignPerformanceSerializer(serializers.ModelSerializer):
 class MarketingCampaignSerializer(serializers.ModelSerializer):
     """Main serializer for marketing campaigns with AI integration"""
     created_by = CustomUserSerializer(read_only=True)
-    tenant = TenantSerializer(read_only=True)
     steps = CampaignStepSerializer(many=True, read_only=True)
-    catalyst_insights = CatalystInsightSerializer(many=True, read_only=True)
+    optimizer_insights = OptimizerInsightSerializer(many=True, read_only=True)
     performance_data = CampaignPerformanceSerializer(many=True, read_only=True)
     
     # Computed fields
@@ -105,19 +104,19 @@ class MarketingCampaignSerializer(serializers.ModelSerializer):
     class Meta:
         model = MarketingCampaign
         fields = [
-            'id', 'tenant', 'name', 'description', 'campaign_type', 'objective',
+            'id', 'name', 'description', 'campaign_type', 'objective',
             'status', 'start_date', 'end_date', 'target_audience_segment',
             'audience_criteria', 'estimated_reach', 'budget', 'spent_budget',
-            'target_roi', 'catalyst_health_score', 'catalyst_recommendations',
+            'target_roi', 'optimizer_health_score', 'optimizer_recommendations',
             'auto_optimization_enabled', 'last_optimized', 'is_template',
             'template_category', 'performance_metrics', 'conversion_goals',
             'created_at', 'updated_at', 'created_by',
-            'steps', 'catalyst_insights', 'performance_data',
+            'steps', 'optimizer_insights', 'performance_data',
             'budget_utilization', 'days_remaining', 'total_steps', 'active_insights'
         ]
         read_only_fields = [
             'id', 'created_at', 'updated_at', 'created_by', 'spent_budget',
-            'catalyst_health_score', 'catalyst_recommendations', 'last_optimized',
+            'optimizer_health_score', 'optimizer_recommendations', 'last_optimized',
             'performance_metrics', 'budget_utilization', 'days_remaining'
         ]
 
@@ -125,14 +124,14 @@ class MarketingCampaignSerializer(serializers.ModelSerializer):
         return obj.steps.count()
 
     def get_active_insights(self, obj):
-        return obj.catalyst_insights.filter(is_dismissed=False, is_actioned=False).count()
+        return obj.optimizer_insights.filter(is_dismissed=False, is_actioned=False).count()
 
 
 class CampaignStepDetailSerializer(serializers.ModelSerializer):
     """Detailed serializer for campaign steps with performance data"""
     campaign = MarketingCampaignSerializer(read_only=True)
     performance_data = CampaignPerformanceSerializer(many=True, read_only=True)
-    catalyst_insights = CatalystInsightSerializer(many=True, read_only=True)
+    optimizer_insights = OptimizerInsightSerializer(many=True, read_only=True)
     
     class Meta:
         model = CampaignStep
@@ -140,14 +139,14 @@ class CampaignStepDetailSerializer(serializers.ModelSerializer):
             'id', 'campaign', 'step_type', 'name', 'description', 'order',
             'config', 'content_data', 'metadata', 'parent_steps',
             'true_path_next_step', 'false_path_next_step',
-            'catalyst_optimized', 'catalyst_suggestions', 'performance_score',
+            'optimizer_optimized', 'optimizer_suggestions', 'performance_score',
             'is_enabled', 'execution_count', 'last_executed',
-            'performance_data', 'catalyst_insights',
+            'performance_data', 'optimizer_insights',
             'created_at', 'updated_at'
         ]
         read_only_fields = [
             'id', 'created_at', 'updated_at', 'execution_count', 'last_executed',
-            'catalyst_suggestions', 'performance_score'
+            'optimizer_suggestions', 'performance_score'
         ]
 
 
@@ -202,10 +201,10 @@ class StepUpdateSerializer(serializers.ModelSerializer):
         ]
 
 
-class CatalystInsightCreateSerializer(serializers.ModelSerializer):
-    """Serializer for creating Catalyst insights"""
+class OptimizerInsightCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating Optimizer insights"""
     class Meta:
-        model = CatalystInsight
+        model = OptimizerInsight
         fields = [
             'campaign', 'step', 'insight_type', 'title', 'description',
             'recommendation', 'priority', 'predicted_impact', 'confidence_score',
@@ -213,10 +212,10 @@ class CatalystInsightCreateSerializer(serializers.ModelSerializer):
         ]
 
 
-class CatalystInsightUpdateSerializer(serializers.ModelSerializer):
-    """Serializer for updating Catalyst insights"""
+class OptimizerInsightUpdateSerializer(serializers.ModelSerializer):
+    """Serializer for updating Optimizer insights"""
     class Meta:
-        model = CatalystInsight
+        model = OptimizerInsight
         fields = [
             'is_actioned', 'is_dismissed', 'action_taken'
         ]
@@ -240,14 +239,14 @@ class CampaignDashboardSerializer(serializers.Serializer):
     total_budget = serializers.DecimalField(max_digits=10, decimal_places=2)
     spent_budget = serializers.DecimalField(max_digits=10, decimal_places=2)
     average_roi = serializers.DecimalField(max_digits=5, decimal_places=2)
-    catalyst_insights_count = serializers.IntegerField()
+    optimizer_insights_count = serializers.IntegerField()
     performance_trends = serializers.JSONField()
     top_performing_campaigns = serializers.ListField()
     recent_insights = serializers.ListField()
 
 
-class CatalystRecommendationSerializer(serializers.Serializer):
-    """Serializer for Catalyst AI recommendations"""
+class OptimizerRecommendationSerializer(serializers.Serializer):
+    """Serializer for Optimizer AI recommendations"""
     recommendation_type = serializers.CharField()
     title = serializers.CharField()
     description = serializers.CharField()
@@ -265,5 +264,5 @@ class CampaignAnalyticsSerializer(serializers.Serializer):
     metrics = serializers.JSONField()
     trends = serializers.JSONField()
     comparisons = serializers.JSONField()
-    catalyst_insights = CatalystInsightSerializer(many=True)
-    recommendations = CatalystRecommendationSerializer(many=True) 
+    optimizer_insights = OptimizerInsightSerializer(many=True)
+    recommendations = OptimizerRecommendationSerializer(many=True) 

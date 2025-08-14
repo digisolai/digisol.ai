@@ -9,16 +9,16 @@ from datetime import datetime, timedelta
 import json
 
 from .models import (
-    MarketingCampaign, CampaignStep, CatalystInsight, 
+    MarketingCampaign, CampaignStep, OptimizerInsight, 
     CampaignPerformance, CampaignAudience, CampaignTemplate
 )
 from .serializers import (
-    MarketingCampaignSerializer, CampaignStepSerializer, CatalystInsightSerializer,
+    MarketingCampaignSerializer, CampaignStepSerializer, OptimizerInsightSerializer,
     CampaignPerformanceSerializer, CampaignAudienceSerializer, CampaignTemplateSerializer,
     CampaignCreateSerializer, CampaignUpdateSerializer, StepCreateSerializer, StepUpdateSerializer,
-    CatalystInsightCreateSerializer, CatalystInsightUpdateSerializer,
+    OptimizerInsightCreateSerializer, OptimizerInsightUpdateSerializer,
     CampaignPerformanceCreateSerializer, CampaignDashboardSerializer,
-    CatalystRecommendationSerializer, CampaignAnalyticsSerializer
+    OptimizerRecommendationSerializer, CampaignAnalyticsSerializer
 )
 from accounts.permissions import IsTenantUser as IsTenantMember
 from ai_services.models import AIProfile
@@ -200,7 +200,7 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
             })
         
         # Get Catalyst insights
-        insights = CatalystInsight.objects.filter(
+        insights = OptimizerInsight.objects.filter(
             campaign=campaign,
             is_dismissed=False,
             is_actioned=False
@@ -232,7 +232,7 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
                     'revenue_change': 0
                 }
             },
-            'catalyst_insights': CatalystInsightSerializer(insights, many=True).data,
+            'optimizer_insights': OptimizerInsightSerializer(insights, many=True).data,
             'recommendations': []
         }
         
@@ -247,8 +247,7 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
         
         # This would integrate with your AI service
         # For now, we'll create a mock insight
-        insight = CatalystInsight.objects.create(
-            tenant=campaign.tenant,
+        insight = OptimizerInsight.objects.create(
             campaign=campaign,
             insight_type='optimization_suggestion',
             title=f"Response to: {question[:50]}...",
@@ -259,7 +258,7 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
             context_data={'question': question, 'response_type': 'user_query'}
         )
         
-        serializer = CatalystInsightSerializer(insight)
+        serializer = OptimizerInsightSerializer(insight)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
@@ -334,22 +333,22 @@ class CampaignStepViewSet(viewsets.ModelViewSet):
         })
 
 
-class CatalystInsightViewSet(viewsets.ModelViewSet):
+class OptimizerInsightViewSet(viewsets.ModelViewSet):
     """
     ViewSet for managing Catalyst AI insights
     """
     permission_classes = [permissions.IsAuthenticated, IsTenantMember]
-    serializer_class = CatalystInsightSerializer
+    serializer_class = OptimizerInsightSerializer
     
     def get_queryset(self):
-        return CatalystInsight.objects.filter(tenant=self.request.user.tenant)
+        return OptimizerInsight.objects.all()
     
     def get_serializer_class(self):
         if self.action == 'create':
-            return CatalystInsightCreateSerializer
+            return OptimizerInsightCreateSerializer
         elif self.action in ['update', 'partial_update']:
-            return CatalystInsightUpdateSerializer
-        return CatalystInsightSerializer
+            return OptimizerInsightUpdateSerializer
+        return OptimizerInsightSerializer
     
     def perform_create(self, serializer):
         serializer.save(tenant=self.request.user.tenant)
@@ -536,10 +535,9 @@ class CampaignDashboardView(APIView):
             except Exception:
                 performance_stats = {'avg_roi': 0}
             
-            # Get Catalyst insights count
+            # Get Optimizer insights count
             try:
-                insights_count = CatalystInsight.objects.filter(
-                    tenant=tenant,
+                insights_count = OptimizerInsight.objects.filter(
                     is_dismissed=False,
                     is_actioned=False
                 ).count()
@@ -548,17 +546,13 @@ class CampaignDashboardView(APIView):
             
             # Get top performing campaigns
             try:
-                top_campaigns = MarketingCampaign.objects.filter(
-                    tenant=tenant
-                ).order_by('-catalyst_health_score')[:5]
+                top_campaigns = MarketingCampaign.objects.all().order_by('-optimizer_health_score')[:5]
             except Exception:
-                top_campaigns = MarketingCampaign.objects.filter(tenant=tenant)[:5]
+                top_campaigns = MarketingCampaign.objects.all()[:5]
             
             # Get recent insights
             try:
-                recent_insights = CatalystInsight.objects.filter(
-                    tenant=tenant
-                ).order_by('-created_at')[:10]
+                recent_insights = OptimizerInsight.objects.all().order_by('-created_at')[:10]
             except Exception:
                 recent_insights = []
             
@@ -576,10 +570,10 @@ class CampaignDashboardView(APIView):
                 'total_budget': budget_stats.get('total_budget', 0) or 0,
                 'spent_budget': budget_stats.get('spent_budget', 0) or 0,
                 'average_roi': performance_stats.get('avg_roi', 0) or 0,
-                'catalyst_insights_count': insights_count,
+                'optimizer_insights_count': insights_count,
                 'performance_trends': performance_trends,
                 'top_performing_campaigns': MarketingCampaignSerializer(top_campaigns, many=True).data,
-                'recent_insights': CatalystInsightSerializer(recent_insights, many=True).data
+                'recent_insights': OptimizerInsightSerializer(recent_insights, many=True).data
             }
             
             serializer = CampaignDashboardSerializer(dashboard_data)
@@ -591,24 +585,14 @@ class CampaignDashboardView(APIView):
             }, status=500)
 
 
-class CatalystRecommendationView(APIView):
+class OptimizerRecommendationView(APIView):
     """
-    API view for Catalyst AI recommendations
+    API view for Optimizer AI recommendations
     """
     permission_classes = []  # Temporarily remove authentication for testing
     
     def get(self, request):
-        # For testing without authentication, use a default tenant
-        if hasattr(request, 'user') and request.user.is_authenticated:
-            tenant = request.user.tenant
-        else:
-            # Use the test tenant for unauthenticated requests
-            from core.models import Tenant
-            tenant = Tenant.objects.filter(name='Test Tenant').first()
-            if not tenant:
-                return Response({
-                    'error': 'No test tenant found'
-                }, status=400)
+        # No tenant filtering needed since we removed tenant model
         
         # Mock recommendations - in real implementation, this would come from AI analysis
         recommendations = [

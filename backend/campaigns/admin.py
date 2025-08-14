@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    MarketingCampaign, CampaignStep, CatalystInsight, 
+    MarketingCampaign, CampaignStep, OptimizerInsight, 
     CampaignPerformance, CampaignAudience, CampaignTemplate
 )
 
@@ -8,8 +8,8 @@ from .models import (
 @admin.register(MarketingCampaign)
 class MarketingCampaignAdmin(admin.ModelAdmin):
     list_display = [
-        'name', 'tenant', 'campaign_type', 'objective', 'status', 
-        'catalyst_health_score', 'budget', 'spent_budget', 'created_at'
+        'name', 'campaign_type', 'objective', 'status', 
+        'optimizer_health_score', 'budget', 'spent_budget', 'created_at'
     ]
     list_filter = [
         'status', 'campaign_type', 'objective', 'is_template', 
@@ -19,7 +19,7 @@ class MarketingCampaignAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at', 'spent_budget']
     fieldsets = (
         ('Basic Information', {
-            'fields': ('tenant', 'name', 'description', 'campaign_type', 'objective')
+            'fields': ('name', 'description', 'campaign_type', 'objective')
         }),
         ('Status & Lifecycle', {
             'fields': ('status', 'start_date', 'end_date')
@@ -31,7 +31,7 @@ class MarketingCampaignAdmin(admin.ModelAdmin):
             'fields': ('budget', 'spent_budget', 'target_roi', 'performance_metrics', 'conversion_goals')
         }),
         ('AI Integration', {
-            'fields': ('catalyst_health_score', 'catalyst_recommendations', 'auto_optimization_enabled', 'last_optimized')
+            'fields': ('optimizer_health_score', 'optimizer_recommendations', 'auto_optimization_enabled', 'last_optimized')
         }),
         ('Template', {
             'fields': ('is_template', 'template_category')
@@ -47,10 +47,10 @@ class MarketingCampaignAdmin(admin.ModelAdmin):
 class CampaignStepAdmin(admin.ModelAdmin):
     list_display = [
         'name', 'campaign', 'step_type', 'order', 'is_enabled', 
-        'catalyst_optimized', 'execution_count', 'created_at'
+        'optimizer_optimized', 'execution_count', 'created_at'
     ]
     list_filter = [
-        'step_type', 'is_enabled', 'catalyst_optimized', 'created_at'
+        'step_type', 'is_enabled', 'optimizer_optimized', 'created_at'
     ]
     search_fields = ['name', 'description', 'campaign__name']
     readonly_fields = ['created_at', 'updated_at', 'execution_count', 'last_executed']
@@ -65,7 +65,7 @@ class CampaignStepAdmin(admin.ModelAdmin):
             'fields': ('parent_steps', 'true_path_next_step', 'false_path_next_step')
         }),
         ('AI Integration', {
-            'fields': ('catalyst_optimized', 'catalyst_suggestions', 'performance_score')
+            'fields': ('optimizer_optimized', 'optimizer_suggestions', 'performance_score')
         }),
         ('Execution', {
             'fields': ('is_enabled', 'execution_count', 'last_executed')
@@ -77,8 +77,8 @@ class CampaignStepAdmin(admin.ModelAdmin):
     )
 
 
-@admin.register(CatalystInsight)
-class CatalystInsightAdmin(admin.ModelAdmin):
+@admin.register(OptimizerInsight)
+class OptimizerInsightAdmin(admin.ModelAdmin):
     list_display = [
         'title', 'campaign', 'insight_type', 'priority', 'confidence_score',
         'is_actioned', 'is_dismissed', 'created_at'
@@ -90,7 +90,7 @@ class CatalystInsightAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at']
     fieldsets = (
         ('Basic Information', {
-            'fields': ('tenant', 'campaign', 'step', 'title', 'description')
+            'fields': ('campaign', 'step', 'title', 'description')
         }),
         ('Insight Details', {
             'fields': ('insight_type', 'recommendation', 'priority', 'predicted_impact', 'confidence_score')
@@ -146,15 +146,15 @@ class CampaignPerformanceAdmin(admin.ModelAdmin):
 @admin.register(CampaignAudience)
 class CampaignAudienceAdmin(admin.ModelAdmin):
     list_display = [
-        'name', 'tenant', 'segment_type', 'estimated_size', 'actual_size',
-        'engagement_rate', 'conversion_rate', 'catalyst_score', 'is_active'
+        'name', 'segment_type', 'estimated_size', 'actual_size',
+        'engagement_rate', 'conversion_rate', 'optimizer_score', 'is_active'
     ]
     list_filter = ['segment_type', 'is_active', 'created_at']
     search_fields = ['name', 'description']
     readonly_fields = ['created_at', 'updated_at']
     fieldsets = (
         ('Basic Information', {
-            'fields': ('tenant', 'name', 'description', 'segment_type')
+            'fields': ('name', 'description', 'segment_type')
         }),
         ('Audience Criteria', {
             'fields': ('criteria', 'filters')
@@ -163,7 +163,7 @@ class CampaignAudienceAdmin(admin.ModelAdmin):
             'fields': ('estimated_size', 'actual_size', 'engagement_rate', 'conversion_rate')
         }),
         ('AI Integration', {
-            'fields': ('catalyst_score', 'catalyst_recommendations')
+            'fields': ('optimizer_score', 'optimizer_recommendations')
         }),
         ('Status', {
             'fields': ('is_active',)
@@ -186,7 +186,7 @@ class CampaignTemplateAdmin(admin.ModelAdmin):
     readonly_fields = ['usage_count', 'created_at', 'updated_at']
     fieldsets = (
         ('Basic Information', {
-            'fields': ('tenant', 'name', 'description', 'category')
+            'fields': ('name', 'description', 'category')
         }),
         ('Template Data', {
             'fields': ('campaign_data', 'steps_data', 'settings'),
