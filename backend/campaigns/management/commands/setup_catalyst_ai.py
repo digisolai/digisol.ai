@@ -1,75 +1,48 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
 from campaigns.models import (
-    MarketingCampaign, CampaignStep, CatalystInsight, 
+    MarketingCampaign, CampaignStep, OptimizerInsight, 
     CampaignPerformance, CampaignAudience, CampaignTemplate
 )
-from core.models import Tenant
 from accounts.models import CustomUser
 from datetime import datetime, timedelta
 import random
 
 
 class Command(BaseCommand):
-    help = 'Set up default Catalyst AI data and sample campaigns'
-
-    def add_arguments(self, parser):
-        parser.add_argument(
-            '--tenant-id',
-            type=str,
-            help='Tenant ID to create data for (optional)',
-        )
+    help = 'Set up default Optimizer AI data and sample campaigns'
 
     def handle(self, *args, **options):
-        tenant_id = options.get('tenant_id')
-        
-        if tenant_id:
-            try:
-                tenant = Tenant.objects.get(id=tenant_id)
-            except Tenant.DoesNotExist:
-                self.stdout.write(
-                    self.style.ERROR(f'Tenant with ID {tenant_id} does not exist')
-                )
-                return
-        else:
-            # Use the first tenant or create a default one
-            tenant = Tenant.objects.first()
-            if not tenant:
-                self.stdout.write(
-                    self.style.ERROR('No tenants found. Please create a tenant first.')
-                )
-                return
-
         # Get or create a user
-        user = CustomUser.objects.filter(tenant=tenant).first()
+        user = CustomUser.objects.first()
         if not user:
             self.stdout.write(
-                self.style.ERROR('No users found for this tenant. Please create a user first.')
+                self.style.ERROR('No users found. Please create a user first.')
             )
             return
 
-        self.stdout.write(f'Setting up Catalyst AI data for tenant: {tenant.name}')
+        self.stdout.write('Setting up Optimizer AI data')
 
         # Create sample campaigns
-        campaigns = self.create_sample_campaigns(tenant, user)
+        campaigns = self.create_sample_campaigns(user)
         
         # Create sample insights
-        self.create_sample_insights(tenant, campaigns)
+        self.create_sample_insights(campaigns)
         
         # Create sample performance data
         self.create_sample_performance_data(campaigns)
         
         # Create sample audiences
-        self.create_sample_audiences(tenant, user)
+        self.create_sample_audiences(user)
         
         # Create sample templates
-        self.create_sample_templates(tenant, user)
+        self.create_sample_templates(user)
 
         self.stdout.write(
-            self.style.SUCCESS('Successfully set up Catalyst AI data!')
+            self.style.SUCCESS('Successfully set up Optimizer AI data!')
         )
 
-    def create_sample_campaigns(self, tenant, user):
+    def create_sample_campaigns(self, user):
         campaigns_data = [
             {
                 'name': 'Holiday Email Campaign',
@@ -80,7 +53,7 @@ class Command(BaseCommand):
                 'budget': 5000.00,
                 'spent_budget': 3200.00,
                 'target_roi': 150.0,
-                'catalyst_health_score': 85,
+                'optimizer_health_score': 85,
                 'auto_optimization_enabled': True,
             },
             {
@@ -92,7 +65,7 @@ class Command(BaseCommand):
                 'budget': 3000.00,
                 'spent_budget': 1800.00,
                 'target_roi': 120.0,
-                'catalyst_health_score': 72,
+                'optimizer_health_score': 72,
                 'auto_optimization_enabled': True,
             },
             {
@@ -104,7 +77,7 @@ class Command(BaseCommand):
                 'budget': 2000.00,
                 'spent_budget': 950.00,
                 'target_roi': 200.0,
-                'catalyst_health_score': 91,
+                'optimizer_health_score': 91,
                 'auto_optimization_enabled': True,
             },
             {
@@ -116,7 +89,7 @@ class Command(BaseCommand):
                 'budget': 10000.00,
                 'spent_budget': 0.00,
                 'target_roi': 180.0,
-                'catalyst_health_score': None,
+                'optimizer_health_score': None,
                 'auto_optimization_enabled': False,
             },
         ]
@@ -125,7 +98,6 @@ class Command(BaseCommand):
         for data in campaigns_data:
             campaign, created = MarketingCampaign.objects.get_or_create(
                 name=data['name'],
-                tenant=tenant,
                 defaults={
                     'description': data['description'],
                     'campaign_type': data['campaign_type'],
@@ -134,7 +106,7 @@ class Command(BaseCommand):
                     'budget': data['budget'],
                     'spent_budget': data['spent_budget'],
                     'target_roi': data['target_roi'],
-                    'catalyst_health_score': data['catalyst_health_score'],
+                    'optimizer_health_score': data['optimizer_health_score'],
                     'auto_optimization_enabled': data['auto_optimization_enabled'],
                     'created_by': user,
                 }
@@ -146,7 +118,7 @@ class Command(BaseCommand):
 
         return campaigns
 
-    def create_sample_insights(self, tenant, campaigns):
+    def create_sample_insights(self, campaigns):
         insights_data = [
             {
                 'title': 'Email Open Rate Below Average',
@@ -184,11 +156,10 @@ class Command(BaseCommand):
 
         for i, data in enumerate(insights_data):
             campaign = campaigns[i % len(campaigns)]
-            insight, created = CatalystInsight.objects.get_or_create(
+            insight, created = OptimizerInsight.objects.get_or_create(
                 title=data['title'],
                 campaign=campaign,
                 defaults={
-                    'tenant': tenant,
                     'description': data['description'],
                     'recommendation': data['recommendation'],
                     'insight_type': data['insight_type'],
@@ -245,7 +216,7 @@ class Command(BaseCommand):
                     
                     current_date += timedelta(days=1)
 
-    def create_sample_audiences(self, tenant, user):
+    def create_sample_audiences(self, user):
         audiences_data = [
             {
                 'name': 'Early Adopters',
@@ -255,7 +226,7 @@ class Command(BaseCommand):
                 'actual_size': 2340,
                 'engagement_rate': 0.085,
                 'conversion_rate': 0.032,
-                'catalyst_score': 8.5,
+                'optimizer_score': 8.5,
             },
             {
                 'name': 'High-Value Customers',
@@ -265,7 +236,7 @@ class Command(BaseCommand):
                 'actual_size': 1180,
                 'engagement_rate': 0.092,
                 'conversion_rate': 0.045,
-                'catalyst_score': 9.2,
+                'optimizer_score': 9.2,
             },
             {
                 'name': 'Inactive Subscribers',
@@ -275,14 +246,13 @@ class Command(BaseCommand):
                 'actual_size': 4870,
                 'engagement_rate': 0.015,
                 'conversion_rate': 0.005,
-                'catalyst_score': 3.2,
+                'optimizer_score': 3.2,
             },
         ]
 
         for data in audiences_data:
             audience, created = CampaignAudience.objects.get_or_create(
                 name=data['name'],
-                tenant=tenant,
                 defaults={
                     'description': data['description'],
                     'segment_type': data['segment_type'],
@@ -290,7 +260,7 @@ class Command(BaseCommand):
                     'actual_size': data['actual_size'],
                     'engagement_rate': data['engagement_rate'],
                     'conversion_rate': data['conversion_rate'],
-                    'catalyst_score': data['catalyst_score'],
+                    'optimizer_score': data['optimizer_score'],
                     'criteria': {
                         'conditions': [
                             {'field': 'purchase_frequency', 'operator': 'gte', 'value': 2},
@@ -301,7 +271,7 @@ class Command(BaseCommand):
                         {'type': 'demographic', 'field': 'age', 'value': '25-45'},
                         {'type': 'behavioral', 'field': 'engagement_score', 'value': 'high'}
                     ],
-                    'catalyst_recommendations': [
+                    'optimizer_recommendations': [
                         'Target with premium product offers',
                         'Use personalized messaging',
                         'Test different communication channels'
@@ -313,7 +283,7 @@ class Command(BaseCommand):
             if created:
                 self.stdout.write(f'Created audience: {audience.name}')
 
-    def create_sample_templates(self, tenant, user):
+    def create_sample_templates(self, user):
         templates_data = [
             {
                 'name': 'Welcome Email Series',
@@ -401,7 +371,6 @@ class Command(BaseCommand):
         for data in templates_data:
             template, created = CampaignTemplate.objects.get_or_create(
                 name=data['name'],
-                tenant=tenant,
                 defaults={
                     'description': data['description'],
                     'category': data['category'],

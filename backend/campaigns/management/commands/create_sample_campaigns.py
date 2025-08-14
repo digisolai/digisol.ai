@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from django.utils import timezone
-from campaigns.models import MarketingCampaign, CampaignStep, CatalystInsight
+from campaigns.models import MarketingCampaign, CampaignStep, OptimizerInsight
 from accounts.models import CustomUser
 from datetime import timedelta
 import random
@@ -37,7 +37,7 @@ class Command(BaseCommand):
                 'budget': 5000.00,
                 'spent_budget': 3200.00,
                 'target_roi': 2.5,
-                'catalyst_health_score': 85
+                'optimizer_health_score': 85
             },
             {
                 'name': 'Social Media Brand Awareness',
@@ -48,7 +48,7 @@ class Command(BaseCommand):
                 'budget': 3000.00,
                 'spent_budget': 1800.00,
                 'target_roi': 1.8,
-                'catalyst_health_score': 92
+                'optimizer_health_score': 92
             },
             {
                 'name': 'Lead Generation Webinar',
@@ -59,7 +59,7 @@ class Command(BaseCommand):
                 'budget': 2000.00,
                 'spent_budget': 0.00,
                 'target_roi': 3.0,
-                'catalyst_health_score': 78
+                'optimizer_health_score': 78
             },
             {
                 'name': 'SMS Promotion Campaign',
@@ -70,7 +70,7 @@ class Command(BaseCommand):
                 'budget': 1500.00,
                 'spent_budget': 750.00,
                 'target_roi': 2.2,
-                'catalyst_health_score': 65
+                'optimizer_health_score': 65
             }
         ]
         
@@ -87,7 +87,7 @@ class Command(BaseCommand):
                     'budget': campaign_data['budget'],
                     'spent_budget': campaign_data['spent_budget'],
                     'target_roi': campaign_data['target_roi'],
-                    'catalyst_health_score': campaign_data['catalyst_health_score'],
+                    'optimizer_health_score': campaign_data['optimizer_health_score'],
                     'created_by': user,
                     'start_date': timezone.now() - timedelta(days=random.randint(1, 30)),
                     'end_date': timezone.now() + timedelta(days=random.randint(30, 90))
@@ -97,7 +97,7 @@ class Command(BaseCommand):
                 self.stdout.write(f'Created campaign: {campaign.name}')
                 created_campaigns.append(campaign)
         
-        # Create sample Catalyst insights
+        # Create sample Optimizer insights
         insights_data = [
             {
                 'campaign': created_campaigns[0] if created_campaigns else None,
@@ -130,7 +130,7 @@ class Command(BaseCommand):
         
         for insight_data in insights_data:
             if insight_data['campaign']:
-                insight, created = CatalystInsight.objects.get_or_create(
+                insight, created = OptimizerInsight.objects.get_or_create(
                     campaign=insight_data['campaign'],
                     title=insight_data['title'],
                     defaults={
