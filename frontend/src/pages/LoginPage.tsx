@@ -95,7 +95,9 @@ export default function LoginPage() {
           <Box alignSelf="center">
             <Logo size={100} />
           </Box>
-          <Heading size="md" color="brand.primary" textAlign="center">Sign in to DigiSol.AI</Heading>
+          <Heading size="md" color="brand.primary" textAlign="center">
+            Sign in to DigiSol<Text as="span" color="brand.accent">.AI</Text>
+          </Heading>
           {errors.general && (
             <Alert status="error" borderRadius="md">
               <AlertIcon />
