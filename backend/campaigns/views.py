@@ -33,19 +33,8 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         try:
-            # For testing without authentication, use a default tenant
-            if hasattr(self.request, 'user') and self.request.user.is_authenticated:
-                tenant = self.request.user.tenant
-                if not tenant:
-                    return MarketingCampaign.objects.none()
-            else:
-                # Use the test tenant for unauthenticated requests
-                from core.models import Tenant
-                tenant = Tenant.objects.filter(name='Test Tenant').first()
-                if not tenant:
-                    return MarketingCampaign.objects.none()
-            
-            return MarketingCampaign.objects.filter(tenant=tenant)
+            # Return all campaigns since we removed tenant model
+            return MarketingCampaign.objects.all()
         except Exception:
             return MarketingCampaign.objects.none()
     
@@ -58,10 +47,11 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
     
     def perform_create(self, serializer):
         try:
-            tenant = self.request.user.tenant
-            if not tenant:
-                raise Exception("User has no tenant assigned")
-            serializer.save(tenant=tenant, created_by=self.request.user)
+            # Save campaign without tenant since we removed tenant model
+            if hasattr(self.request, 'user') and self.request.user.is_authenticated:
+                serializer.save(created_by=self.request.user)
+            else:
+                serializer.save(created_by=None)
         except Exception as e:
             raise Exception(f"Error creating campaign: {str(e)}")
     
@@ -70,7 +60,6 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
         """Duplicate a campaign"""
         campaign = self.get_object()
         new_campaign = MarketingCampaign.objects.create(
-            tenant=campaign.tenant,
             name=f"{campaign.name} (Copy)",
             description=campaign.description,
             campaign_type=campaign.campaign_type,
@@ -99,6 +88,37 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
         
         serializer = self.get_serializer(new_campaign)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    
+    @action(detail=False, methods=['get'])
+    def stats(self, request):
+        """Get campaign statistics"""
+        try:
+            queryset = self.get_queryset()
+            
+            # Calculate basic stats
+            total_campaigns = queryset.count()
+            active_campaigns = queryset.filter(status='Active').count()
+            total_budget = queryset.aggregate(Sum('budget'))['budget__sum'] or 0
+            total_spent = queryset.aggregate(Sum('spent_budget'))['spent_budget__sum'] or 0
+            
+            # Calculate average ROI (simplified calculation)
+            campaigns_with_roi = queryset.exclude(target_roi__isnull=True)
+            average_roi = campaigns_with_roi.aggregate(Avg('target_roi'))['target_roi__avg'] or 0
+            
+            stats = {
+                'total_campaigns': total_campaigns,
+                'active_campaigns': active_campaigns,
+                'total_budget': float(total_budget),
+                'total_spent': float(total_spent),
+                'average_roi': float(average_roi),
+            }
+            
+            return Response(stats)
+        except Exception as e:
+            return Response(
+                {'error': f'Error calculating stats: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
     
     @action(detail=True, methods=['post'])
     def activate(self, request, pk=None):

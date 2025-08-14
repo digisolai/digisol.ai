@@ -283,6 +283,33 @@ export default function CampaignsPage() {
     }
   };
 
+  // Update campaign
+  const handleUpdateCampaign = async (campaignId: string, data: CampaignCreateData) => {
+    try {
+      const response = await api.patch(`/campaigns/campaigns/${campaignId}/`, data);
+      setCampaigns(prev => prev.map(campaign =>
+        campaign.id === campaignId ? response.data : campaign
+      ));
+      onEditClose();
+      toast({
+        title: 'Success',
+        description: 'Campaign updated successfully',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.error('Error updating campaign:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to update campaign',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  };
+
   // Update campaign status
   const handleStatusChange = async (campaignId: string, status: MarketingCampaign['status']) => {
     try {
@@ -382,7 +409,7 @@ export default function CampaignsPage() {
                 </Text>
               )}
             </VStack>
-            <Menu>
+            <Menu placement="bottom-end">
               <MenuButton
                 as={IconButton}
                 icon={<FiMoreVertical />}
@@ -390,7 +417,7 @@ export default function CampaignsPage() {
                 size="sm"
                 aria-label="Campaign options"
               />
-              <MenuList>
+              <MenuList zIndex={9999}>
                 <MenuItem icon={<FiEye />} onClick={() => {
                   setSelectedCampaign(campaign);
                   onViewOpen();
@@ -568,6 +595,7 @@ export default function CampaignsPage() {
               value={filters.campaign_type || ''}
               onChange={(e) => setFilters(prev => ({ ...prev, campaign_type: e.target.value as any }))}
               maxW="200px"
+              zIndex={9999}
             >
               {Object.entries(CAMPAIGN_TYPES).map(([value, info]) => (
                 <option key={value} value={value}>
@@ -580,6 +608,7 @@ export default function CampaignsPage() {
               value={filters.objective || ''}
               onChange={(e) => setFilters(prev => ({ ...prev, objective: e.target.value as any }))}
               maxW="200px"
+              zIndex={9999}
             >
               <option value="awareness">Brand Awareness</option>
               <option value="traffic">Drive Traffic</option>
@@ -751,7 +780,7 @@ export default function CampaignsPage() {
           isOpen={isEditOpen}
           onClose={onEditClose}
           campaign={selectedCampaign}
-          onSubmit={handleCreateCampaign}
+          onSubmit={(data) => handleUpdateCampaign(selectedCampaign.id, data)}
         />
       )}
 
@@ -801,6 +830,7 @@ function CreateCampaignModal({ isOpen, onClose, onSubmit }: {
   onClose: () => void;
   onSubmit: (data: CampaignCreateData) => void;
 }) {
+  const toast = useToast();
   const [formData, setFormData] = useState<CampaignCreateData>({
     name: '',
     description: '',
@@ -810,7 +840,27 @@ function CreateCampaignModal({ isOpen, onClose, onSubmit }: {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!formData.name.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Campaign name is required',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    
     onSubmit(formData);
+    // Reset form after submission
+    setFormData({
+      name: '',
+      description: '',
+      campaign_type: 'email',
+      objective: 'leads',
+    });
   };
 
   return (
@@ -928,6 +978,7 @@ function EditCampaignModal({ isOpen, onClose, campaign, onSubmit }: {
   campaign: MarketingCampaign;
   onSubmit: (data: CampaignCreateData) => void;
 }) {
+  const toast = useToast();
   const [formData, setFormData] = useState<CampaignCreateData>({
     name: campaign.name,
     description: campaign.description || '',
@@ -939,6 +990,19 @@ function EditCampaignModal({ isOpen, onClose, campaign, onSubmit }: {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!formData.name.trim()) {
+      toast({
+        title: 'Error',
+        description: 'Campaign name is required',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+    
     onSubmit(formData);
   };
 

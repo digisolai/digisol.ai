@@ -47,6 +47,7 @@ urlpatterns = [
     # IMPORTANT: Each API app MUST have a UNIQUE sub-path under /api/
     path('api/accounts/', include('accounts.urls')),
     path('api/core/', include('core.urls')), # Note: This handles general core models
+    path('api/campaigns/', include('campaigns.urls')),
     path('api/ai-services/', include('ai_services.urls')),
     path('api/project-management/', include('project_management.urls')),
     path('api/billing/', include('billing.urls')),

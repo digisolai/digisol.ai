@@ -227,6 +227,23 @@ const components = {
       colorScheme: "brand",
     },
   },
+  Select: {
+    defaultProps: {
+      colorScheme: "brand",
+    },
+    baseStyle: {
+      field: {
+        zIndex: 1,
+      },
+    },
+  },
+  Menu: {
+    baseStyle: {
+      list: {
+        zIndex: 9999,
+      },
+    },
+  },
 };
 
 const theme = extendTheme({
@@ -239,6 +256,16 @@ const theme = extendTheme({
       body: {
         bg: "brand.neutral.50",
         color: "brand.primary",
+      },
+      // Fix z-index issues for dropdowns and modals
+      ".chakra-menu__menu-list": {
+        zIndex: "9999 !important",
+      },
+      ".chakra-select__menu": {
+        zIndex: "9999 !important",
+      },
+      ".chakra-modal__content": {
+        zIndex: "9999 !important",
       },
     },
   },

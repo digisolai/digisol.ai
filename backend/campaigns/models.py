@@ -1,7 +1,6 @@
 from django.db import models
 from django.db.models import JSONField
 from django.core.validators import MinValueValidator, MaxValueValidator
-from core.models import Tenant
 from accounts.models import CustomUser
 import uuid
 
@@ -40,7 +39,6 @@ class MarketingCampaign(models.Model):
 
     # Core Campaign Fields
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    tenant = models.ForeignKey(Tenant, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
     campaign_type = models.CharField(max_length=50, choices=CAMPAIGN_TYPE_CHOICES, default='email')
@@ -90,7 +88,7 @@ class MarketingCampaign(models.Model):
         verbose_name_plural = 'Marketing Campaigns'
 
     def __str__(self):
-        return f"{self.name} ({self.tenant.name})"
+        return f"{self.name}"
 
     @property
     def is_active(self):

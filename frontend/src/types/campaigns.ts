@@ -1,6 +1,5 @@
 export interface MarketingCampaign {
   id: string;
-  tenant: string;
   name: string;
   description?: string;
   campaign_type: 'email' | 'social' | 'paid_ads' | 'content' | 'event' | 'product_launch' | 'lead_nurturing' | 'retention' | 'multi_channel';
