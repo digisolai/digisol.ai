@@ -19,7 +19,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import { FiCalendar, FiClock, FiUser, FiMail, FiPhone, FiMessageSquare } from "react-icons/fi";
+import { FiCalendar, FiClock, FiUser } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
 import Logo from "../components/Logo";
 
