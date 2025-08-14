@@ -971,7 +971,8 @@ export default function HomePage() {
           <VStack spacing={16}>
             <Box textAlign="center" maxW="3xl">
               <Heading size="xl" color="#1F4287" mb={4}>
-                DigiSol.AI Partnership Program
+                <Text as="span" color="#1F4287">DigiSol</Text>
+                <Text as="span" color="brand.accent">.AI</Text> Partnership Program
               </Heading>
               <Text fontSize="lg" color="gray.600">
                 For marketing agencies, consultants, and strategic partners. 
@@ -980,7 +981,7 @@ export default function HomePage() {
             </Box>
 
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
-              <Card bg={cardBg} border="2px solid" borderColor="#1F4287">
+              <Card bg="gray.50" border="2px solid" borderColor="#1F4287">
                 <CardHeader>
                   <VStack align="start" spacing={2}>
                     <Heading size="lg" color="#1F4287">Base Partner Fee</Heading>
@@ -1020,7 +1021,7 @@ export default function HomePage() {
                 </CardBody>
               </Card>
 
-              <Card bg={cardBg} border="2px solid" borderColor="#FFC300">
+              <Card bg="gray.50" border="2px solid" borderColor="#FFC300">
                 <CardHeader>
                   <VStack align="start" spacing={2}>
                     <Heading size="lg" color="#1F4287">Client Pricing</Heading>
