@@ -4,7 +4,7 @@ from .models import (
     CampaignPerformance, CampaignAudience, CampaignTemplate
 )
 from accounts.serializers import UserProfileSerializer as CustomUserSerializer
-from core.serializers import TenantSerializer
+
 
 
 class CampaignAudienceSerializer(serializers.ModelSerializer):
@@ -16,7 +16,7 @@ class CampaignAudienceSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'description', 'segment_type', 'criteria', 'filters',
             'estimated_size', 'actual_size', 'engagement_rate', 'conversion_rate',
-            'catalyst_score', 'catalyst_recommendations', 'is_active',
+            'optimizer_score', 'optimizer_recommendations', 'is_active',
             'created_at', 'updated_at', 'created_by'
         ]
         read_only_fields = ['id', 'created_at', 'updated_at', 'created_by']
@@ -25,21 +25,21 @@ class CampaignAudienceSerializer(serializers.ModelSerializer):
 class CampaignTemplateSerializer(serializers.ModelSerializer):
     """Serializer for campaign templates"""
     created_by = CustomUserSerializer(read_only=True)
-    tenant = TenantSerializer(read_only=True)
+
     
     class Meta:
         model = CampaignTemplate
         fields = [
             'id', 'name', 'description', 'category', 'campaign_data', 'steps_data',
             'settings', 'usage_count', 'rating', 'is_public', 'is_featured',
-            'created_at', 'updated_at', 'created_by', 'tenant'
+            'created_at', 'updated_at', 'created_by'
         ]
         read_only_fields = ['id', 'usage_count', 'created_at', 'updated_at', 'created_by']
 
 
 class CampaignStepSerializer(serializers.ModelSerializer):
     """Serializer for campaign steps"""
-    catalyst_suggestions = serializers.JSONField(read_only=True)
+    optimizer_suggestions = serializers.JSONField(read_only=True)
     performance_score = serializers.DecimalField(max_digits=5, decimal_places=2, read_only=True)
     
     class Meta:
@@ -48,7 +48,7 @@ class CampaignStepSerializer(serializers.ModelSerializer):
             'id', 'campaign', 'step_type', 'name', 'description', 'order',
             'config', 'content_data', 'metadata', 'parent_steps',
             'true_path_next_step', 'false_path_next_step',
-            'catalyst_optimized', 'catalyst_suggestions', 'performance_score',
+            'optimizer_optimized', 'optimizer_suggestions', 'performance_score',
             'is_enabled', 'execution_count', 'last_executed',
             'created_at', 'updated_at'
         ]
