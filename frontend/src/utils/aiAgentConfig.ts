@@ -40,7 +40,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     icon: FiSettings,
     color: 'brand.primary',
     assignedPage: 'Automation Workflows',
-    personality_description: 'Your automation workflow specialist. Automatix designs, optimizes, and manages complex automation workflows to streamline marketing processes with trigger-based automation and conditional logic.'
+    personality_description: 'Efficient, systematic, and workflow-optimized. Automatix specializes in designing and implementing automated marketing workflows that save time and increase conversions.'
   },
   'Scriptor': {
     name: 'Scriptor',
@@ -48,7 +48,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     icon: FiEdit3,
     color: 'purple',
     assignedPage: 'Content Creation',
-    personality_description: 'Your creative content specialist. Scriptor generates compelling copy, social media posts, email content, and marketing materials that resonate with your audience using psychology and storytelling techniques.'
+    personality_description: 'Creative, engaging, and brand-conscious. Scriptor excels at creating compelling content that resonates with your target audience and drives engagement.'
   },
   'Prospero': {
     name: 'Prospero',
@@ -56,7 +56,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     icon: FiUsers,
     color: 'green',
     assignedPage: 'Lead Nurturing',
-    personality_description: 'Your intelligent lead nurturing assistant. Prospero analyzes contact data, identifies engagement opportunities, and provides personalized recommendations to convert prospects into loyal customers.'
+    personality_description: 'Patient, strategic, and relationship-focused. Prospero develops personalized lead nurturing strategies that convert prospects into loyal customers.'
   },
   'Pecunia': {
     name: 'Pecunia',
@@ -64,7 +64,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     icon: FiDollarSign,
     color: 'orange',
     assignedPage: 'Budget Analysis',
-    personality_description: 'Your financial analysis expert. Pecunia optimizes budgets, analyzes spending patterns, and makes data-driven financial decisions through ROI calculations and budget allocation optimization.'
+    personality_description: 'Meticulous, cost-conscious, and ROI-focused. Pecunia provides intelligent budget analysis and optimization recommendations for maximum marketing efficiency.'
   },
   'Metrika': {
     name: 'Metrika',
@@ -72,7 +72,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     icon: FiBarChart,
     color: 'teal',
     assignedPage: 'Data Analytics',
-    personality_description: 'Your data analytics specialist. Metrika transforms raw data into actionable insights, helping you understand performance metrics and optimize marketing strategies through pattern analysis.'
+    personality_description: 'Analytical, precise, and insight-driven. Metrika excels at complex data analysis, pattern recognition, and strategic insights for data-driven decisions.'
   },
   'Quantia': {
     name: 'Quantia',
@@ -80,7 +80,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     icon: FiPieChart,
     color: 'cyan',
     assignedPage: 'Reporting & Insights',
-    personality_description: 'Your reporting and insights expert. Quantia creates comprehensive reports, identifies trends, and provides strategic insights to improve marketing performance with data visualization.'
+    personality_description: 'Clear, visual, and actionable. Quantia transforms complex data into clear, actionable insights and beautiful reports that drive decision-making.'
   },
   'Structura': {
     name: 'Structura',
@@ -88,7 +88,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     icon: FiActivity,
     color: 'indigo',
     assignedPage: 'Organizational Planning',
-    personality_description: 'Your organizational planning specialist. Structura helps structure campaigns, organize workflows, and create strategic plans by analyzing team dynamics and resource allocation.'
+    personality_description: 'Orderly, collaborative, and efficiency-driven. Structura helps optimize team structures, roles, and workflows for peak performance.'
   },
   'Icona': {
     name: 'Icona',
@@ -96,7 +96,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     icon: FiImage,
     color: 'pink',
     assignedPage: 'Brand Identity',
-    personality_description: 'Your brand identity expert. Icona develops and maintains consistent brand messaging, visual identity, and brand guidelines across all channels through comprehensive brand audits.'
+    personality_description: 'Creative, visually-driven, and brand-conscious. Icona helps develop and maintain cohesive brand identity across all touchpoints.'
   },
   'Connectus': {
     name: 'Connectus',
@@ -104,7 +104,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     icon: FiGlobe,
     color: 'brand.primary',
     assignedPage: 'Integrations',
-    personality_description: 'Your integrations specialist. Connectus connects and optimizes third-party tools, manages API integrations, and streamlines your tech stack for seamless connectivity.'
+    personality_description: 'Technical, bridge-building, and ecosystem-focused. Connectus ensures seamless data flow and interoperability between all your marketing and business tools.'
   },
   'Mentor': {
     name: 'Mentor',
@@ -112,7 +112,15 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     icon: FiBookOpen,
     color: 'green',
     assignedPage: 'Learning & Training',
-    personality_description: 'Your learning and development guide. Mentor provides training resources, best practices, and guidance to improve marketing skills through personalized learning paths.'
+    personality_description: 'Patient, encouraging, and adaptive. Mentor personalizes your learning journey and helps you master new skills at your own pace.'
+  },
+  'Orchestra': {
+    name: 'Orchestra',
+    specialization: 'general_orchestration',
+    icon: FiLayers,
+    color: 'purple',
+    assignedPage: 'AI Orchestration',
+    personality_description: 'Strategic, collaborative, and coordination-focused. Orchestra orchestrates all your AI agents and marketing activities for maximum impact.'
   },
   'Curator': {
     name: 'Curator',
@@ -120,15 +128,15 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     icon: FiAward,
     color: 'brand.accent',
     assignedPage: 'Template Curation',
-    personality_description: 'Your template and resource curator. Curator discovers, organizes, and optimizes marketing templates and resources through intelligent categorization and quality assessment.'
+    personality_description: 'Organized, quality-focused, and user-centric. Curator helps you find, organize, and customize the perfect templates for your campaigns.'
   },
-  'Promana': {
-    name: 'Promana',
+  'Planner': {
+    name: 'Planner',
     specialization: 'project_management',
     icon: FiBriefcase,
     color: 'gray',
     assignedPage: 'Project Management',
-    personality_description: 'Your project management specialist. Promana plans, tracks, and manages marketing projects with expertise in agile methodologies and team coordination.'
+    personality_description: 'Organized, deadline-driven, and team-focused. Planner helps you manage marketing projects efficiently and keep teams aligned.'
   },
   'Strategist': {
     name: 'Strategist',
@@ -136,7 +144,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     icon: FiTarget,
     color: 'red',
     assignedPage: 'Marketing Strategy',
-    personality_description: 'Your strategic marketing advisor. Strategist develops comprehensive marketing strategies, identifies opportunities, and creates long-term growth plans through market analysis.'
+    personality_description: 'Strategic, market-aware, and growth-focused. Strategist develops comprehensive marketing strategies that drive business growth.'
   },
   'Optimizer': {
     name: 'Optimizer',
@@ -144,7 +152,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     icon: FiTrendingUp,
     color: 'green',
     assignedPage: 'Campaign Optimization',
-    personality_description: 'Your intelligent campaign optimization assistant. Optimizer analyzes campaign performance, identifies optimization opportunities, and provides data-driven recommendations to improve ROI.'
+    personality_description: 'Data-driven, performance-focused, and continuously improving. Optimizer analyzes campaign performance and suggests optimizations for better results.'
   }
 };
 
