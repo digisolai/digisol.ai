@@ -165,13 +165,17 @@ class CampaignCreateSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # Set the current user as creator if available
-        if 'request' in self.context and hasattr(self.context['request'], 'user') and self.context['request'].user.is_authenticated:
-            validated_data['created_by'] = self.context['request'].user
-        else:
-            # Get the first available user or set to None
-            from accounts.models import CustomUser
-            user = CustomUser.objects.first()
-            validated_data['created_by'] = user
+        try:
+            if 'request' in self.context and hasattr(self.context['request'], 'user') and self.context['request'].user.is_authenticated:
+                validated_data['created_by'] = self.context['request'].user
+            else:
+                # Get the first available user or set to None
+                from accounts.models import CustomUser
+                user = CustomUser.objects.first()
+                validated_data['created_by'] = user
+        except Exception:
+            # If there's any error getting the user, just set to None
+            validated_data['created_by'] = None
         return super().create(validated_data)
 
 
