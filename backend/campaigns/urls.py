@@ -3,7 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import (
     MarketingCampaignViewSet, CampaignStepViewSet, OptimizerInsightViewSet,
     CampaignPerformanceViewSet, CampaignAudienceViewSet, CampaignTemplateViewSet,
-    CampaignDashboardView, OptimizerRecommendationView
+    CampaignAnalyticsView
 )
 
 router = DefaultRouter()
@@ -16,6 +16,5 @@ router.register(r'templates', CampaignTemplateViewSet, basename='template')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('dashboard/', CampaignDashboardView.as_view(), name='campaign-dashboard'),
-    path('recommendations/', OptimizerRecommendationView.as_view(), name='optimizer-recommendations'),
+    path('analytics/', CampaignAnalyticsView.as_view(), name='campaign-analytics'),
 ] 

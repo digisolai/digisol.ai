@@ -278,3 +278,12 @@ class CampaignAnalyticsSerializer(serializers.Serializer):
     comparisons = serializers.JSONField()
     optimizer_insights = OptimizerInsightSerializer(many=True)
     recommendations = OptimizerRecommendationSerializer(many=True) 
+
+
+class CampaignStatsSerializer(serializers.Serializer):
+    """Serializer for campaign statistics"""
+    total_campaigns = serializers.IntegerField()
+    active_campaigns = serializers.IntegerField()
+    total_budget = serializers.DecimalField(max_digits=10, decimal_places=2)
+    total_spent = serializers.DecimalField(max_digits=10, decimal_places=2)
+    average_roi = serializers.DecimalField(max_digits=5, decimal_places=2) 

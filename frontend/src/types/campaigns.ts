@@ -13,8 +13,8 @@ export interface MarketingCampaign {
   budget?: number;
   spent_budget: number;
   target_roi?: number;
-  catalyst_health_score?: number;
-  catalyst_recommendations: any[];
+  optimizer_health_score?: number;
+  optimizer_recommendations: any[];
   auto_optimization_enabled: boolean;
   last_optimized?: string;
   is_template: boolean;
@@ -40,8 +40,8 @@ export interface CampaignStep {
   parent_steps: string[];
   true_path_next_step?: string;
   false_path_next_step?: string;
-  catalyst_optimized: boolean;
-  catalyst_suggestions: any[];
+  optimizer_optimized: boolean;
+  optimizer_suggestions: any[];
   performance_score?: number;
   is_enabled: boolean;
   execution_count: number;

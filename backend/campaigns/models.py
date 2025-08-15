@@ -56,7 +56,7 @@ class MarketingCampaign(models.Model):
     
     # Budget and Performance
     budget = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    spent_budget = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    actual_spent = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     target_roi = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     
     # AI and Optimization
@@ -98,7 +98,7 @@ class MarketingCampaign(models.Model):
     def budget_utilization(self):
         if not self.budget:
             return 0
-        return (self.spent_budget / self.budget) * 100
+        return (self.actual_spent / self.budget) * 100
 
     @property
     def days_remaining(self):
@@ -135,7 +135,7 @@ class CampaignStep(models.Model):
     step_type = models.CharField(max_length=50, choices=STEP_TYPE_CHOICES)
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    order = models.IntegerField(default=0)
+    order_index = models.IntegerField(default=0)
     
     # Configuration and Content
     config = JSONField(default=dict)
@@ -179,7 +179,7 @@ class CampaignStep(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ['order', 'created_at']
+        ordering = ['order_index', 'created_at']
         verbose_name = 'Campaign Step'
         verbose_name_plural = 'Campaign Steps'
 
@@ -359,33 +359,26 @@ class CampaignAudience(models.Model):
 
     # Core Fields
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-    segment_type = models.CharField(max_length=20, choices=SEGMENT_TYPE_CHOICES, default='static')
+    campaign = models.ForeignKey(
+        MarketingCampaign,
+        on_delete=models.CASCADE,
+        related_name='audiences'
+    )
+    audience_name = models.CharField(max_length=255)
+    audience_criteria = JSONField(default=dict, blank=True)
     
-    # Audience Criteria
-    criteria = JSONField(default=dict, blank=True)
-    filters = JSONField(default=list, blank=True)
-    
-    # Size and Reach
-    estimated_size = models.IntegerField(null=True, blank=True)
-    actual_size = models.IntegerField(null=True, blank=True)
-    
-    # Performance
-    engagement_rate = models.DecimalField(max_digits=5, decimal_places=4, null=True, blank=True)
-    conversion_rate = models.DecimalField(max_digits=5, decimal_places=4, null=True, blank=True)
+    # Size and Performance
+    size = models.IntegerField(null=True, blank=True)
+    engagement_rate = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+    conversion_rate = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     
     # AI Insights
     optimizer_score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     optimizer_recommendations = JSONField(default=list, blank=True)
     
-    # Status
-    is_active = models.BooleanField(default=True)
-    
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -393,7 +386,7 @@ class CampaignAudience(models.Model):
         verbose_name_plural = 'Campaign Audiences'
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.audience_name}"
 
 
 class CampaignTemplate(models.Model):
@@ -420,29 +413,20 @@ class CampaignTemplate(models.Model):
     # Template Data
     campaign_data = JSONField(default=dict)
     steps_data = JSONField(default=list)
-    settings = JSONField(default=dict, blank=True)
     
-    # Usage and Popularity
+    # Usage
     usage_count = models.IntegerField(default=0)
-    rating = models.DecimalField(max_digits=3, decimal_places=2, null=True, blank=True)
-    
-    # Status
-    is_public = models.BooleanField(default=False)
-    is_featured = models.BooleanField(default=False)
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    created_by = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
-        ordering = ['-usage_count', '-rating']
+        ordering = ['-usage_count']
         verbose_name = 'Campaign Template'
         verbose_name_plural = 'Campaign Templates'
 
     def __str__(self):
         return f"{self.name}"
 
-    @property
-    def is_global(self):
-        return True 
+    pass 

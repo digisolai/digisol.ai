@@ -459,17 +459,17 @@ export default function CampaignsPage() {
               <Badge colorScheme={STATUS_COLORS[campaign.status]} variant="solid">
                 {campaign.status}
               </Badge>
-              {campaign.catalyst_health_score && (
+              {campaign.optimizer_health_score && (
                 <HStack>
                   <Text fontSize="sm" color="gray.500">Health:</Text>
                   <Progress
-                    value={campaign.catalyst_health_score}
+                    value={campaign.optimizer_health_score}
                     size="sm"
                     width="60px"
-                    colorScheme={campaign.catalyst_health_score > 70 ? 'brand.primary' : campaign.catalyst_health_score > 40 ? 'brand.accent' : 'red'}
+                    colorScheme={campaign.optimizer_health_score > 70 ? 'brand.primary' : campaign.optimizer_health_score > 40 ? 'brand.accent' : 'red'}
                   />
                   <Text fontSize="sm" fontWeight="medium">
-                    {campaign.catalyst_health_score}%
+                    {campaign.optimizer_health_score}%
                   </Text>
                 </HStack>
               )}
@@ -1202,15 +1202,15 @@ function ViewCampaignModal({ isOpen, onClose, campaign }: {
                     </>
                   )}
                   
-                  {campaign.catalyst_health_score && (
+                  {campaign.optimizer_health_score && (
                     <Box>
                       <HStack justify="space-between" mb={2}>
                         <Text fontWeight="medium">Health Score:</Text>
-                        <Text>{campaign.catalyst_health_score}%</Text>
+                        <Text>{campaign.optimizer_health_score}%</Text>
                       </HStack>
                       <Progress
-                        value={campaign.catalyst_health_score}
-                        colorScheme={campaign.catalyst_health_score > 70 ? 'brand.primary' : campaign.catalyst_health_score > 40 ? 'brand.accent' : 'red'}
+                        value={campaign.optimizer_health_score}
+                        colorScheme={campaign.optimizer_health_score > 70 ? 'brand.primary' : campaign.optimizer_health_score > 40 ? 'brand.accent' : 'red'}
                       />
                     </Box>
                   )}
