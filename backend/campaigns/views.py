@@ -87,6 +87,15 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     
     @action(detail=False, methods=['get'])
+    def choices(self, request):
+        """Get available choices for campaign fields"""
+        return Response({
+            'campaign_type': MarketingCampaign.CAMPAIGN_TYPE_CHOICES,
+            'objective': MarketingCampaign.OBJECTIVE_CHOICES,
+            'status': MarketingCampaign.STATUS_CHOICES,
+        })
+    
+    @action(detail=False, methods=['get'])
     def stats(self, request):
         """Get campaign statistics"""
         try:
