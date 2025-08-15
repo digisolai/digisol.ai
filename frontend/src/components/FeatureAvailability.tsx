@@ -193,14 +193,14 @@ export default function FeatureAvailability() {
           ))}
         </SimpleGrid>
         
-        <Box mt={6} p={4} bg="blue.50" borderRadius="md" border="1px solid" borderColor="blue.200">
+        <Box mt={6} p={4} bg="brand.primary.50" borderRadius="md" border="1px solid" borderColor="brand.primary.200">
           <HStack spacing={2} mb={2}>
-            <Icon as={FiInfo} color="blue.500" />
-            <Text fontWeight="bold" color="blue.700">
+            <Icon as={FiInfo} color="brand.primary" />
+            <Text fontWeight="bold" color="brand.primary">
               Explore All Features
             </Text>
           </HStack>
-          <Text fontSize="sm" color="blue.600">
+          <Text fontSize="sm" color="brand.primary">
             You can explore and test all features of DigiSol.AI regardless of your subscription status. 
             Upgrade to remove limits and get priority support.
           </Text>

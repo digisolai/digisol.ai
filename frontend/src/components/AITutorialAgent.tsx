@@ -255,7 +255,7 @@ export const AITutorialAgent: React.FC<AITutorialAgentProps> = ({
         title: "Campaign Creation Mastery",
         description: "Learn to create effective marketing campaigns",
         icon: FiTarget,
-        color: "blue"
+        color: "brand.primary"
       });
     }
     
@@ -519,7 +519,7 @@ export const AITutorialAgent: React.FC<AITutorialAgentProps> = ({
                         <VStack spacing={3} align="stretch">
                           <HStack justify="space-between">
                             <Text fontWeight="bold">{tutorial.title}</Text>
-                            <Badge colorScheme={tutorial.is_completed ? "green" : "blue"}>
+                            <Badge colorScheme={tutorial.is_completed ? "green" : "brand.primary"}>
                               {tutorial.is_completed ? "Completed" : "Available"}
                             </Badge>
                           </HStack>

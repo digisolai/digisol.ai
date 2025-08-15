@@ -577,7 +577,7 @@ export default function BrandHubPage() {
                     <HStack spacing={2}>
                       <Badge 
                         colorScheme={brandingConfig.branding_status === 'active' ? 'green' : 
-                                   brandingConfig.branding_status === 'pending' ? 'yellow' : 'gray'}
+                                   brandingConfig.branding_status === 'pending' ? 'brand.accent' : 'gray'}
                       >
                         {brandingConfig.branding_status === 'active' ? 'Active' : 
                          brandingConfig.branding_status === 'pending' ? 'Pending' : 'Not Configured'}

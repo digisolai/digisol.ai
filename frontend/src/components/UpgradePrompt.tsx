@@ -52,14 +52,14 @@ export default function UpgradePrompt({
         mb={4}
       >
         <HStack spacing={2} align="center">
-          <Icon as={FiStar} color="blue.500" boxSize={4} />
+          <Icon as={FiStar} color="brand.primary" boxSize={4} />
           <Text fontSize="sm" color={textColor} fontWeight="medium">
             {feature ? `${feature} available with upgrade` : "Upgrade for unlimited access"}
           </Text>
           {showUpgradeButton && (
             <Button
               size="xs"
-              colorScheme="blue"
+              colorScheme="brand.primary"
               variant="outline"
               onClick={handleUpgrade}
               ml="auto"
@@ -97,12 +97,12 @@ export default function UpgradePrompt({
       
       {showUpgradeButton && (
         <VStack mt={4} spacing={3}>
-          <Button
-            colorScheme="blue"
-            size="md"
-            onClick={handleUpgrade}
-            leftIcon={<FiZap />}
-          >
+                     <Button
+             colorScheme="brand.primary"
+             size="md"
+             onClick={handleUpgrade}
+             leftIcon={<FiZap />}
+           >
             View Plans & Upgrade
           </Button>
           <Text fontSize="xs" color={textColor} opacity={0.8}>
@@ -189,25 +189,25 @@ export function UsageLimitPrompt({
       mb={4}
     >
       <HStack spacing={3} align="center">
-        <Icon 
-          as={isNearLimit ? FiTrendingUp : FiStar} 
-          color={isNearLimit ? 'orange.500' : 'blue.500'} 
-          boxSize={5} 
-        />
+                 <Icon 
+           as={isNearLimit ? FiTrendingUp : FiStar} 
+           color={isNearLimit ? 'orange.500' : 'brand.primary'} 
+           boxSize={5} 
+         />
         <VStack align="start" spacing={1} flex={1}>
-          <Text fontSize="sm" fontWeight="medium" color={isNearLimit ? 'orange.800' : 'blue.800'}>
-            {isNearLimit ? 'Approaching Limit' : 'Usage Limit'}
-          </Text>
-          <Text fontSize="xs" color={isNearLimit ? 'orange.700' : 'blue.700'}>
+                     <Text fontSize="sm" fontWeight="medium" color={isNearLimit ? 'orange.800' : 'brand.primary'}>
+             {isNearLimit ? 'Approaching Limit' : 'Usage Limit'}
+           </Text>
+           <Text fontSize="xs" color={isNearLimit ? 'orange.700' : 'brand.primary'}>
             {feature}: {current} / {limit} used
           </Text>
         </VStack>
-        <Button
-          size="sm"
-          colorScheme={isNearLimit ? 'orange' : 'blue'}
-          variant="outline"
-          onClick={() => window.location.href = '/billing'}
-        >
+                 <Button
+           size="sm"
+           colorScheme={isNearLimit ? 'orange' : 'brand.primary'}
+           variant="outline"
+           onClick={() => window.location.href = '/billing'}
+         >
           Upgrade
         </Button>
       </HStack>

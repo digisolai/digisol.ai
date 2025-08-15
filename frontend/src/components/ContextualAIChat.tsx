@@ -180,7 +180,7 @@ export default function ContextualAIChat({
               <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={AgentIcon} color={AI_BRAND_COLORS.accent} />} />
               <VStack align="start" spacing={0}>
                 <Text fontWeight="bold" color={AI_BRAND_COLORS.primary}>{agentName}</Text>
-                <Badge colorScheme="blue" size="sm">{getSpecializationLabel(agentSpecialization)}</Badge>
+                <Badge colorScheme="brand.primary" size="sm">{getSpecializationLabel(agentSpecialization)}</Badge>
               </VStack>
             </HStack>
           </Box>
@@ -217,7 +217,7 @@ export default function ContextualAIChat({
             <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={AgentIcon} color={AI_BRAND_COLORS.accent} />} />
             <VStack align="start" spacing={0}>
               <Text fontWeight="bold" color={AI_BRAND_COLORS.primary}>{agentName}</Text>
-              <Badge colorScheme="blue" size="sm">{getSpecializationLabel(agentSpecialization)}</Badge>
+                              <Badge colorScheme="brand.primary" size="sm">{getSpecializationLabel(agentSpecialization)}</Badge>
               {pageContext !== 'general' && (
                 <Badge colorScheme="green" size="xs" mt={1}>
                   {pageContext} context

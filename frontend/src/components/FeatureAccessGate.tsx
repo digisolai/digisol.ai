@@ -167,7 +167,7 @@ export const FeatureAccessGate: React.FC<FeatureAccessGateProps> = ({
         <Text color="gray.500" mb={4}>
           Upgrade to {requiredPlan} plan to access this feature
         </Text>
-        <Button colorScheme="blue" as="a" href="/pricing">
+        <Button colorScheme="brand.primary" as="a" href="/pricing">
           View Plans
         </Button>
       </Box>
@@ -186,9 +186,9 @@ export const FeatureAccessGate: React.FC<FeatureAccessGateProps> = ({
         <CardBody>
           <VStack spacing={4} align="stretch">
             <HStack spacing={3}>
-              <Icon as={info?.icon || FiStar} boxSize={6} color="blue.500" />
+              <Icon as={info?.icon || FiStar} boxSize={6} color="brand.primary" />
               <Box>
-                <Heading size="md" color="blue.600">
+                <Heading size="md" color="brand.primary">
                   {info?.title || feature}
                 </Heading>
                 <Text color="gray.600" fontSize="sm">
@@ -219,7 +219,7 @@ export const FeatureAccessGate: React.FC<FeatureAccessGateProps> = ({
               </Text>
               <HStack spacing={2}>
                 {info?.plans.map((plan) => (
-                  <Badge key={plan} colorScheme="blue" variant="subtle">
+                  <Badge key={plan} colorScheme="brand.primary" variant="subtle">
                     {plan}
                   </Badge>
                 ))}
@@ -227,7 +227,7 @@ export const FeatureAccessGate: React.FC<FeatureAccessGateProps> = ({
             </Box>
             
             <HStack spacing={3} pt={2}>
-              <Button colorScheme="blue" size="lg" as="a" href="/pricing">
+              <Button colorScheme="brand.primary" size="lg" as="a" href="/pricing">
                 Upgrade Now
               </Button>
               <Button variant="outline" size="lg" as="a" href="/features">

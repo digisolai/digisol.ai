@@ -280,7 +280,7 @@ export default function BudgetingPage() {
   const getProgressColor = (percentage: number) => {
     if (percentage >= 90) return 'red';
     if (percentage >= 75) return 'orange';
-    if (percentage >= 50) return 'yellow';
+    if (percentage >= 50) return 'brand.accent';
     return 'green';
   };
 

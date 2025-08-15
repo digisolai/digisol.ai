@@ -212,7 +212,7 @@ export default function AIChatInterface({
                 <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={agentConfig.icon} color={AI_BRAND_COLORS.accent} />} />
                 <VStack align="start" spacing={0}>
                   <Text fontWeight="bold" color={AI_BRAND_COLORS.primary}>{agentName}</Text>
-                  <Badge colorScheme="blue" variant="subtle" size="sm">
+                  <Badge colorScheme="brand.primary" variant="subtle" size="sm">
                     {agentConfig.assignedPage}
                   </Badge>
                 </VStack>
@@ -250,7 +250,7 @@ export default function AIChatInterface({
                 <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={agentConfig.icon} color={AI_BRAND_COLORS.accent} />} />
                 <VStack align="start" spacing={0}>
                   <Text fontWeight="bold" color={AI_BRAND_COLORS.primary}>{agentName}</Text>
-                  <Badge colorScheme="blue" variant="subtle" size="sm">
+                  <Badge colorScheme="brand.primary" variant="subtle" size="sm">
                     {agentConfig.assignedPage}
                   </Badge>
                 </VStack>
@@ -292,7 +292,7 @@ export default function AIChatInterface({
               <Avatar size="sm" bg={AI_BRAND_COLORS.primary} icon={<Icon as={agentConfig.icon} color={AI_BRAND_COLORS.accent} />} />
               <VStack align="start" spacing={0}>
                 <Text fontWeight="bold" color={AI_BRAND_COLORS.primary}>{agentName}</Text>
-                <Badge colorScheme="blue" variant="subtle" size="sm">
+                <Badge colorScheme="brand.primary" variant="subtle" size="sm">
                   {agentConfig.assignedPage}
                 </Badge>
               </VStack>

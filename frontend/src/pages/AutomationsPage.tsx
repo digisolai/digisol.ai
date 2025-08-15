@@ -137,8 +137,8 @@ export default function AutomationsPage() {
   const getWorkflowStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'green';
-      case 'paused': return 'yellow';
-      case 'completed': return 'blue';
+      case 'paused': return 'brand.accent';
+      case 'completed': return 'brand.primary';
       case 'failed': return 'red';
       case 'in_progress': return 'purple';
       default: return 'gray';
@@ -148,8 +148,8 @@ export default function AutomationsPage() {
   const getExecutionStatusColor = (status: string) => {
     switch (status) {
       case 'active': return 'green';
-      case 'paused': return 'yellow';
-      case 'completed': return 'blue';
+      case 'paused': return 'brand.accent';
+      case 'completed': return 'brand.primary';
       case 'failed': return 'red';
       case 'in_progress': return 'purple';
       default: return 'gray';

@@ -408,8 +408,8 @@ export default function AIPlanningPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed': return 'green';
-      case 'in_progress': return 'blue';
-      case 'pending': return 'yellow';
+              case 'in_progress': return 'brand.primary';
+              case 'pending': return 'brand.accent';
       case 'failed': return 'red';
       default: return 'gray';
     }
@@ -459,7 +459,7 @@ export default function AIPlanningPage() {
   const getAgentColor = (specialization: string) => {
     switch (specialization) {
       case 'marketing_strategy':
-        return 'blue.500';
+        return 'brand.primary';
       case 'budget_analysis':
         return 'green.500';
       case 'content_creation':
@@ -477,7 +477,7 @@ export default function AIPlanningPage() {
       case 'integrations_management':
         return 'gray.500';
       case 'learning_guidance':
-        return 'yellow.500';
+        return 'brand.accent';
       case 'reporting_insights':
         return 'indigo.500';
       case 'organizational_planning':
@@ -487,7 +487,7 @@ export default function AIPlanningPage() {
       case 'brand_identity':
         return 'brand.accent';
       case 'template_curation':
-        return 'blue.400';
+        return 'brand.400';
       case 'project_management':
         return 'green.400';
       default:
@@ -559,14 +559,14 @@ export default function AIPlanningPage() {
             </CardBody>
           </Card>
 
-          <Card bg="white" boxShadow="md" borderLeft="4px solid" borderLeftColor="blue.500">
+          <Card bg="white" boxShadow="md" borderLeft="4px solid" borderLeftColor="brand.primary">
             <CardBody>
               <Stat>
                 <StatLabel color="brand.neutral.600" fontSize="sm">
                   <Icon as={FiClock} mr={2} />
                   In Progress
                 </StatLabel>
-                <StatNumber color="blue.500" fontSize="2xl">{inProgressTasks}</StatNumber>
+                <StatNumber color="brand.primary" fontSize="2xl">{inProgressTasks}</StatNumber>
                 <StatHelpText>
                   Currently being processed
                 </StatHelpText>
@@ -621,13 +621,13 @@ export default function AIPlanningPage() {
                   <Text fontSize="lg" fontWeight="bold" color="green.600">{completedTasks}</Text>
                   <Text fontSize="sm" color="green.600">Completed</Text>
                 </Box>
-                <Box textAlign="center" p={3} bg="blue.50" borderRadius="md">
-                  <Text fontSize="lg" fontWeight="bold" color="blue.600">{inProgressTasks}</Text>
-                  <Text fontSize="sm" color="blue.600">In Progress</Text>
+                        <Box textAlign="center" p={3} bg="brand.50" borderRadius="md">
+          <Text fontSize="lg" fontWeight="bold" color="brand.600">{inProgressTasks}</Text>
+          <Text fontSize="sm" color="brand.600">In Progress</Text>
                 </Box>
-                <Box textAlign="center" p={3} bg="yellow.50" borderRadius="md">
-                  <Text fontSize="lg" fontWeight="bold" color="yellow.600">{pendingTasks}</Text>
-                  <Text fontSize="sm" color="yellow.600">Pending</Text>
+                        <Box textAlign="center" p={3} bg="brand.accent.50" borderRadius="md">
+          <Text fontSize="lg" fontWeight="bold" color="brand.accent.600">{pendingTasks}</Text>
+          <Text fontSize="sm" color="brand.accent.600">Pending</Text>
                 </Box>
               </SimpleGrid>
             </VStack>
@@ -692,7 +692,7 @@ export default function AIPlanningPage() {
                 </AlertDescription>
                 <Button 
                   size="sm" 
-                  colorScheme="blue" 
+                  colorScheme="brand.primary" 
                   mt={2}
                   onClick={() => {
                     setError(null);
@@ -978,7 +978,7 @@ const RecommendationCard = ({ recommendation, onDismiss, onActioned }: {
     switch (priority) {
       case 'critical': return 'red';
       case 'high': return 'orange';
-      case 'medium': return 'yellow';
+              case 'medium': return 'brand.accent';
       case 'low': return 'green';
       default: return 'gray';
     }

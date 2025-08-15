@@ -111,7 +111,7 @@ const features: Feature[] = [
     icon: FiCpu,
     title: "AI-Powered Marketing",
     description: "Advanced AI agents that generate content, optimize campaigns, and provide strategic insights",
-    color: "blue.500",
+    color: "brand.primary",
   },
   {
     icon: FiTarget,
@@ -276,13 +276,13 @@ const learningFeatures = [
     icon: FiBookOpen,
     title: "Marketing Resources",
     description: "Comprehensive library of articles, videos, and templates",
-    color: "blue.500",
+    color: "brand.primary",
   },
   {
     icon: FiAward,
     title: "Badges & Achievements",
     description: "Gamified learning with token rewards and progress tracking",
-    color: "yellow.500",
+            color: "brand.accent",
   },
   {
     icon: FiAward,
@@ -303,7 +303,7 @@ const clientPortalFeatures = [
     icon: FiUsers,
     title: "Multi-Client Management",
     description: "Manage unlimited clients with individual portals",
-    color: "blue.500",
+    color: "brand.primary",
   },
   {
     icon: FiShield,
@@ -362,7 +362,7 @@ export default function HomePage() {
       <Icon
         key={i}
         as={FiStar}
-        color={i < rating ? "yellow.400" : "gray.300"}
+        color={i < rating ? "brand.accent" : "gray.300"}
         boxSize={4}
       />
     ));
@@ -861,7 +861,7 @@ export default function HomePage() {
                         top={-3}
                         left="50%"
                         transform="translateX(-50%)"
-                        colorScheme="yellow"
+                        colorScheme="brand.accent"
                         px={4}
                         py={1}
                         borderRadius="full"

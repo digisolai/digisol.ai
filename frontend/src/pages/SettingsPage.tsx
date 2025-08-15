@@ -372,12 +372,12 @@ export default function SettingsPage() {
                         </HStack>
                         <Badge colorScheme="green">Connected</Badge>
                       </HStack>
-                      <HStack justify="space-between" p={3} bg="blue.50" borderRadius="md">
+                      <HStack justify="space-between" p={3} bg="brand.primary.50" borderRadius="md">
                         <HStack>
-                          <Icon as={FiCheck} color="blue.500" />
+                          <Icon as={FiCheck} color="brand.primary" />
                           <Text fontWeight="medium">Mailchimp</Text>
                         </HStack>
-                        <Badge colorScheme="blue">Connected</Badge>
+                        <Badge colorScheme="brand.primary">Connected</Badge>
                       </HStack>
                       <HStack justify="space-between" p={3} bg="gray.50" borderRadius="md">
                         <HStack>

@@ -265,7 +265,7 @@ export default function TutorialDetailPage() {
                     {tutorial.title}
                   </Heading>
                   {tutorial.is_global && (
-                    <Badge colorScheme="blue" variant="subtle">
+                    <Badge colorScheme="brand.primary" variant="subtle">
                       Global
                     </Badge>
                   )}

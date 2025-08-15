@@ -431,7 +431,7 @@ export default function AIOverviewPage() {
     switch (status) {
       case 'completed': return 'green';
       case 'in_progress': return 'blue';
-      case 'pending': return 'yellow';
+              case 'pending': return 'brand.accent';
       case 'failed': return 'red';
       default: return 'gray';
     }
@@ -468,7 +468,7 @@ export default function AIOverviewPage() {
       case 'prediction': return 'blue';
       case 'recommendation': return 'green';
       case 'alert': return 'red';
-      case 'opportunity': return 'yellow';
+              case 'opportunity': return 'brand.accent';
       default: return 'gray';
     }
   };
@@ -516,7 +516,7 @@ export default function AIOverviewPage() {
               </HStack>
               <Button
                 size="sm"
-                colorScheme="yellow"
+                colorScheme="brand.accent"
                 bg="brand.accent"
                 color="brand.primary"
                 leftIcon={<FiCommand />}
@@ -978,7 +978,7 @@ const RecommendationCard = ({ recommendation, onDismiss, onActioned }: {
     switch (priority) {
       case 'critical': return 'red';
       case 'high': return 'orange';
-      case 'medium': return 'yellow';
+              case 'medium': return 'brand.accent';
       case 'low': return 'green';
       default: return 'gray';
     }
@@ -993,7 +993,7 @@ const RecommendationCard = ({ recommendation, onDismiss, onActioned }: {
               <Badge colorScheme={getPriorityColor(recommendation.priority)}>
                 {recommendation.priority}
               </Badge>
-              <Badge colorScheme="blue" variant="outline">
+              <Badge colorScheme="brand.primary" variant="outline">
                 {recommendation.type.replace('_', ' ')}
               </Badge>
             </HStack>

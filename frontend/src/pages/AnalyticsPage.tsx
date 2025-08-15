@@ -642,11 +642,11 @@ function AnalyticsPage() {
   const getInsightColor = (insightType: string) => {
     switch (insightType) {
       case 'anomaly': return 'red';
-      case 'trend': return 'blue';
+              case 'trend': return 'brand.primary';
       case 'prediction': return 'purple';
       case 'recommendation': return 'green';
       case 'segmentation': return 'orange';
-      case 'root_cause': return 'yellow';
+              case 'root_cause': return 'brand.accent';
       default: return 'gray';
     }
   };
@@ -753,7 +753,7 @@ function AnalyticsPage() {
                             <Text fontWeight="medium" mb={2}>Top Strategic Recommendations</Text>
                             <List spacing={2}>
                               <ListItem fontSize="sm">
-                                <ListIcon as={FiTarget} color="blue.500" />
+                                <ListIcon as={FiTarget} color="brand.primary" />
                                 Launch targeted retention campaign for customers with engagement score below threshold
                               </ListItem>
                               <ListItem fontSize="sm">
@@ -907,7 +907,7 @@ function AnalyticsPage() {
                     <Heading size="md" color="brand.primary">Machine Learning Models</Heading>
                     <Button 
                       leftIcon={<FiPlus />} 
-                      colorScheme="blue" 
+                      colorScheme="brand.primary" 
                       size="md" 
                       onClick={onModelOpen}
                       bg="brand.primary"
@@ -959,29 +959,29 @@ function AnalyticsPage() {
                           <Text fontSize="sm" color="gray.600" mb={4}>
                             {model.description}
                           </Text>
-                          <Badge colorScheme="blue" mb={4}>
+                          <Badge colorScheme="brand.primary" mb={4}>
                             {model.model_type_display}
                           </Badge>
                           
-                          {model.performance_metrics && (
+                          {model.performance_metrics && typeof model.performance_metrics === 'object' && (
                             <Box mb={4}>
                               <Text fontSize="sm" fontWeight="medium" mb={2}>Performance:</Text>
                               <SimpleGrid columns={2} spacing={2}>
                                 <Stat size="sm">
                                   <StatLabel>Accuracy</StatLabel>
                                   <StatNumber fontSize="sm">
-                                    {(model.performance_metrics.accuracy * 100).toFixed(1)}%
+                                    {('accuracy' in model.performance_metrics && typeof model.performance_metrics.accuracy === 'number' ? (model.performance_metrics.accuracy * 100).toFixed(1) : 0)}%
                                   </StatNumber>
                                 </Stat>
                                 <Stat size="sm">
                                   <StatLabel>F1 Score</StatLabel>
                                   <StatNumber fontSize="sm">
-                                    {(model.performance_metrics.f1_score * 100).toFixed(1)}%
+                                    {('f1_score' in model.performance_metrics && typeof model.performance_metrics.f1_score === 'number' ? (model.performance_metrics.f1_score * 100).toFixed(1) : 0)}%
                                   </StatNumber>
                                 </Stat>
                               </SimpleGrid>
                             </Box>
-                          )}
+                          ) as React.ReactNode}
                           
                           <HStack spacing={2}>
                             <Button
@@ -1018,7 +1018,7 @@ function AnalyticsPage() {
                     <Heading size="md" color="brand.primary">AI-Generated Insights</Heading>
                     <Button 
                       leftIcon={<FiPlus />} 
-                      colorScheme="blue" 
+                      colorScheme="brand.primary" 
                       size="md" 
                       onClick={onAnalysisOpen}
                       bg="brand.primary"
@@ -1139,11 +1139,11 @@ function AnalyticsPage() {
                               </List>
                             </Box>
                             <Box>
-                              <Text fontWeight="medium" color="blue.600" mb={2}>Opportunities</Text>
+                              <Text fontWeight="medium" color="brand.primary" mb={2}>Opportunities</Text>
                               <List spacing={1}>
                                 {analysis.opportunities.slice(0, 3).map((opportunity, index) => (
                                   <ListItem key={index} fontSize="sm">
-                                    <ListIcon as={FiTrendingUp} color="blue.500" />
+                                    <ListIcon as={FiTrendingUp} color="brand.primary" />
                                     {opportunity}
                                   </ListItem>
                                 ))}
@@ -1316,7 +1316,7 @@ function AnalyticsPage() {
                               <List spacing={1}>
                                 {analysis.trends.slice(0, 3).map((trend, index) => (
                                   <ListItem key={index} fontSize="sm">
-                                    <ListIcon as={FiTrendingUp} color="blue.500" />
+                                    <ListIcon as={FiTrendingUp} color="brand.primary" />
                                     {trend}
                                   </ListItem>
                                 ))}

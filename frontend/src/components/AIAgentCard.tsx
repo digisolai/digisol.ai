@@ -117,7 +117,7 @@ export const AIAgentCard: React.FC<AIAgentCardProps> = ({
                 <Text fontWeight="bold" fontSize="lg" color={AI_BRAND_COLORS.primary}>
                   {agent.name}
                 </Text>
-                <Badge bg="blue.100" color="blue.800" variant="subtle">
+                <Badge bg="brand.primary.100" color="brand.primary.800" variant="subtle">
                   {getSpecializationLabel(agent.specialization)}
                 </Badge>
               </VStack>

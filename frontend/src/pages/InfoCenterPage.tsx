@@ -713,14 +713,14 @@ export default function InfoCenterPage() {
                       </ListItem>
                       <ListItem>
                         <HStack>
-                          <ListIcon as={FiAward} color="yellow.500" />
+                          <ListIcon as={FiAward} color="brand.accent" />
                           <Text>Earned "First Steps" badge</Text>
                           <Badge colorScheme="green" size="sm">+50 tokens</Badge>
                         </HStack>
                       </ListItem>
                       <ListItem>
                         <HStack>
-                          <ListIcon as={FiBook} color="blue.500" />
+                          <ListIcon as={FiBook} color="brand.primary" />
                           <Text>Started "Social Media Strategy Guide"</Text>
                         </HStack>
                       </ListItem>
@@ -778,7 +778,7 @@ export default function InfoCenterPage() {
                       <Text fontWeight="bold" mb={2}>Tags:</Text>
                       <HStack spacing={2} flexWrap="wrap">
                         {selectedResource.tags.map((tag, index) => (
-                          <Badge key={index} colorScheme="blue" variant="subtle">
+                          <Badge key={index} colorScheme="brand.primary" variant="subtle">
                             {tag}
                           </Badge>
                         ))}

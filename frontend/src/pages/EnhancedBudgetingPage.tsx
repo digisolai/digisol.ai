@@ -495,13 +495,13 @@ export default function EnhancedBudgetingPage() {
   const getProgressColor = (percentage: number) => {
     if (percentage >= 90) return 'red';
     if (percentage >= 75) return 'orange';
-    if (percentage >= 50) return 'yellow';
+    if (percentage >= 50) return 'brand.accent';
     return 'green';
   };
 
   const getHealthColor = (score: number) => {
     if (score >= 80) return 'green.500';
-    if (score >= 60) return 'yellow.500';
+    if (score >= 60) return 'brand.accent';
     return 'red.500';
   };
 
@@ -509,7 +509,7 @@ export default function EnhancedBudgetingPage() {
     switch (priority) {
       case 'critical': return 'red';
       case 'high': return 'orange';
-      case 'medium': return 'yellow';
+              case 'medium': return 'brand.accent';
       case 'low': return 'green';
       default: return 'gray';
     }
@@ -552,7 +552,7 @@ export default function EnhancedBudgetingPage() {
             </VStack>
             <Button
               leftIcon={<FiPlus />}
-              colorScheme="blue"
+              colorScheme="brand.primary"
               onClick={onBudgetModalOpen}
             >
               Create New Budget
@@ -583,7 +583,7 @@ export default function EnhancedBudgetingPage() {
                   <Heading size="md">Financial Health At-a-Glance</Heading>
                   <Badge
                     colorScheme={getHealthColor(summary.pecunia_health_score) === 'green.500' ? 'green' : 
-                               getHealthColor(summary.pecunia_health_score) === 'yellow.500' ? 'yellow' : 'red'}
+                               getHealthColor(summary.pecunia_health_score) === 'brand.accent' ? 'brand.accent' : 'red'}
                     size="lg"
                     fontSize="lg"
                     px={3}
@@ -655,7 +655,7 @@ export default function EnhancedBudgetingPage() {
                       </HStack>
                       <Text color="gray.600" mb={3}>{rec.description}</Text>
                       <HStack spacing={4}>
-                        <Button size="sm" colorScheme="blue" variant="outline">
+                        <Button size="sm" colorScheme="brand.primary" variant="outline">
                           Review
                         </Button>
                         <Button size="sm" colorScheme="green" variant="outline">
@@ -765,7 +765,7 @@ export default function EnhancedBudgetingPage() {
                             <VStack align="start" spacing={1}>
                               <HStack>
                                 <Text fontWeight="bold" fontSize="lg">{budget.name}</Text>
-                                <Badge colorScheme="blue" size="sm">
+                                <Badge colorScheme="brand.primary" size="sm">
                                   {budget.budget_type}
                                 </Badge>
                                 <Badge colorScheme={budget.status === 'active' ? 'green' : 'gray'} size="sm">
@@ -792,7 +792,7 @@ export default function EnhancedBudgetingPage() {
                               </Text>
                               <HStack>
                                 <Badge colorScheme={getHealthColor(budget.pecunia_health_score || 75) === 'green.500' ? 'green' : 
-                                                   getHealthColor(budget.pecunia_health_score || 75) === 'yellow.500' ? 'yellow' : 'red'}>
+                                                   getHealthColor(budget.pecunia_health_score || 75) === 'brand.accent' ? 'brand.accent' : 'red'}>
                                   {budget.pecunia_health_score || 75}/100
                                 </Badge>
                                 <IconButton
@@ -846,7 +846,7 @@ export default function EnhancedBudgetingPage() {
                             </HStack>
                             <Progress
                               value={budget.time_progress_percentage}
-                              colorScheme="blue"
+                              colorScheme="brand.primary"
                               size="sm"
                               borderRadius="full"
                             />
@@ -912,7 +912,7 @@ export default function EnhancedBudgetingPage() {
                           <StatLabel>Risk Level</StatLabel>
                           <StatNumber>
                             <Badge colorScheme={selectedBudget.pecunia_risk_level === 'high' ? 'red' : 
-                                               selectedBudget.pecunia_risk_level === 'medium' ? 'yellow' : 'green'}>
+                                               selectedBudget.pecunia_risk_level === 'medium' ? 'brand.accent' : 'green'}>
                               {selectedBudget.pecunia_risk_level || 'low'}
                             </Badge>
                           </StatNumber>
@@ -938,7 +938,7 @@ export default function EnhancedBudgetingPage() {
                         </Button>
                         <Button
                           leftIcon={<FiTarget />}
-                          colorScheme="blue"
+                          colorScheme="brand.primary"
                           width="full"
                           onClick={onGoalModalOpen}
                         >

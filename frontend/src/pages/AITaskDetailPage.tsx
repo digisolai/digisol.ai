@@ -128,8 +128,8 @@ export default function AITaskDetailPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed': return 'green';
-      case 'in_progress': return 'blue';
-      case 'pending': return 'yellow';
+              case 'in_progress': return 'brand.primary';
+              case 'pending': return 'brand.accent';
       case 'failed': return 'red';
       case 'delegated': return 'purple';
       default: return 'gray';

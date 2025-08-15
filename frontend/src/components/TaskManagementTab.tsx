@@ -288,7 +288,7 @@ const TaskManagementTab: React.FC<TaskManagementTabProps> = ({
                     {task.description}
                   </Text>
                   {task.dependency_names.length > 0 && (
-                    <Text fontSize="xs" color="blue.600">
+                    <Text fontSize="xs" color="brand.primary">
                       Depends on: {task.dependency_names.join(', ')}
                     </Text>
                   )}
@@ -485,19 +485,19 @@ const TaskManagementTab: React.FC<TaskManagementTabProps> = ({
         <ModalContent>
           <ModalHeader>
             <HStack>
-              <Icon as={FiZap} color="blue.500" />
+              <Icon as={FiZap} color="brand.primary" />
               <Text>Promana Smart Add Task</Text>
             </HStack>
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4}>
-              <Card bg="blue.50" border="1px solid" borderColor="blue.200">
+              <Card bg="brand.primary.50" border="1px solid" borderColor="brand.primary.200">
                 <CardBody>
-                  <Text fontSize="sm" color="blue.800">
+                  <Text fontSize="sm" color="brand.primary">
                     Describe your task naturally. Promana will automatically parse and populate all fields.
                   </Text>
-                  <Text fontSize="sm" color="blue.600" mt={2}>
+                  <Text fontSize="sm" color="brand.primary" mt={2}>
                     Example: "Design mockups for landing page due next Friday assigned to Sarah"
                   </Text>
                 </CardBody>

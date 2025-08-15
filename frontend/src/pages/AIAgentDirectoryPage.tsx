@@ -106,7 +106,7 @@ export default function AIAgentDirectoryPage() {
             </Stat>
             <Stat>
               <StatLabel color="brand.neutral.600">Global Agents</StatLabel>
-              <StatNumber color="blue.500">{globalAgents.length}</StatNumber>
+              <StatNumber color="brand.primary">{globalAgents.length}</StatNumber>
               <StatHelpText>Available to all tenants</StatHelpText>
             </Stat>
             <Stat>

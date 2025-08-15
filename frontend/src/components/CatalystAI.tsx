@@ -91,7 +91,7 @@ export default function CatalystAI({
     switch (priority) {
       case 'critical': return 'red';
       case 'high': return 'orange';
-      case 'medium': return 'yellow';
+      case 'medium': return 'brand.accent';
       case 'low': return 'green';
       default: return 'gray';
     }
@@ -99,7 +99,7 @@ export default function CatalystAI({
 
   const getHealthScoreColor = (score: number) => {
     if (score >= 80) return 'green';
-    if (score >= 60) return 'yellow';
+    if (score >= 60) return 'brand.accent';
     return 'red';
   };
 
@@ -440,7 +440,7 @@ export default function CatalystAI({
                 <Text color="gray.700">{selectedInsight.description}</Text>
                 
                 {selectedInsight.recommendation && (
-                  <Box p={3} bg="blue.50" borderRadius="md">
+                  <Box p={3} bg="brand.primary.50" borderRadius="md">
                     <Text fontWeight="medium" mb={2}>Recommendation:</Text>
                     <Text fontSize="sm">{selectedInsight.recommendation}</Text>
                   </Box>

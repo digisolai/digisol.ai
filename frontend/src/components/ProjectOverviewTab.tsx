@@ -523,9 +523,9 @@ const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project }) => {
           <ModalCloseButton />
           <ModalBody>
             <VStack spacing={4} align="stretch">
-              <Card bg="blue.50" border="1px solid" borderColor="blue.200">
+              <Card bg="brand.primary.50" border="1px solid" borderColor="brand.primary.200">
                 <CardBody>
-                  <Text fontSize="sm" color="blue.800">
+                  <Text fontSize="sm" color="brand.primary">
                     Based on the project type and current context, Promana suggests the following goals and scope:
                   </Text>
                 </CardBody>
@@ -535,19 +535,19 @@ const ProjectOverviewTab: React.FC<ProjectOverviewTabProps> = ({ project }) => {
                 <Text fontWeight="medium" mb={2}>Suggested Project Goals:</Text>
                 <List spacing={2}>
                   <ListItem>
-                    <ListIcon as={FiTarget} color="blue.500" />
+                    <ListIcon as={FiTarget} color="brand.primary" />
                     Deliver a fully functional web application within the specified timeline
                   </ListItem>
                   <ListItem>
-                    <ListIcon as={FiTarget} color="blue.500" />
+                    <ListIcon as={FiTarget} color="brand.primary" />
                     Ensure high user experience standards with intuitive interface design
                   </ListItem>
                   <ListItem>
-                    <ListIcon as={FiTarget} color="blue.500" />
+                    <ListIcon as={FiTarget} color="brand.primary" />
                     Implement robust security measures and data protection protocols
                   </ListItem>
                   <ListItem>
-                    <ListIcon as={FiTarget} color="blue.500" />
+                    <ListIcon as={FiTarget} color="brand.primary" />
                     Provide comprehensive documentation and training materials
                   </ListItem>
                 </List>

@@ -305,7 +305,7 @@ export default function ImageEditor({ isOpen, onClose, imageUrl, requestId, prom
 
             {/* Text Input */}
             {tool === 'text' && isAddingText && (
-              <HStack spacing={2} p={4} bg="blue.50" borderRadius="md">
+              <HStack spacing={2} p={4} bg="brand.primary.50" borderRadius="md">
                 <Text>Click on canvas to place text:</Text>
                 <Input
                   value={textInput}

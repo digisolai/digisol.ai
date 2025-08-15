@@ -364,7 +364,7 @@ export default function LearningCenterPage() {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty.toLowerCase()) {
       case 'beginner': return 'green';
-      case 'intermediate': return 'yellow';
+              case 'intermediate': return 'brand.accent';
       case 'advanced': return 'red';
       default: return 'gray';
     }
@@ -579,7 +579,7 @@ export default function LearningCenterPage() {
                                 <Icon
                                   as={badge.is_earned ? GiTrophy : FiAward}
                                   boxSize={8}
-                                  color={badge.is_earned ? "yellow.400" : "gray.400"}
+                                  color={badge.is_earned ? "brand.accent" : "gray.400"}
                                 />
                                 <Heading size="sm" textAlign="center">
                                   {badge.name}

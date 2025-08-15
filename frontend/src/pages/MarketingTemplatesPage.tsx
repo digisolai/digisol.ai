@@ -432,7 +432,7 @@ export const MarketingTemplatesPage: React.FC = () => {
                       <Switch
                         isChecked={showGlobalOnly}
                         onChange={(e) => setShowGlobalOnly(e.target.checked)}
-                        colorScheme="blue"
+                        colorScheme="brand.primary"
                       />
                       <FormHelperText>Show global templates only</FormHelperText>
                     </FormControl>
@@ -484,7 +484,7 @@ export const MarketingTemplatesPage: React.FC = () => {
                           {template.name}
                         </Heading>
                         <HStack spacing={2}>
-                          <Badge colorScheme="blue" variant="subtle">
+                          <Badge colorScheme="brand.primary" variant="subtle">
                             {template.template_type_display}
                           </Badge>
                           {template.is_global && (
@@ -701,7 +701,7 @@ export const MarketingTemplatesPage: React.FC = () => {
                 </Button>
                 <Button
                   onClick={handleSubmit}
-                  colorScheme="blue"
+                  colorScheme="brand.primary"
                   bg="brand.primary"
                   color="white"
                   _hover={{ bg: "brand.primary" }}

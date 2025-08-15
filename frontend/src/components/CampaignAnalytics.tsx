@@ -420,7 +420,7 @@ export default function CampaignAnalytics({ campaignId, dateRange = 30 }: Campai
                       colorScheme={
                         insight.priority === 'critical' ? 'red' :
                         insight.priority === 'high' ? 'orange' :
-                        insight.priority === 'medium' ? 'yellow' : 'green'
+                        insight.priority === 'medium' ? 'brand.accent' : 'green'
                       }
                     >
                       {insight.priority}

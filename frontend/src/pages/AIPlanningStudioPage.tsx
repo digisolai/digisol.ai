@@ -108,8 +108,8 @@ export default function AIPlanningStudioPage() {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'completed': return 'green';
-      case 'in_progress': return 'blue';
-      case 'pending': return 'yellow';
+              case 'in_progress': return 'brand.primary';
+              case 'pending': return 'brand.accent';
       case 'failed': return 'red';
       case 'delegated': return 'purple';
       default: return 'gray';
@@ -148,7 +148,7 @@ export default function AIPlanningStudioPage() {
           <Card>
             <CardBody textAlign="center">
               <Text fontSize="sm" color="gray.600">Pending</Text>
-              <Text fontSize="2xl" fontWeight="bold" color="yellow.500">
+              <Text fontSize="2xl" fontWeight="bold" color="brand.accent">
                 {pendingTasks.length}
               </Text>
             </CardBody>
@@ -156,7 +156,7 @@ export default function AIPlanningStudioPage() {
           <Card>
             <CardBody textAlign="center">
               <Text fontSize="sm" color="gray.600">In Progress</Text>
-              <Text fontSize="2xl" fontWeight="bold" color="blue.500">
+              <Text fontSize="2xl" fontWeight="bold" color="brand.primary">
                 {inProgressTasks.length}
               </Text>
             </CardBody>
@@ -199,7 +199,7 @@ export default function AIPlanningStudioPage() {
                               {task.status.replace('_', ' ')}
                             </Badge>
                             {task.assignee_agent && (
-                              <Badge colorScheme="blue" variant="subtle">
+                              <Badge colorScheme="brand.primary" variant="subtle">
                                 {task.assignee_agent.name}
                               </Badge>
                             )}

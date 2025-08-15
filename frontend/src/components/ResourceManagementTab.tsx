@@ -555,15 +555,15 @@ const ResourceManagementTab: React.FC<ResourceManagementTabProps> = ({ project }
                 </CardBody>
               </Card>
               
-              <Card bg="blue.50" border="1px solid" borderColor="blue.200">
+              <Card bg="brand.primary.50" border="1px solid" borderColor="brand.primary.200">
                 <CardBody>
-                  <Text fontSize="sm" fontWeight="medium" color="blue.800" mb={2}>
+                  <Text fontSize="sm" fontWeight="medium" color="brand.primary" mb={2}>
                     Recommendations:
                   </Text>
                   <VStack align="start" spacing={1}>
-                    <Text fontSize="sm" color="blue.700">• Consider hiring a DevOps specialist</Text>
-                    <Text fontSize="sm" color="blue.700">• Provide training for mobile development</Text>
-                    <Text fontSize="sm" color="blue.700">• Upskill team in data analytics</Text>
+                    <Text fontSize="sm" color="brand.primary">• Consider hiring a DevOps specialist</Text>
+                    <Text fontSize="sm" color="brand.primary">• Provide training for mobile development</Text>
+                    <Text fontSize="sm" color="brand.primary">• Upskill team in data analytics</Text>
                   </VStack>
                 </CardBody>
               </Card>

@@ -417,7 +417,7 @@ const ProjectSettingsTab: React.FC<ProjectSettingsTabProps> = ({ project, onProj
                               <Text fontSize="sm" color="gray.600">
                                 {member.email}
                               </Text>
-                              <Badge colorScheme="blue" variant="subtle" mt={1}>
+                              <Badge colorScheme="brand.primary" variant="subtle" mt={1}>
                                 {member.role.replace('_', ' ').toUpperCase()}
                               </Badge>
                             </Box>

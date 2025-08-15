@@ -38,7 +38,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     name: 'Automatix',
     specialization: 'automation_design',
     icon: FiSettings,
-    color: 'blue',
+    color: 'brand.primary',
     assignedPage: 'Automation Workflows',
     personality_description: 'Your automation workflow specialist. Automatix helps you design, optimize, and manage complex automation workflows to streamline your marketing processes. With expertise in trigger-based automation, conditional logic, and performance optimization, Automatix ensures your marketing campaigns run smoothly and efficiently while maximizing engagement and conversion rates.'
   },
@@ -102,7 +102,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     name: 'Connectus',
     specialization: 'integrations_management',
     icon: FiGlobe,
-    color: 'blue',
+    color: 'brand.primary',
     assignedPage: 'Integrations',
     personality_description: 'Your integrations specialist. Connectus helps you connect and optimize third-party tools, manage API integrations, and streamline your tech stack. By evaluating compatibility, performance optimization, and data flow efficiency, Connectus ensures seamless connectivity between all your marketing tools while maintaining data integrity and operational efficiency.'
   },
@@ -126,7 +126,7 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     name: 'Curator',
     specialization: 'template_curation',
     icon: FiAward,
-    color: 'yellow',
+    color: 'brand.accent',
     assignedPage: 'Template Curation',
     personality_description: 'Your template and resource curator. Curator helps you discover, organize, and optimize marketing templates, resources, and best practices. Through intelligent categorization, quality assessment, and performance tracking, Curator ensures you have access to the most effective templates and resources that align with your brand guidelines and campaign objectives.'
   },
@@ -184,10 +184,10 @@ export const getSpecializationLabel = (specialization: string) => {
   return specialization.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 };
 
-// AI brand colors (deep sapphire background, yellow text)
+// AI brand colors (DigiSol deep sapphire blue, golden yellow)
 export const AI_BRAND_COLORS = {
-  primary: '#1F4287', // Deep sapphire background (same as sidebar)
-  accent: '#FCD34D',  // Yellow text
-  hover: '#1E3A8A',   // Darker sapphire for hover
-  light: '#DBEAFE'    // Light blue for backgrounds
+  primary: '#1F4287', // DigiSol Deep Sapphire Blue
+  accent: '#FFC300',  // DigiSol Golden Yellow
+  hover: '#1A3A7A',   // Darker sapphire for hover
+  light: '#E6F0FF'    // Light blue for backgrounds
 };

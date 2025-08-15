@@ -154,7 +154,7 @@ export default function AIAgentsPage() {
                       </Flex>
                       <VStack align="start" spacing={0} flex={1}>
                         <Heading size="md" color={AI_BRAND_COLORS.primary}>{agent.name}</Heading>
-                        <Badge colorScheme="blue" variant="subtle" mb={1}>
+                        <Badge colorScheme="brand.primary" variant="subtle" mb={1}>
                           {getSpecializationLabel(agent.specialization)}
                         </Badge>
                         <Text fontSize="xs" color="gray.500">
@@ -229,7 +229,7 @@ export default function AIAgentsPage() {
                       <Text fontSize="sm" color="gray.600">Global Agents</Text>
                     </Box>
                     <Box textAlign="center">
-                      <Text fontSize="2xl" fontWeight="bold" color="blue.500">
+                      <Text fontSize="2xl" fontWeight="bold" color="brand.primary">
                         {new Set(agents.map(a => a.specialization)).size}
                       </Text>
                       <Text fontSize="sm" color="gray.600">Specializations</Text>

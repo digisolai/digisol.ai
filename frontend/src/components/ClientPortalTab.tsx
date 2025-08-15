@@ -295,7 +295,7 @@ const ClientPortalTab: React.FC<ClientPortalTabProps> = ({ project }) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'approved': return 'green';
-      case 'submitted': return 'blue';
+      case 'submitted': return 'brand.primary';
       case 'pending': return 'yellow';
       case 'rejected': return 'red';
       default: return 'gray';
