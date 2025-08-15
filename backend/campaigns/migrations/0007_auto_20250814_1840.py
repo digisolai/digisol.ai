@@ -11,104 +11,104 @@ class Migration(migrations.Migration):
     operations = [
         # Drop all existing tables and recreate them
         migrations.RunSQL(
-            # Drop all campaign-related tables (SQLite compatible)
+            # Drop all campaign-related tables (PostgreSQL compatible)
             """
-            DROP TABLE IF EXISTS campaigns_campaignaudience;
-            DROP TABLE IF EXISTS campaigns_campaignperformance;
-            DROP TABLE IF EXISTS campaigns_optimizerinsight;
-            DROP TABLE IF EXISTS campaigns_campaignstep;
-            DROP TABLE IF EXISTS campaigns_campaigntemplate;
-            DROP TABLE IF EXISTS campaigns_marketingcampaign;
+            DROP TABLE IF EXISTS campaigns_campaignaudience CASCADE;
+            DROP TABLE IF EXISTS campaigns_campaignperformance CASCADE;
+            DROP TABLE IF EXISTS campaigns_optimizerinsight CASCADE;
+            DROP TABLE IF EXISTS campaigns_campaignstep CASCADE;
+            DROP TABLE IF EXISTS campaigns_campaigntemplate CASCADE;
+            DROP TABLE IF EXISTS campaigns_marketingcampaign CASCADE;
             """,
             # Reverse SQL (empty since we're dropping everything)
             ""
         ),
         # Recreate tables with the correct schema
         migrations.RunSQL(
-            # Create MarketingCampaign table with correct fields (SQLite compatible)
+            # Create MarketingCampaign table with correct fields (PostgreSQL compatible)
             """
             CREATE TABLE campaigns_marketingcampaign (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                 name VARCHAR(255) NOT NULL,
                 description TEXT,
                 campaign_type VARCHAR(50),
                 objective VARCHAR(50),
                 status VARCHAR(50) DEFAULT 'Draft',
-                start_date DATE,
-                end_date DATE,
+                start_date TIMESTAMP WITH TIME ZONE,
+                end_date TIMESTAMP WITH TIME ZONE,
                 target_audience_segment TEXT,
-                audience_criteria TEXT,
+                audience_criteria JSONB DEFAULT '{}',
                 estimated_reach INTEGER,
                 budget DECIMAL(10,2),
                 target_roi DECIMAL(5,2),
-                auto_optimization_enabled BOOLEAN DEFAULT 0,
-                is_template BOOLEAN DEFAULT 0,
+                auto_optimization_enabled BOOLEAN DEFAULT FALSE,
+                is_template BOOLEAN DEFAULT FALSE,
                 template_category VARCHAR(100),
-                conversion_goals TEXT,
+                conversion_goals JSONB DEFAULT '[]',
                 optimizer_health_score INTEGER,
-                optimizer_optimized BOOLEAN DEFAULT 0,
-                optimizer_recommendations TEXT,
-                optimizer_suggestions TEXT,
+                optimizer_optimized BOOLEAN DEFAULT FALSE,
+                optimizer_recommendations JSONB DEFAULT '[]',
+                optimizer_suggestions JSONB DEFAULT '[]',
                 actual_spent DECIMAL(10,2) DEFAULT 0,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
             """,
             # Reverse SQL
-            "DROP TABLE IF EXISTS campaigns_marketingcampaign;"
+            "DROP TABLE IF EXISTS campaigns_marketingcampaign CASCADE;"
         ),
         migrations.RunSQL(
             # Create CampaignStep table
             """
             CREATE TABLE campaigns_campaignstep (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                campaign_id INTEGER REFERENCES campaigns_marketingcampaign(id),
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                campaign_id UUID REFERENCES campaigns_marketingcampaign(id) ON DELETE CASCADE,
                 step_type VARCHAR(50),
                 name VARCHAR(255),
                 description TEXT,
                 order_index INTEGER DEFAULT 0,
-                config TEXT,
-                content_data TEXT,
-                metadata TEXT,
-                is_enabled BOOLEAN DEFAULT 1,
+                config JSONB DEFAULT '{}',
+                content_data JSONB DEFAULT '{}',
+                metadata JSONB DEFAULT '{}',
+                is_enabled BOOLEAN DEFAULT TRUE,
                 execution_count INTEGER DEFAULT 0,
-                last_executed DATETIME,
-                optimizer_optimized BOOLEAN DEFAULT 0,
-                optimizer_suggestions TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                last_executed TIMESTAMP WITH TIME ZONE,
+                optimizer_optimized BOOLEAN DEFAULT FALSE,
+                optimizer_suggestions JSONB DEFAULT '[]',
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
             """,
-            "DROP TABLE IF EXISTS campaigns_campaignstep;"
+            "DROP TABLE IF EXISTS campaigns_campaignstep CASCADE;"
         ),
         migrations.RunSQL(
             # Create OptimizerInsight table
             """
             CREATE TABLE campaigns_optimizerinsight (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                campaign_id INTEGER REFERENCES campaigns_marketingcampaign(id),
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                campaign_id UUID REFERENCES campaigns_marketingcampaign(id) ON DELETE CASCADE,
                 insight_type VARCHAR(50),
                 title VARCHAR(255),
                 description TEXT,
                 recommendation TEXT,
                 priority VARCHAR(20) DEFAULT 'medium',
                 confidence_score DECIMAL(5,2),
-                context_data TEXT,
-                is_dismissed BOOLEAN DEFAULT 0,
-                is_actioned BOOLEAN DEFAULT 0,
+                context_data JSONB DEFAULT '{}',
+                is_dismissed BOOLEAN DEFAULT FALSE,
+                is_actioned BOOLEAN DEFAULT FALSE,
                 action_taken TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
             """,
-            "DROP TABLE IF EXISTS campaigns_optimizerinsight;"
+            "DROP TABLE IF EXISTS campaigns_optimizerinsight CASCADE;"
         ),
         migrations.RunSQL(
             # Create CampaignPerformance table
             """
             CREATE TABLE campaigns_campaignperformance (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                campaign_id INTEGER REFERENCES campaigns_marketingcampaign(id),
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                campaign_id UUID REFERENCES campaigns_marketingcampaign(id) ON DELETE CASCADE,
                 date DATE,
                 impressions INTEGER DEFAULT 0,
                 clicks INTEGER DEFAULT 0,
@@ -116,46 +116,46 @@ class Migration(migrations.Migration):
                 revenue DECIMAL(10,2) DEFAULT 0,
                 cost DECIMAL(10,2) DEFAULT 0,
                 roi DECIMAL(5,2),
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
             """,
-            "DROP TABLE IF EXISTS campaigns_campaignperformance;"
+            "DROP TABLE IF EXISTS campaigns_campaignperformance CASCADE;"
         ),
         migrations.RunSQL(
             # Create CampaignAudience table
             """
             CREATE TABLE campaigns_campaignaudience (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                campaign_id INTEGER REFERENCES campaigns_marketingcampaign(id),
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                campaign_id UUID REFERENCES campaigns_marketingcampaign(id) ON DELETE CASCADE,
                 audience_name VARCHAR(255),
-                audience_criteria TEXT,
+                audience_criteria JSONB DEFAULT '{}',
                 size INTEGER,
                 engagement_rate DECIMAL(5,2),
                 conversion_rate DECIMAL(5,2),
                 optimizer_score DECIMAL(5,2),
-                optimizer_recommendations TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                optimizer_recommendations JSONB DEFAULT '[]',
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
             """,
-            "DROP TABLE IF EXISTS campaigns_campaignaudience;"
+            "DROP TABLE IF EXISTS campaigns_campaignaudience CASCADE;"
         ),
         migrations.RunSQL(
             # Create CampaignTemplate table
             """
             CREATE TABLE campaigns_campaigntemplate (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
                 name VARCHAR(255),
                 description TEXT,
                 category VARCHAR(100),
-                campaign_data TEXT,
-                steps_data TEXT,
+                campaign_data JSONB DEFAULT '{}',
+                steps_data JSONB DEFAULT '[]',
                 usage_count INTEGER DEFAULT 0,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
             );
             """,
-            "DROP TABLE IF EXISTS campaigns_campaigntemplate;"
+            "DROP TABLE IF EXISTS campaigns_campaigntemplate CASCADE;"
         ),
     ]
