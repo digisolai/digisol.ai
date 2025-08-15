@@ -32,23 +32,25 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
         elif self.action in ['update', 'partial_update']:
             return CampaignUpdateSerializer
         return MarketingCampaignSerializer
-
+    
     def perform_create(self, serializer):
         # Temporarily create without user for testing
-        serializer.save()
+            serializer.save()
 
     def perform_update(self, serializer):
         serializer.save()
-
+    
     @action(detail=False, methods=['get'])
     def stats(self, request):
         """Get campaign statistics"""
         total_campaigns = MarketingCampaign.objects.count()
         active_campaigns = MarketingCampaign.objects.filter(status='Active').count()
-        total_budget = MarketingCampaign.objects.aggregate(Sum('budget'))['budget__sum'] or 0
-        total_spent = MarketingCampaign.objects.aggregate(Sum('actual_spent'))['actual_spent__sum'] or 0
-        average_roi = MarketingCampaign.objects.aggregate(Avg('target_roi'))['target_roi__avg'] or 0
         
+        # Convert to float to ensure proper number types
+        total_budget = float(MarketingCampaign.objects.aggregate(Sum('budget'))['budget__sum'] or 0)
+        total_spent = float(MarketingCampaign.objects.aggregate(Sum('actual_spent'))['actual_spent__sum'] or 0)
+        average_roi = float(MarketingCampaign.objects.aggregate(Avg('target_roi'))['target_roi__avg'] or 0)
+            
         stats = {
             'total_campaigns': total_campaigns,
             'active_campaigns': active_campaigns,
@@ -59,7 +61,7 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
         
         serializer = CampaignStatsSerializer(stats)
         return Response(serializer.data)
-
+    
     @action(detail=True, methods=['post'])
     def optimize(self, request, pk=None):
         """AI-powered campaign optimization"""
@@ -74,7 +76,7 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
             'message': 'Campaign optimized successfully',
             'health_score': campaign.optimizer_health_score
         })
-
+    
     @action(detail=True, methods=['get'])
     def insights(self, request, pk=None):
         """Get AI insights for campaign"""
@@ -155,9 +157,9 @@ class CampaignAnalyticsView(APIView):
         analytics = {
             'total_campaigns': MarketingCampaign.objects.count(),
             'active_campaigns': MarketingCampaign.objects.filter(status='Active').count(),
-            'total_budget': MarketingCampaign.objects.aggregate(Sum('budget'))['budget__sum'] or 0,
-            'total_spent': MarketingCampaign.objects.aggregate(Sum('actual_spent'))['actual_spent__sum'] or 0,
-            'average_roi': MarketingCampaign.objects.aggregate(Avg('target_roi'))['target_roi__avg'] or 0,
+            'total_budget': float(MarketingCampaign.objects.aggregate(Sum('budget'))['budget__sum'] or 0),
+            'total_spent': float(MarketingCampaign.objects.aggregate(Sum('actual_spent'))['actual_spent__sum'] or 0),
+            'average_roi': float(MarketingCampaign.objects.aggregate(Avg('target_roi'))['target_roi__avg'] or 0),
             'performance_by_type': {
                 'email': {'count': 5, 'avg_roi': 2.5},
                 'social': {'count': 3, 'avg_roi': 3.2},
