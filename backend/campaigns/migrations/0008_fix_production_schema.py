@@ -35,30 +35,32 @@ class Migration(migrations.Migration):
             existing_step_fields = [row[0] for row in cursor.fetchall()]
         
         # Add MarketingCampaign fields if they don't exist
-        if 'last_optimized' not in existing_marketing_fields:
-            cursor.execute("ALTER TABLE campaigns_marketingcampaign ADD COLUMN last_optimized TIMESTAMP NULL")
-        
-        if 'performance_metrics' not in existing_marketing_fields:
-            cursor.execute("ALTER TABLE campaigns_marketingcampaign ADD COLUMN performance_metrics JSONB DEFAULT '{}'")
-        
-        if 'created_by_id' not in existing_marketing_fields:
-            cursor.execute("ALTER TABLE campaigns_marketingcampaign ADD COLUMN created_by_id INTEGER NULL")
+        with schema_editor.connection.cursor() as cursor:
+            if 'last_optimized' not in existing_marketing_fields:
+                cursor.execute("ALTER TABLE campaigns_marketingcampaign ADD COLUMN last_optimized TIMESTAMP NULL")
+            
+            if 'performance_metrics' not in existing_marketing_fields:
+                cursor.execute("ALTER TABLE campaigns_marketingcampaign ADD COLUMN performance_metrics JSONB DEFAULT '{}'")
+            
+            if 'created_by_id' not in existing_marketing_fields:
+                cursor.execute("ALTER TABLE campaigns_marketingcampaign ADD COLUMN created_by_id INTEGER NULL")
         
         # Add CampaignStep fields if they don't exist
-        if 'optimizer_optimized' not in existing_step_fields:
-            cursor.execute("ALTER TABLE campaigns_campaignstep ADD COLUMN optimizer_optimized BOOLEAN DEFAULT FALSE")
-        
-        if 'optimizer_suggestions' not in existing_step_fields:
-            cursor.execute("ALTER TABLE campaigns_campaignstep ADD COLUMN optimizer_suggestions JSONB DEFAULT '{}'")
-        
-        if 'performance_score' not in existing_step_fields:
-            cursor.execute("ALTER TABLE campaigns_campaignstep ADD COLUMN performance_score DECIMAL(5,2) NULL")
-        
-        if 'execution_count' not in existing_step_fields:
-            cursor.execute("ALTER TABLE campaigns_campaignstep ADD COLUMN execution_count INTEGER DEFAULT 0")
-        
-        if 'last_executed' not in existing_step_fields:
-            cursor.execute("ALTER TABLE campaigns_campaignstep ADD COLUMN last_executed TIMESTAMP NULL")
+        with schema_editor.connection.cursor() as cursor:
+            if 'optimizer_optimized' not in existing_step_fields:
+                cursor.execute("ALTER TABLE campaigns_campaignstep ADD COLUMN optimizer_optimized BOOLEAN DEFAULT FALSE")
+            
+            if 'optimizer_suggestions' not in existing_step_fields:
+                cursor.execute("ALTER TABLE campaigns_campaignstep ADD COLUMN optimizer_suggestions JSONB DEFAULT '{}'")
+            
+            if 'performance_score' not in existing_step_fields:
+                cursor.execute("ALTER TABLE campaigns_campaignstep ADD COLUMN performance_score DECIMAL(5,2) NULL")
+            
+            if 'execution_count' not in existing_step_fields:
+                cursor.execute("ALTER TABLE campaigns_campaignstep ADD COLUMN execution_count INTEGER DEFAULT 0")
+            
+            if 'last_executed' not in existing_step_fields:
+                cursor.execute("ALTER TABLE campaigns_campaignstep ADD COLUMN last_executed TIMESTAMP NULL")
 
     def reverse_func(apps, schema_editor):
         """Reverse migration - remove fields if needed"""
