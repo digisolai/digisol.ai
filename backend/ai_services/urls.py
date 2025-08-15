@@ -18,7 +18,8 @@ from .views import (
     AIEcosystemHealthViewSet,
     GeminiChatView,
     setup_ai_agents,
-    get_quota_status_view
+    get_quota_status_view,
+    cleanup_ai_agents_endpoint
 )
 
 app_name = 'ai_services'
@@ -51,6 +52,9 @@ urlpatterns = [
     
     # Setup endpoint
     path('setup-agents/', setup_ai_agents, name='setup-ai-agents'),
+    
+    # Cleanup endpoint
+    path('cleanup-agents/', cleanup_ai_agents_endpoint, name='cleanup-ai-agents'),
     
     # Quota status endpoint
     path('quota-status/', get_quota_status_view, name='quota-status'),

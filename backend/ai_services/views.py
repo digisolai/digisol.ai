@@ -1348,3 +1348,26 @@ def setup_ai_agents(request):
             'error': f'Failed to setup AI agents: {str(e)}',
             'status': 'setup_failed'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def cleanup_ai_agents_endpoint(request):
+    """
+    Temporary endpoint to cleanup AI agents.
+    This will remove Orchestra, Planner, Strategist and create Promana.
+    """
+    try:
+        # Run the cleanup command
+        call_command('cleanup_ai_agents')
+        
+        return Response({
+            'message': '✅ AI agents cleanup completed successfully!',
+            'status': 'cleanup_complete'
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        logger.error(f"Error cleaning up AI agents: {e}")
+        return Response({
+            'error': f'Failed to cleanup AI agents: {str(e)}',
+            'status': 'cleanup_failed'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
