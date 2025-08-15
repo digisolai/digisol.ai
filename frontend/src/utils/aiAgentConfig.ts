@@ -114,14 +114,6 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     assignedPage: 'Learning & Training',
     personality_description: 'Patient, encouraging, and adaptive. Mentor personalizes your learning journey and helps you master new skills at your own pace.'
   },
-  'Orchestra': {
-    name: 'Orchestra',
-    specialization: 'general_orchestration',
-    icon: FiLayers,
-    color: 'purple',
-    assignedPage: 'AI Orchestration',
-    personality_description: 'Strategic, collaborative, and coordination-focused. Orchestra orchestrates all your AI agents and marketing activities for maximum impact.'
-  },
   'Curator': {
     name: 'Curator',
     specialization: 'template_curation',
@@ -130,21 +122,13 @@ export const AI_AGENT_CONFIG: Record<string, AIAgentConfig> = {
     assignedPage: 'Template Curation',
     personality_description: 'Organized, quality-focused, and user-centric. Curator helps you find, organize, and customize the perfect templates for your campaigns.'
   },
-  'Planner': {
-    name: 'Planner',
+  'Promana': {
+    name: 'Promana',
     specialization: 'project_management',
     icon: FiBriefcase,
     color: 'gray',
     assignedPage: 'Project Management',
-    personality_description: 'Organized, deadline-driven, and team-focused. Planner helps you manage marketing projects efficiently and keep teams aligned.'
-  },
-  'Strategist': {
-    name: 'Strategist',
-    specialization: 'marketing_strategy',
-    icon: FiTarget,
-    color: 'red',
-    assignedPage: 'Marketing Strategy',
-    personality_description: 'Strategic, market-aware, and growth-focused. Strategist develops comprehensive marketing strategies that drive business growth.'
+    personality_description: 'Organized, deadline-driven, and team-focused. Promana helps you manage marketing projects efficiently and keep teams aligned.'
   },
   'Optimizer': {
     name: 'Optimizer',

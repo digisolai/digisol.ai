@@ -75,35 +75,23 @@ class Command(BaseCommand):
                 "is_active": True
             },
             {
-                "name": "Orchestra",
-                "specialization": "general_orchestration",
-                "personality_description": "Strategic, collaborative, and coordination-focused. Orchestra orchestrates all your AI agents and marketing activities for maximum impact.",
-                "is_active": True
-            },
-            {
                 "name": "Curator",
                 "specialization": "template_curation",
                 "personality_description": "Organized, quality-focused, and user-centric. Curator helps you find, organize, and customize the perfect templates for your campaigns.",
                 "is_active": True
             },
             {
-                "name": "Planner",
+                "name": "Promana",
                 "specialization": "project_management",
-                "personality_description": "Organized, deadline-driven, and team-focused. Planner helps you manage marketing projects efficiently and keep teams aligned.",
+                "personality_description": "Organized, deadline-driven, and team-focused. Promana helps you manage marketing projects efficiently and keep teams aligned.",
                 "is_active": True
             },
             {
-                "name": "Strategist",
-                "specialization": "marketing_strategy",
-                "personality_description": "Strategic, market-aware, and growth-focused. Strategist develops comprehensive marketing strategies that drive business growth.",
+                "name": "Optimizer",
+                "specialization": "campaign_optimization",
+                "personality_description": "Data-driven, performance-focused, and continuously improving. Optimizer analyzes campaign performance and suggests optimizations for better results.",
                 "is_active": True
-            },
-                         {
-                 "name": "Optimizer",
-                 "specialization": "campaign_optimization",
-                 "personality_description": "Data-driven, performance-focused, and continuously improving. Optimizer analyzes campaign performance and suggests optimizations for better results.",
-                 "is_active": True
-             }
+            }
         ]
         
         created_count = 0
