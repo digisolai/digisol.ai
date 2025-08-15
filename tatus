@@ -1,3 +1,0 @@
-[33m91d31be[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix AI agent consistency: centralized config, proper colors (blue bg/yellow text), fixed naming (Planner->Promana), consistent icons across all components
-[33m79b2246[m Fix Catalyst agent name consistency - change Optimizer to Catalyst in AIChatPage
-[33m2cc4078[m Fix Catalyst AI agent colors to use proper DigiSol brand scheme - blue background with yellow text/icons
