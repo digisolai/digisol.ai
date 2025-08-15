@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from django.db.models import Q, Sum, Avg, Count
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 from datetime import datetime, timedelta
 import json
 
@@ -26,41 +27,110 @@ class MarketingCampaignViewSet(viewsets.ModelViewSet):
     serializer_class = MarketingCampaignSerializer
     permission_classes = []  # Temporarily remove authentication for testing
     
+    def get_queryset(self):
+        """Override to handle potential database issues gracefully"""
+        try:
+            return MarketingCampaign.objects.all()
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error getting campaigns queryset: {e}")
+            # Return empty queryset if there's a database issue
+            return MarketingCampaign.objects.none()
+    
     def get_serializer_class(self):
-        if self.action == 'create':
+        # Handle case where action is not set (like in tests)
+        action = getattr(self, 'action', None)
+        if action == 'create':
             return CampaignCreateSerializer
-        elif self.action in ['update', 'partial_update']:
+        elif action in ['update', 'partial_update']:
             return CampaignUpdateSerializer
         return MarketingCampaignSerializer
     
+    def list(self, request, *args, **kwargs):
+        """Override list method to add error handling"""
+        try:
+            # Set up proper context for the viewset
+            self.format_kwarg = getattr(self, 'format_kwarg', None)
+            
+            # Add logging for production debugging
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.info(f"Campaigns list request from {request.META.get('REMOTE_ADDR', 'unknown')}")
+            
+            return super().list(request, *args, **kwargs)
+        except Exception as e:
+            import traceback
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error in campaigns list view: {str(e)}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            
+            # Return a more detailed error response in development
+            if settings.DEBUG:
+                return Response(
+                    {
+                        'error': 'Failed to fetch campaigns', 
+                        'detail': str(e),
+                        'traceback': traceback.format_exc()
+                    },
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+            else:
+                return Response(
+                    {'error': 'Failed to fetch campaigns', 'detail': 'Internal server error'},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+    
     def perform_create(self, serializer):
         # Temporarily create without user for testing
+        try:
             serializer.save()
+        except Exception as e:
+            import traceback
+            print(f"Error creating campaign: {str(e)}")
+            print(f"Traceback: {traceback.format_exc()}")
+            raise
 
     def perform_update(self, serializer):
-        serializer.save()
+        try:
+            serializer.save()
+        except Exception as e:
+            import traceback
+            print(f"Error updating campaign: {str(e)}")
+            print(f"Traceback: {traceback.format_exc()}")
+            raise
     
     @action(detail=False, methods=['get'])
     def stats(self, request):
         """Get campaign statistics"""
-        total_campaigns = MarketingCampaign.objects.count()
-        active_campaigns = MarketingCampaign.objects.filter(status='Active').count()
-        
-        # Convert to float to ensure proper number types
-        total_budget = float(MarketingCampaign.objects.aggregate(Sum('budget'))['budget__sum'] or 0)
-        total_spent = float(MarketingCampaign.objects.aggregate(Sum('actual_spent'))['actual_spent__sum'] or 0)
-        average_roi = float(MarketingCampaign.objects.aggregate(Avg('target_roi'))['target_roi__avg'] or 0)
+        try:
+            total_campaigns = MarketingCampaign.objects.count()
+            active_campaigns = MarketingCampaign.objects.filter(status='Active').count()
             
-        stats = {
-            'total_campaigns': total_campaigns,
-            'active_campaigns': active_campaigns,
-            'total_budget': total_budget,
-            'total_spent': total_spent,
-            'average_roi': average_roi
-        }
-        
-        serializer = CampaignStatsSerializer(stats)
-        return Response(serializer.data)
+            # Convert to float to ensure proper number types
+            total_budget = float(MarketingCampaign.objects.aggregate(Sum('budget'))['budget__sum'] or 0)
+            total_spent = float(MarketingCampaign.objects.aggregate(Sum('actual_spent'))['actual_spent__sum'] or 0)
+            average_roi = float(MarketingCampaign.objects.aggregate(Avg('target_roi'))['target_roi__avg'] or 0)
+                
+            stats = {
+                'total_campaigns': total_campaigns,
+                'active_campaigns': active_campaigns,
+                'total_budget': total_budget,
+                'total_spent': total_spent,
+                'average_roi': average_roi
+            }
+            
+            serializer = CampaignStatsSerializer(stats)
+            return Response(serializer.data)
+        except Exception as e:
+            import traceback
+            print(f"Error in campaigns stats: {str(e)}")
+            print(f"Traceback: {traceback.format_exc()}")
+            return Response(
+                {'error': 'Failed to fetch campaign statistics', 'detail': str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
     
     @action(detail=True, methods=['post'])
     def optimize(self, request, pk=None):

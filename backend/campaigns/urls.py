@@ -5,6 +5,7 @@ from .views import (
     CampaignPerformanceViewSet, CampaignAudienceViewSet, CampaignTemplateViewSet,
     CampaignAnalyticsView
 )
+from .views_simple import campaigns_list_simple, create_campaign_simple, campaigns_stats_simple
 
 router = DefaultRouter()
 router.register(r'campaigns', MarketingCampaignViewSet, basename='campaign')
@@ -17,4 +18,8 @@ router.register(r'templates', CampaignTemplateViewSet, basename='template')
 urlpatterns = [
     path('', include(router.urls)),
     path('analytics/', CampaignAnalyticsView.as_view(), name='campaign-analytics'),
+    # Simple production-ready endpoints
+    path('simple/campaigns/', campaigns_list_simple, name='campaigns-simple'),
+    path('simple/campaigns/create/', create_campaign_simple, name='create-campaign-simple'),
+    path('simple/campaigns/stats/', campaigns_stats_simple, name='campaigns-stats-simple'),
 ] 

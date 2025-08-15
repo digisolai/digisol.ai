@@ -45,7 +45,7 @@ class CampaignStepSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignStep
         fields = [
-            'id', 'campaign', 'step_type', 'name', 'description', 'order',
+            'id', 'campaign', 'step_type', 'name', 'description', 'order_index',
             'config', 'content_data', 'metadata', 'parent_steps',
             'true_path_next_step', 'false_path_next_step',
             'optimizer_optimized', 'optimizer_suggestions', 'performance_score',
@@ -108,7 +108,7 @@ class MarketingCampaignSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'description', 'campaign_type', 'objective',
             'status', 'start_date', 'end_date', 'target_audience_segment',
-            'audience_criteria', 'estimated_reach', 'budget', 'spent_budget',
+            'audience_criteria', 'estimated_reach', 'budget', 'actual_spent',
             'target_roi', 'optimizer_health_score', 'optimizer_recommendations',
             'auto_optimization_enabled', 'last_optimized', 'is_template',
             'template_category', 'performance_metrics', 'conversion_goals',
@@ -117,7 +117,7 @@ class MarketingCampaignSerializer(serializers.ModelSerializer):
             'budget_utilization', 'days_remaining', 'total_steps', 'active_insights'
         ]
         read_only_fields = [
-            'id', 'created_at', 'updated_at', 'created_by', 'spent_budget',
+            'id', 'created_at', 'updated_at', 'created_by', 'actual_spent',
             'optimizer_health_score', 'optimizer_recommendations', 'last_optimized',
             'performance_metrics', 'budget_utilization', 'days_remaining'
         ]
@@ -138,7 +138,7 @@ class CampaignStepDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignStep
         fields = [
-            'id', 'campaign', 'step_type', 'name', 'description', 'order',
+            'id', 'campaign', 'step_type', 'name', 'description', 'order_index',
             'config', 'content_data', 'metadata', 'parent_steps',
             'true_path_next_step', 'false_path_next_step',
             'optimizer_optimized', 'optimizer_suggestions', 'performance_score',
@@ -196,7 +196,7 @@ class StepCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignStep
         fields = [
-            'step_type', 'name', 'description', 'order', 'config', 'content_data',
+            'step_type', 'name', 'description', 'order_index', 'config', 'content_data',
             'metadata', 'parent_steps', 'true_path_next_step', 'false_path_next_step',
             'is_enabled'
         ]
@@ -207,7 +207,7 @@ class StepUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = CampaignStep
         fields = [
-            'name', 'description', 'order', 'config', 'content_data', 'metadata',
+            'name', 'description', 'order_index', 'config', 'content_data', 'metadata',
             'parent_steps', 'true_path_next_step', 'false_path_next_step',
             'is_enabled'
         ]
@@ -249,7 +249,7 @@ class CampaignDashboardSerializer(serializers.Serializer):
     total_campaigns = serializers.IntegerField()
     active_campaigns = serializers.IntegerField()
     total_budget = serializers.DecimalField(max_digits=10, decimal_places=2)
-    spent_budget = serializers.DecimalField(max_digits=10, decimal_places=2)
+    actual_spent = serializers.DecimalField(max_digits=10, decimal_places=2)
     average_roi = serializers.DecimalField(max_digits=5, decimal_places=2)
     optimizer_insights_count = serializers.IntegerField()
     performance_trends = serializers.JSONField()
