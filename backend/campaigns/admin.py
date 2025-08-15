@@ -9,14 +9,14 @@ from .models import (
 class MarketingCampaignAdmin(admin.ModelAdmin):
     list_display = [
         'name', 'campaign_type', 'objective', 'status', 
-        'optimizer_health_score', 'budget', 'spent_budget', 'created_at'
+        'optimizer_health_score', 'budget', 'actual_spent', 'created_at'
     ]
     list_filter = [
         'status', 'campaign_type', 'objective', 'is_template', 
         'auto_optimization_enabled', 'created_at'
     ]
     search_fields = ['name', 'description', 'target_audience_segment']
-    readonly_fields = ['created_at', 'updated_at', 'spent_budget']
+    readonly_fields = ['created_at', 'updated_at', 'actual_spent']
     fieldsets = (
         ('Basic Information', {
             'fields': ('name', 'description', 'campaign_type', 'objective')
@@ -28,7 +28,7 @@ class MarketingCampaignAdmin(admin.ModelAdmin):
             'fields': ('target_audience_segment', 'audience_criteria', 'estimated_reach')
         }),
         ('Budget & Performance', {
-            'fields': ('budget', 'spent_budget', 'target_roi', 'performance_metrics', 'conversion_goals')
+            'fields': ('budget', 'actual_spent', 'target_roi', 'performance_metrics', 'conversion_goals')
         }),
         ('AI Integration', {
             'fields': ('optimizer_health_score', 'optimizer_recommendations', 'auto_optimization_enabled', 'last_optimized')
@@ -46,7 +46,7 @@ class MarketingCampaignAdmin(admin.ModelAdmin):
 @admin.register(CampaignStep)
 class CampaignStepAdmin(admin.ModelAdmin):
     list_display = [
-        'name', 'campaign', 'step_type', 'order', 'is_enabled', 
+        'name', 'campaign', 'step_type', 'order_index', 'is_enabled', 
         'optimizer_optimized', 'execution_count', 'created_at'
     ]
     list_filter = [
@@ -56,7 +56,7 @@ class CampaignStepAdmin(admin.ModelAdmin):
     readonly_fields = ['created_at', 'updated_at', 'execution_count', 'last_executed']
     fieldsets = (
         ('Basic Information', {
-            'fields': ('campaign', 'name', 'description', 'step_type', 'order')
+            'fields': ('campaign', 'name', 'description', 'step_type', 'order_index')
         }),
         ('Configuration', {
             'fields': ('config', 'content_data', 'metadata')
@@ -146,30 +146,24 @@ class CampaignPerformanceAdmin(admin.ModelAdmin):
 @admin.register(CampaignAudience)
 class CampaignAudienceAdmin(admin.ModelAdmin):
     list_display = [
-        'name', 'segment_type', 'estimated_size', 'actual_size',
-        'engagement_rate', 'conversion_rate', 'optimizer_score', 'is_active'
+        'audience_name', 'campaign', 'size', 'engagement_rate', 
+        'conversion_rate', 'optimizer_score', 'created_at'
     ]
-    list_filter = ['segment_type', 'is_active', 'created_at']
-    search_fields = ['name', 'description']
+    list_filter = ['created_at']
+    search_fields = ['audience_name', 'campaign__name']
     readonly_fields = ['created_at', 'updated_at']
     fieldsets = (
         ('Basic Information', {
-            'fields': ('name', 'description', 'segment_type')
-        }),
-        ('Audience Criteria', {
-            'fields': ('criteria', 'filters')
+            'fields': ('campaign', 'audience_name', 'audience_criteria')
         }),
         ('Size & Performance', {
-            'fields': ('estimated_size', 'actual_size', 'engagement_rate', 'conversion_rate')
+            'fields': ('size', 'engagement_rate', 'conversion_rate')
         }),
         ('AI Integration', {
             'fields': ('optimizer_score', 'optimizer_recommendations')
         }),
-        ('Status', {
-            'fields': ('is_active',)
-        }),
         ('Metadata', {
-            'fields': ('created_by', 'created_at', 'updated_at'),
+            'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     )
@@ -178,10 +172,9 @@ class CampaignAudienceAdmin(admin.ModelAdmin):
 @admin.register(CampaignTemplate)
 class CampaignTemplateAdmin(admin.ModelAdmin):
     list_display = [
-        'name', 'category', 'usage_count', 'rating', 'is_public', 
-        'is_featured', 'created_at'
+        'name', 'category', 'usage_count', 'created_at'
     ]
-    list_filter = ['category', 'is_public', 'is_featured', 'created_at']
+    list_filter = ['category', 'created_at']
     search_fields = ['name', 'description']
     readonly_fields = ['usage_count', 'created_at', 'updated_at']
     fieldsets = (
@@ -189,17 +182,14 @@ class CampaignTemplateAdmin(admin.ModelAdmin):
             'fields': ('name', 'description', 'category')
         }),
         ('Template Data', {
-            'fields': ('campaign_data', 'steps_data', 'settings'),
+            'fields': ('campaign_data', 'steps_data'),
             'classes': ('collapse',)
         }),
-        ('Usage & Popularity', {
-            'fields': ('usage_count', 'rating')
-        }),
-        ('Visibility', {
-            'fields': ('is_public', 'is_featured')
+        ('Usage', {
+            'fields': ('usage_count',)
         }),
         ('Metadata', {
-            'fields': ('created_by', 'created_at', 'updated_at'),
+            'fields': ('created_at', 'updated_at'),
             'classes': ('collapse',)
         }),
     ) 
