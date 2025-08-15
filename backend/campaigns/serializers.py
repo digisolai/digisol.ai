@@ -95,10 +95,7 @@ class MarketingCampaignSerializer(serializers.ModelSerializer):
     optimizer_insights = OptimizerInsightSerializer(many=True, read_only=True)
     performance_data = CampaignPerformanceSerializer(many=True, read_only=True)
     
-    # Explicitly define choice fields to show options in API
-    campaign_type = serializers.ChoiceField(choices=MarketingCampaign.CAMPAIGN_TYPE_CHOICES)
-    objective = serializers.ChoiceField(choices=MarketingCampaign.OBJECTIVE_CHOICES)
-    status = serializers.ChoiceField(choices=MarketingCampaign.STATUS_CHOICES)
+
     
     # Computed fields
     budget_utilization = serializers.DecimalField(max_digits=5, decimal_places=2, read_only=True)
@@ -157,10 +154,6 @@ class CampaignStepDetailSerializer(serializers.ModelSerializer):
 
 class CampaignCreateSerializer(serializers.ModelSerializer):
     """Serializer for creating new campaigns"""
-    campaign_type = serializers.ChoiceField(choices=MarketingCampaign.CAMPAIGN_TYPE_CHOICES)
-    objective = serializers.ChoiceField(choices=MarketingCampaign.OBJECTIVE_CHOICES)
-    status = serializers.ChoiceField(choices=MarketingCampaign.STATUS_CHOICES)
-    
     class Meta:
         model = MarketingCampaign
         fields = [
