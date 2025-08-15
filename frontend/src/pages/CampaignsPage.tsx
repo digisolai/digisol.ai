@@ -192,8 +192,19 @@ export default function CampaignsPage() {
     try {
       setLoading(true);
       const response = await api.get('/campaigns/campaigns/');
-      setCampaigns(response.data);
-      setFilteredCampaigns(response.data);
+      
+      // Handle the new response structure from backend
+      const campaignsData = response.data?.campaigns || [];
+      
+      // Ensure campaigns is always an array
+      if (Array.isArray(campaignsData)) {
+        setCampaigns(campaignsData);
+        setFilteredCampaigns(campaignsData);
+      } else {
+        console.warn('Expected campaigns array but got:', campaignsData);
+        setCampaigns([]);
+        setFilteredCampaigns([]);
+      }
     } catch (error) {
       console.error('Error loading campaigns:', error);
       toast({
@@ -203,6 +214,9 @@ export default function CampaignsPage() {
         duration: 5000,
         isClosable: true,
       });
+      // Set empty arrays on error
+      setCampaigns([]);
+      setFilteredCampaigns([]);
     } finally {
       setLoading(false);
     }
@@ -220,6 +234,13 @@ export default function CampaignsPage() {
 
   // Filter campaigns
   const filterCampaigns = useCallback(() => {
+    // Ensure campaigns is always an array
+    if (!Array.isArray(campaigns)) {
+      console.warn('Campaigns is not an array:', campaigns);
+      setFilteredCampaigns([]);
+      return;
+    }
+
     let filtered = campaigns;
 
     // Tab filter
@@ -245,6 +266,14 @@ export default function CampaignsPage() {
 
     setFilteredCampaigns(filtered);
   }, [campaigns, activeTab, searchTerm, filters]);
+
+  // Helper function to safely filter campaigns
+  const safeFilterCampaigns = useCallback((filterFn: (campaign: MarketingCampaign) => boolean) => {
+    if (!Array.isArray(campaigns)) {
+      return [];
+    }
+    return campaigns.filter(filterFn);
+  }, [campaigns]);
 
   // Apply filters when they change
   useEffect(() => {
@@ -364,7 +393,7 @@ export default function CampaignsPage() {
   const handleDeleteCampaign = async (campaignId: string) => {
     try {
       await api.delete(`/campaigns/campaigns/${campaignId}/`);
-      setCampaigns(prev => prev.filter(campaign => campaign.id !== campaignId));
+      setCampaigns(prev => Array.isArray(prev) ? prev.filter(campaign => campaign.id !== campaignId) : []);
       toast({
         title: 'Success',
         description: 'Campaign deleted successfully',
@@ -639,12 +668,12 @@ export default function CampaignsPage() {
           setActiveTab(tabs[index]);
         }}>
           <TabList>
-            <Tab value="all">All ({campaigns.length})</Tab>
-            <Tab value="Draft">Draft ({campaigns.filter(c => c.status === 'Draft').length})</Tab>
-            <Tab value="Active">Active ({campaigns.filter(c => c.status === 'Active').length})</Tab>
-            <Tab value="Paused">Paused ({campaigns.filter(c => c.status === 'Paused').length})</Tab>
-            <Tab value="Completed">Completed ({campaigns.filter(c => c.status === 'Completed').length})</Tab>
-            <Tab value="Archived">Archived ({campaigns.filter(c => c.status === 'Archived').length})</Tab>
+                          <Tab value="all">All ({Array.isArray(campaigns) ? campaigns.length : 0})</Tab>
+            <Tab value="Draft">Draft ({safeFilterCampaigns(c => c.status === 'Draft').length})</Tab>
+            <Tab value="Active">Active ({safeFilterCampaigns(c => c.status === 'Active').length})</Tab>
+            <Tab value="Paused">Paused ({safeFilterCampaigns(c => c.status === 'Paused').length})</Tab>
+            <Tab value="Completed">Completed ({safeFilterCampaigns(c => c.status === 'Completed').length})</Tab>
+            <Tab value="Archived">Archived ({safeFilterCampaigns(c => c.status === 'Archived').length})</Tab>
           </TabList>
           
           <TabPanels>
@@ -733,23 +762,23 @@ export default function CampaignsPage() {
         <VStack spacing={3} align="stretch">
           <HStack justify="space-between">
             <Text>Draft</Text>
-            <Badge colorScheme="gray">{campaigns.filter(c => c.status === 'Draft').length}</Badge>
+            <Badge colorScheme="gray">{safeFilterCampaigns(c => c.status === 'Draft').length}</Badge>
           </HStack>
           <HStack justify="space-between">
             <Text>Active</Text>
-            <Badge colorScheme="brand.primary">{campaigns.filter(c => c.status === 'Active').length}</Badge>
+            <Badge colorScheme="brand.primary">{safeFilterCampaigns(c => c.status === 'Active').length}</Badge>
           </HStack>
           <HStack justify="space-between">
             <Text>Paused</Text>
-            <Badge colorScheme="brand.accent">{campaigns.filter(c => c.status === 'Paused').length}</Badge>
+            <Badge colorScheme="brand.accent">{safeFilterCampaigns(c => c.status === 'Paused').length}</Badge>
           </HStack>
           <HStack justify="space-between">
             <Text>Completed</Text>
-            <Badge colorScheme="brand.primary">{campaigns.filter(c => c.status === 'Completed').length}</Badge>
+            <Badge colorScheme="brand.primary">{safeFilterCampaigns(c => c.status === 'Completed').length}</Badge>
           </HStack>
           <HStack justify="space-between">
             <Text>Archived</Text>
-            <Badge colorScheme="gray">{campaigns.filter(c => c.status === 'Archived').length}</Badge>
+            <Badge colorScheme="gray">{safeFilterCampaigns(c => c.status === 'Archived').length}</Badge>
           </HStack>
         </VStack>
       </SideCard>
