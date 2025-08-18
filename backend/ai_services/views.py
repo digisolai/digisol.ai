@@ -38,6 +38,8 @@ from .tasks import generate_content_task, generate_image_task, upload_edited_ima
 from .gemini_utils import call_gemini_for_ai_agent, get_quota_status
 from core.models import BrandProfile, Tenant, BrandAsset
 from accounts.models import CustomUser
+from core.admin_access import is_digisol_admin
+from core.permissions import DigiSolAdminOrAuthenticated
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +48,7 @@ class GeminiChatView(APIView):
     """
     API view for real-time chat with AI agents using Gemini.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def options(self, request, *args, **kwargs):
         """Handle preflight OPTIONS requests"""
@@ -249,7 +251,7 @@ class ContentGenerationView(APIView):
     API view for generating AI content.
     Accepts content generation requests and dispatches async tasks.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def options(self, request, *args, **kwargs):
         """Handle preflight OPTIONS requests"""
@@ -335,7 +337,7 @@ class ContentGenerationStatusView(APIView):
     """
     API view for checking content generation status.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def options(self, request, *args, **kwargs):
         """Handle preflight OPTIONS requests"""
@@ -457,7 +459,7 @@ def cancel_content_generation(request, request_id):
         )
 
 class GenerateImageView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def options(self, request, *args, **kwargs):
         """Handle preflight OPTIONS requests"""
@@ -499,7 +501,7 @@ class GenerateImageView(APIView):
         return Response({'id': str(req.id), 'status': req.status}, status=status.HTTP_201_CREATED)
 
 class ImageGenerationStatusView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def options(self, request, *args, **kwargs):
         """Handle preflight OPTIONS requests"""
@@ -521,7 +523,7 @@ class AIRecommendationViewSet(ModelViewSet):
     """
     queryset = AIRecommendation.objects.all()
     serializer_class = AIRecommendationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filterset_fields = ['type', 'is_actionable', 'is_dismissed', 'is_actioned', 'priority']
     search_fields = ['recommendation_text']
     ordering_fields = ['created_at', 'priority', 'type']
@@ -584,7 +586,7 @@ class AIPlanningView(APIView):
     API view for AI strategic planning and recommendation generation.
     Enhanced to incorporate AI agent selection and task delegation.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def options(self, request, *args, **kwargs):
         """Handle preflight OPTIONS requests"""
@@ -806,7 +808,7 @@ class AIProfileViewSet(ModelViewSet):
     """
     queryset = AIProfile.objects.all()
     serializer_class = AIProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filterset_fields = ['specialization', 'is_active']
     search_fields = ['name', 'personality_description']
     ordering_fields = ['name', 'specialization', 'created_at']
@@ -869,7 +871,7 @@ class AITaskViewSet(ModelViewSet):
     """
     queryset = AITask.objects.all()
     serializer_class = AITaskSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filterset_fields = ['status', 'requester', 'assignee_agent']
     search_fields = ['objective']
     ordering_fields = ['created_at', 'updated_at', 'status']
@@ -930,7 +932,7 @@ class AIInteractionLogViewSet(ModelViewSet):
     """
     queryset = AIInteractionLog.objects.all()
     serializer_class = AIInteractionLogSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filterset_fields = ['role', 'ai_profile', 'ai_task']
     search_fields = ['message_content']
     ordering_fields = ['timestamp']
@@ -968,7 +970,7 @@ class ImageGenerationRequestViewSet(ModelViewSet):
     """
     queryset = ImageGenerationRequest.objects.all()
     serializer_class = ImageGenerationRequestSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filterset_fields = ['status', 'requested_by', 'brand_profile']
     search_fields = ['prompt_text']
     ordering_fields = ['created_at', 'updated_at', 'status']
@@ -1097,7 +1099,7 @@ class AIOrchestrationView(APIView):
     API view for AI orchestration requests.
     Handles complex multi-agent coordination tasks.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def options(self, request, *args, **kwargs):
         """Handle preflight OPTIONS requests"""
@@ -1176,7 +1178,7 @@ class StructuraInsightViewSet(ModelViewSet):
     """
     queryset = StructuraInsight.objects.all()
     serializer_class = StructuraInsightSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filterset_fields = ['type', 'impact', 'category', 'actionable']
     search_fields = ['title', 'description']
     ordering_fields = ['created_at', 'confidence', 'impact']
@@ -1229,7 +1231,7 @@ class AIEcosystemHealthViewSet(ModelViewSet):
     """
     queryset = AIEcosystemHealth.objects.all()
     serializer_class = AIEcosystemHealthSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     http_method_names = ['get', 'post', 'put', 'patch', 'head', 'options']  # No delete
     
     def options(self, request, *args, **kwargs):

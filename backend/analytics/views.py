@@ -1,6 +1,7 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
+from core.permissions import DigiSolAdminOrAuthenticated
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
@@ -25,7 +26,7 @@ from .serializers import (
 from accounts.permissions import IsTenantUser
 
 class CampaignSummaryView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def get(self, request, campaign_id):
         tenant = request.user.tenant
@@ -51,7 +52,7 @@ class CampaignSummaryView(APIView):
 
 
 class DashboardSummaryView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def get(self, request, *args, **kwargs):
         user_tenant = request.user.tenant
@@ -112,7 +113,7 @@ class EventViewSet(ModelViewSet):
     """
     queryset = Event.objects.all()
     serializer_class = EventSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filterset_fields = ['event_type', 'campaign', 'contact']
     search_fields = ['event_type', 'details']
     ordering_fields = ['timestamp', 'event_type']
@@ -175,7 +176,7 @@ class ReportConfigurationViewSet(ModelViewSet):
     """
     queryset = ReportConfiguration.objects.all()
     serializer_class = ReportConfigurationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     search_fields = ['name']
     ordering_fields = ['name', 'created_at']
     ordering = ['-created_at']
@@ -218,7 +219,7 @@ class AnalyticsSummaryView(APIView):
     """
     API view for comprehensive analytics summary.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def get(self, request):
         """Get comprehensive analytics summary."""
@@ -271,7 +272,7 @@ class LeadFunnelEventViewSet(ModelViewSet):
     """
     queryset = LeadFunnelEvent.objects.all()
     serializer_class = LeadFunnelEventSerializer
-    permission_classes = [permissions.IsAuthenticated, IsTenantUser]
+    permission_classes = [DigiSolAdminOrAuthenticated, IsTenantUser]
     filterset_fields = ['event_type', 'campaign', 'campaign_step', 'contact']
     search_fields = ['event_type', 'event_data']
     ordering_fields = ['timestamp', 'event_type']
@@ -413,7 +414,7 @@ class ReportTemplateViewSet(ModelViewSet):
     """
     queryset = ReportTemplate.objects.all()
     serializer_class = ReportTemplateSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'template_type', 'created_at']
     ordering = ['name']
@@ -435,7 +436,7 @@ class SavedReportViewSet(ModelViewSet):
     """
     queryset = SavedReport.objects.all()
     serializer_class = SavedReportSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'created_at', 'updated_at']
     ordering = ['-updated_at']
@@ -546,7 +547,7 @@ class ReportExecutionViewSet(ModelViewSet):
     """
     queryset = ReportExecution.objects.all()
     serializer_class = ReportExecutionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     ordering_fields = ['started_at', 'status']
     ordering = ['-started_at']
 
@@ -563,7 +564,7 @@ class AnalyticsModelViewSet(ModelViewSet):
     """
     queryset = AnalyticsModel.objects.all()
     serializer_class = AnalyticsModelSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'model_type', 'created_at', 'updated_at']
     ordering = ['-updated_at']
@@ -627,7 +628,7 @@ class AnalyticsInsightViewSet(ModelViewSet):
     """
     queryset = AnalyticsInsight.objects.all()
     serializer_class = AnalyticsInsightSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     search_fields = ['title', 'description']
     ordering_fields = ['created_at', 'insight_type', 'confidence_score']
     ordering = ['-created_at']
@@ -673,7 +674,7 @@ class SEOAnalysisViewSet(ModelViewSet):
     """
     queryset = SEOAnalysis.objects.all()
     serializer_class = SEOAnalysisSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     search_fields = ['domain']
     ordering_fields = ['analysis_date', 'domain']
     ordering = ['-analysis_date']
@@ -753,7 +754,7 @@ class SWOTAnalysisViewSet(ModelViewSet):
     """
     queryset = SWOTAnalysis.objects.all()
     serializer_class = SWOTAnalysisSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     search_fields = ['analysis_period']
     ordering_fields = ['analysis_date', 'analysis_period']
     ordering = ['-analysis_date']
@@ -830,7 +831,7 @@ class IndustryAnalysisViewSet(ModelViewSet):
     """
     queryset = IndustryAnalysis.objects.all()
     serializer_class = IndustryAnalysisSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     search_fields = ['industry', 'sub_industry']
     ordering_fields = ['analysis_date', 'industry']
     ordering = ['-analysis_date']
@@ -899,7 +900,7 @@ class DataSourceViewSet(ModelViewSet):
     """
     queryset = DataSource.objects.all()
     serializer_class = DataSourceSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     search_fields = ['name']
     ordering_fields = ['name', 'source_type', 'created_at']
     ordering = ['name']
@@ -974,7 +975,7 @@ class DataSyncLogViewSet(ModelViewSet):
     """
     queryset = DataSyncLog.objects.all()
     serializer_class = DataSyncLogSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     ordering_fields = ['sync_started', 'status']
     ordering = ['-sync_started']
 
@@ -989,7 +990,7 @@ class QuantiaInsightsView(APIView):
     """
     API view for Quantia's AI-generated insights.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def get(self, request):
         """Get Quantia insights for the dashboard."""
@@ -1055,7 +1056,7 @@ class MetrikaAnalysisView(APIView):
     """
     API view for Metrika's advanced analysis capabilities.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def post(self, request):
         """Run advanced analysis with Metrika."""
@@ -1113,7 +1114,7 @@ class ComprehensiveReportView(APIView):
     """
     API view for generating comprehensive reports combining Quantia and Metrika.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def post(self, request):
         """Generate a comprehensive report."""

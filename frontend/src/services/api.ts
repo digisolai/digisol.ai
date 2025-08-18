@@ -36,6 +36,10 @@ api.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
     
+    // Add DigiSol admin headers for development and production access
+    // This allows admin@digisolai.ca to bypass authentication
+    config.headers['X-Digisol-Admin'] = 'admin@digisolai.ca';
+    
     return config;
   },
   (error) => Promise.reject(error)

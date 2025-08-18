@@ -1,4 +1,5 @@
 from rest_framework import viewsets, status, filters
+from core.permissions import DigiSolAdminOrAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -35,7 +36,7 @@ class ProjectViewSet(viewsets.ModelViewSet):
     
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
-    permission_classes = [IsAuthenticated, IsTenantUser]
+    permission_classes = [DigiSolAdminOrAuthenticated, IsTenantUser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'project_type', 'manager', 'risk_level']
     search_fields = ['name', 'description', 'client_name']
@@ -653,7 +654,7 @@ class ProjectTaskViewSet(viewsets.ModelViewSet):
     
     queryset = ProjectTask.objects.all()
     serializer_class = ProjectTaskSerializer
-    permission_classes = [IsAuthenticated, IsTenantUser]
+    permission_classes = [DigiSolAdminOrAuthenticated, IsTenantUser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_fields = ['status', 'priority', 'assigned_to', 'project']
     search_fields = ['name', 'description']
@@ -758,7 +759,7 @@ class ProjectMilestoneViewSet(viewsets.ModelViewSet):
     
     queryset = ProjectMilestone.objects.all()
     serializer_class = ProjectMilestoneSerializer
-    permission_classes = [IsAuthenticated, IsTenantUser]
+    permission_classes = [DigiSolAdminOrAuthenticated, IsTenantUser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['project', 'is_completed']
     search_fields = ['name', 'description']
@@ -796,7 +797,7 @@ class ProjectFileViewSet(viewsets.ModelViewSet):
     
     queryset = ProjectFile.objects.all()
     serializer_class = ProjectFileSerializer
-    permission_classes = [IsAuthenticated, IsTenantUser]
+    permission_classes = [DigiSolAdminOrAuthenticated, IsTenantUser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['project', 'task', 'file_type', 'is_public']
     search_fields = ['name']
@@ -811,7 +812,7 @@ class ProjectCommentViewSet(viewsets.ModelViewSet):
     
     queryset = ProjectComment.objects.all()
     serializer_class = ProjectCommentSerializer
-    permission_classes = [IsAuthenticated, IsTenantUser]
+    permission_classes = [DigiSolAdminOrAuthenticated, IsTenantUser]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['project', 'task', 'is_internal']
     
@@ -829,7 +830,7 @@ class ProjectTemplateViewSet(viewsets.ModelViewSet):
     
     queryset = ProjectTemplate.objects.all()
     serializer_class = ProjectTemplateSerializer
-    permission_classes = [IsAuthenticated, IsTenantUser]
+    permission_classes = [DigiSolAdminOrAuthenticated, IsTenantUser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['project_type', 'is_global']
     search_fields = ['name', 'description']
@@ -892,7 +893,7 @@ class PromanaInsightViewSet(viewsets.ModelViewSet):
     
     queryset = PromanaInsight.objects.all()
     serializer_class = PromanaInsightSerializer
-    permission_classes = [IsAuthenticated, IsTenantUser]
+    permission_classes = [DigiSolAdminOrAuthenticated, IsTenantUser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['project', 'task', 'insight_type', 'is_actionable', 'action_taken']
     search_fields = ['title', 'description']
@@ -919,7 +920,7 @@ class ProjectAutomationRuleViewSet(viewsets.ModelViewSet):
     
     queryset = ProjectAutomationRule.objects.all()
     serializer_class = ProjectAutomationRuleSerializer
-    permission_classes = [IsAuthenticated, IsTenantUser]
+    permission_classes = [DigiSolAdminOrAuthenticated, IsTenantUser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['project', 'trigger', 'action', 'is_active']
     search_fields = ['name']
@@ -938,7 +939,7 @@ class ProjectRiskViewSet(viewsets.ModelViewSet):
     
     queryset = ProjectRisk.objects.all()
     serializer_class = ProjectRiskSerializer
-    permission_classes = [IsAuthenticated, IsTenantUser]
+    permission_classes = [DigiSolAdminOrAuthenticated, IsTenantUser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['project', 'probability', 'impact', 'status']
     search_fields = ['title', 'description']
@@ -953,7 +954,7 @@ class ProjectReportViewSet(viewsets.ModelViewSet):
     
     queryset = ProjectReport.objects.all()
     serializer_class = ProjectReportSerializer
-    permission_classes = [IsAuthenticated, IsTenantUser]
+    permission_classes = [DigiSolAdminOrAuthenticated, IsTenantUser]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['project', 'report_type', 'is_scheduled']
     search_fields = ['name']
@@ -988,7 +989,7 @@ class ClientPortalViewSet(viewsets.ModelViewSet):
     
     queryset = ClientPortal.objects.all()
     serializer_class = ClientPortalSerializer
-    permission_classes = [IsAuthenticated, IsTenantUser]
+    permission_classes = [DigiSolAdminOrAuthenticated, IsTenantUser]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['project', 'is_active']
     
@@ -1013,7 +1014,7 @@ class TimeEntryViewSet(viewsets.ModelViewSet):
     
     queryset = TimeEntry.objects.all()
     serializer_class = TimeEntrySerializer
-    permission_classes = [IsAuthenticated, IsTenantUser]
+    permission_classes = [DigiSolAdminOrAuthenticated, IsTenantUser]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['project', 'task', 'user', 'date']
     

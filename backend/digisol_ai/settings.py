@@ -258,7 +258,7 @@ CONTENT_GENERATION_MIN_PROMPT_LENGTH = 10
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'core.authentication.JWTAuthenticationWithDigiSolBypass',
     ),
 }
 

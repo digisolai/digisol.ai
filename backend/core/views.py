@@ -1,4 +1,6 @@
 from rest_framework import viewsets, permissions, status, serializers
+from core.permissions import DigiSolAdminOrAuthenticated
+from .permissions import DigiSolAdminOrAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -19,6 +21,7 @@ from .serializers import (
     BrandAssetUpdateSerializer, AgencyClientPortalSerializer, AgencyClientUserSerializer,
     AgencyClientActivitySerializer, AgencyClientBillingSerializer
 )
+from .admin_access import is_digisol_admin
 from .tasks import start_workflow_execution, trigger_workflow_by_event
 from ai_services.models import AIProfile, AIRecommendation
 from ai_services.tasks import generate_campaign_insights_task
@@ -26,6 +29,7 @@ from django.db import models
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from core.permissions import DigiSolAdminOrAuthenticated
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
@@ -214,7 +218,7 @@ class TenantViewSet(viewsets.ModelViewSet):
     """
     queryset = Tenant.objects.all()
     serializer_class = TenantSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def get_queryset(self):
         """Override to filter by current user's tenant for non-superusers."""
@@ -230,7 +234,7 @@ class ContactViewSet(viewsets.ModelViewSet):
     """
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def get_queryset(self):
         """Override to filter contacts by user's tenant."""
@@ -379,7 +383,7 @@ class CampaignViewSet(viewsets.ModelViewSet):
     """
     queryset = Campaign.objects.all()
     serializer_class = CampaignSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def get_queryset(self):
         """Override to filter campaigns by user's tenant."""
@@ -531,7 +535,7 @@ class EmailTemplateViewSet(viewsets.ModelViewSet):
     """
     queryset = EmailTemplate.objects.all()
     serializer_class = EmailTemplateSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def get_queryset(self):
         """Override to filter email templates by user's tenant."""
@@ -578,7 +582,7 @@ class AutomationWorkflowViewSet(viewsets.ModelViewSet):
     """
     queryset = AutomationWorkflow.objects.all()
     serializer_class = AutomationWorkflowSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def options(self, request, *args, **kwargs):
         """Handle preflight OPTIONS requests"""
@@ -691,7 +695,7 @@ class AutomationExecutionViewSet(viewsets.ModelViewSet):
     """
     queryset = AutomationExecution.objects.all()
     serializer_class = AutomationExecutionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def options(self, request, *args, **kwargs):
         """Handle preflight OPTIONS requests"""
@@ -742,7 +746,7 @@ class BrandProfileViewSet(viewsets.ModelViewSet):
     """
     queryset = BrandProfile.objects.all()
     serializer_class = BrandProfileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     http_method_names = ['get', 'post', 'put', 'patch', 'options']  # Enable create and options
     
     def options(self, request, *args, **kwargs):
@@ -925,7 +929,7 @@ class BrandAssetViewSet(viewsets.ModelViewSet):
     """
     queryset = BrandAsset.objects.all()
     serializer_class = BrandAssetSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filterset_fields = ['asset_type', 'is_shared_with_clients', 'created_by']
     search_fields = ['name', 'description', 'tags']
     ordering_fields = ['name', 'created_at', 'updated_at']
@@ -1058,7 +1062,7 @@ class BrandAssetViewSet(viewsets.ModelViewSet):
 class AgencyClientPortalViewSet(viewsets.ModelViewSet):
     """ViewSet for managing agency client portals."""
     serializer_class = AgencyClientPortalSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def get_queryset(self):
         """Filter client portals by the current user's tenant."""
@@ -1153,7 +1157,7 @@ class AgencyClientPortalViewSet(viewsets.ModelViewSet):
 class AgencyClientUserViewSet(viewsets.ModelViewSet):
     """ViewSet for managing agency client users."""
     serializer_class = AgencyClientUserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def get_queryset(self):
         """Filter client users by the current user's tenant's client portals."""
@@ -1181,7 +1185,7 @@ class AgencyClientUserViewSet(viewsets.ModelViewSet):
 class AgencyClientActivityViewSet(viewsets.ReadOnlyModelViewSet):
     """ViewSet for viewing agency client activities."""
     serializer_class = AgencyClientActivitySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def get_queryset(self):
         """Filter activities by the current user's tenant's client portals."""
@@ -1193,7 +1197,7 @@ class AgencyClientActivityViewSet(viewsets.ReadOnlyModelViewSet):
 class AgencyClientBillingViewSet(viewsets.ModelViewSet):
     """ViewSet for managing agency client billing."""
     serializer_class = AgencyClientBillingSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def get_queryset(self):
         """Filter billing records by the current user's tenant's client portals."""
@@ -1212,3 +1216,17 @@ class AgencyClientBillingViewSet(viewsets.ModelViewSet):
         billing.save()
         
         return Response(AgencyClientBillingSerializer(billing).data)
+
+@api_view(['GET'])
+@permission_classes([DigiSolAdminOrAuthenticated])
+def test_digisol_admin_access(request):
+    """
+    Test endpoint to verify DigiSol admin authentication bypass is working.
+    """
+    return Response({
+        'message': 'DigiSol admin access working!',
+        'user_email': request.user.email if request.user else None,
+        'is_digisol_admin': is_digisol_admin(request.user) if request.user else False,
+        'is_superuser': request.user.is_superuser if request.user else False,
+        'timestamp': timezone.now().isoformat()
+    }, status=status.HTTP_200_OK)

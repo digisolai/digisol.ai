@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions, status
+from core.permissions import DigiSolAdminOrAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q, Count, Avg, F
@@ -27,7 +28,7 @@ class IntegrationProviderViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = IntegrationProvider.objects.filter(is_active=True)
     serializer_class = IntegrationProviderSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filterset_fields = ['category', 'auth_type', 'webhook_support']
     search_fields = ['name', 'display_name', 'description']
 
@@ -76,7 +77,7 @@ class IntegrationViewSet(viewsets.ModelViewSet):
     Enhanced ViewSet for managing integrations with comprehensive features.
     """
     serializer_class = IntegrationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def get_queryset(self):
         """Filter by tenant and include related data."""
@@ -284,7 +285,7 @@ class DataFlowViewSet(viewsets.ModelViewSet):
     ViewSet for managing data flows between integrations and DigiSol.AI.
     """
     serializer_class = DataFlowSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def get_queryset(self):
         """Filter by tenant."""
@@ -328,7 +329,7 @@ class WorkflowAutomationViewSet(viewsets.ModelViewSet):
     ViewSet for managing workflow automations.
     """
     serializer_class = WorkflowAutomationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def get_queryset(self):
         """Filter by tenant."""
@@ -374,7 +375,7 @@ class ConnectusInsightViewSet(viewsets.ModelViewSet):
     ViewSet for managing Connectus AI insights.
     """
     serializer_class = ConnectusInsightSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def get_queryset(self):
         """Filter by tenant."""

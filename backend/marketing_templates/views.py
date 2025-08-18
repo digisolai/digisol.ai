@@ -1,4 +1,5 @@
 from rest_framework import viewsets, permissions, status
+from core.permissions import DigiSolAdminOrAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters import rest_framework as filters
@@ -39,7 +40,7 @@ class TemplateCategoryViewSet(viewsets.ModelViewSet):
     """ViewSet for TemplateCategory model"""
     
     serializer_class = TemplateCategorySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filterset_class = TemplateCategoryFilter
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'created_at', 'updated_at']
@@ -103,7 +104,7 @@ class TemplateCategoryViewSet(viewsets.ModelViewSet):
 class MarketingTemplateViewSet(viewsets.ModelViewSet):
     """ViewSet for MarketingTemplate model"""
     
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filterset_class = MarketingTemplateFilter
     search_fields = ['name', 'content_json']
     ordering_fields = ['name', 'created_at', 'updated_at']

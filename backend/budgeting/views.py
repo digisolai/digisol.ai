@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions, filters, status
+from core.permissions import DigiSolAdminOrAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Sum, Q, Count, Avg
@@ -26,7 +27,7 @@ class BudgetCategoryViewSet(viewsets.ModelViewSet):
     """
     queryset = BudgetCategory.objects.all()
     serializer_class = BudgetCategorySerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'created_at']
@@ -91,7 +92,7 @@ class BudgetViewSet(viewsets.ModelViewSet):
     """
     queryset = Budget.objects.all()
     serializer_class = BudgetSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'description']
     ordering_fields = ['name', 'amount', 'start_date', 'end_date', 'created_at', 'pecunia_health_score']
@@ -330,7 +331,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     """
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['description', 'notes', 'vendor']
     ordering_fields = ['date', 'amount', 'created_at']
@@ -481,7 +482,7 @@ class BudgetGoalViewSet(viewsets.ModelViewSet):
     """
     queryset = BudgetGoal.objects.all()
     serializer_class = BudgetGoalSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def get_queryset(self):
         return BudgetGoal.objects.filter(tenant=self.request.user.tenant)
@@ -499,7 +500,7 @@ class BudgetForecastViewSet(viewsets.ModelViewSet):
     """
     queryset = BudgetForecast.objects.all()
     serializer_class = BudgetForecastSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def get_queryset(self):
         return BudgetForecast.objects.filter(tenant=self.request.user.tenant)
@@ -517,7 +518,7 @@ class PecuniaRecommendationViewSet(viewsets.ModelViewSet):
     """
     queryset = PecuniaRecommendation.objects.all()
     serializer_class = PecuniaRecommendationSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def get_queryset(self):
         return PecuniaRecommendation.objects.filter(tenant=self.request.user.tenant)

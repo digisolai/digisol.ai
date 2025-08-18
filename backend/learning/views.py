@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions, filters, status
+from core.permissions import DigiSolAdminOrAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q
@@ -19,7 +20,7 @@ class TutorialViewSet(viewsets.ModelViewSet):
     """
     queryset = Tutorial.objects.all()
     serializer_class = TutorialSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'description']
     ordering_fields = ['title', 'order', 'created_at']
@@ -99,7 +100,7 @@ class TutorialSectionViewSet(viewsets.ModelViewSet):
     """
     queryset = TutorialSection.objects.all()
     serializer_class = TutorialSectionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'description']
     ordering_fields = ['title', 'order', 'created_at']
@@ -143,7 +144,7 @@ class TutorialStepViewSet(viewsets.ModelViewSet):
     """
     queryset = TutorialStep.objects.all()
     serializer_class = TutorialStepSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'content']
     ordering_fields = ['title', 'order', 'created_at']
@@ -209,7 +210,7 @@ class UserTutorialProgressViewSet(viewsets.ModelViewSet):
     """
     queryset = UserTutorialProgress.objects.all()
     serializer_class = UserTutorialProgressSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['tutorial__title']
     ordering_fields = ['started_at', 'completed_at', 'tutorial__title']

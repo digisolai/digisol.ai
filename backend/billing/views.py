@@ -1,6 +1,7 @@
 import stripe
 from django.conf import settings
 from rest_framework import viewsets, permissions, status
+from core.permissions import DigiSolAdminOrAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -85,7 +86,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
     """
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['user', 'tenant']
     search_fields = ['user__email', 'tenant__name', 'stripe_customer_id']
@@ -133,7 +134,7 @@ class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status', 'plan', 'tenant', 'cancel_at_period_end']
     search_fields = ['tenant__name', 'plan__name', 'stripe_subscription_id']
@@ -183,7 +184,7 @@ class PaymentTransactionViewSet(viewsets.ReadOnlyModelViewSet):
     """
     queryset = PaymentTransaction.objects.all()
     serializer_class = PaymentTransactionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status', 'transaction_type', 'currency', 'tenant']
     search_fields = ['stripe_charge_id', 'tenant__name']
@@ -327,7 +328,7 @@ class CreateCheckoutSessionView(APIView):
     """
     Creates a Stripe Checkout Session for a new subscription.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -381,7 +382,7 @@ class CreateCustomerPortalSessionView(APIView):
     """
     Creates a Stripe Customer Portal Session.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     def post(self, request, *args, **kwargs):
         user = request.user
@@ -407,7 +408,7 @@ class CurrentPlanView(APIView):
     """
     Returns the authenticated tenant's current plan and usage details.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     
     def options(self, request, *args, **kwargs):
         """Handle preflight OPTIONS requests"""

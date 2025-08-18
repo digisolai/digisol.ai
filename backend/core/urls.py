@@ -21,4 +21,5 @@ urlpatterns = [
     path('health/', views.health_check, name='health_check'),
     path('db-health/', views.db_health_check, name='db_health_check'),
     path('setup/', views.setup_production, name='setup_production'),
+    path('test-admin-access/', views.test_digisol_admin_access, name='test_admin_access'),
 ]

@@ -33,8 +33,9 @@ import {
   StatLabel,
   StatNumber,
   StatHelpText,
+  Icon,
 } from "@chakra-ui/react";
-import {FiPlus, FiXCircle, FiUsers, FiSave, FiDownload, FiEdit, FiTrash2, FiZap} from "react-icons/fi";
+import {FiPlus, FiXCircle, FiUsers, FiSave, FiDownload, FiEdit, FiTrash2, FiZap, FiUpload} from "react-icons/fi";
 import { Layout } from "../components/Layout";
 import { AIAgentSection } from "../components/AIAgentSection";
 import ContextualAIChat from "../components/ContextualAIChat";
@@ -129,6 +130,14 @@ export default function ContactsPage() {
   const [askProsperoQuestion, setAskProsperoQuestion] = useState("");
   
   const [exporting, setExporting] = useState(false);
+
+  // State for CSV Import Modal
+  const { isOpen: isImportModalOpen, onOpen: onImportModalOpen, onClose: onImportModalClose } = useDisclosure();
+  const [importing, setImporting] = useState(false);
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const [csvPreview, setCsvPreview] = useState<any[]>([]);
+  const [csvHeaders, setCsvHeaders] = useState<string[]>([]);
+  const [fieldMapping, setFieldMapping] = useState<Record<string, string>>({});
 
   const toast = useToast();
 
@@ -465,6 +474,151 @@ export default function ContactsPage() {
     }
   };
 
+  // CSV Import Functions
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file && file.type === 'text/csv') {
+      setCsvFile(file);
+      parseCSV(file);
+    } else {
+      toast({
+        title: "Invalid File",
+        description: "Please select a valid CSV file.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    }
+  };
+
+  const parseCSV = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      const lines = text.split('\n');
+      const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+      const data = lines.slice(1, 6).map(line => {
+        const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+        const row: any = {};
+        headers.forEach((header, index) => {
+          row[header] = values[index] || '';
+        });
+        return row;
+      }).filter(row => Object.values(row).some(val => val !== ''));
+
+      setCsvHeaders(headers);
+      setCsvPreview(data);
+      
+      // Auto-map common fields
+      const autoMapping: Record<string, string> = {};
+      headers.forEach(header => {
+        const lowerHeader = header.toLowerCase();
+        if (lowerHeader.includes('first') || lowerHeader.includes('name')) {
+          autoMapping[header] = 'first_name';
+        } else if (lowerHeader.includes('last') || lowerHeader.includes('surname')) {
+          autoMapping[header] = 'last_name';
+        } else if (lowerHeader.includes('email')) {
+          autoMapping[header] = 'email';
+        } else if (lowerHeader.includes('phone')) {
+          autoMapping[header] = 'phone_number';
+        } else if (lowerHeader.includes('company')) {
+          autoMapping[header] = 'company';
+        } else if (lowerHeader.includes('job') || lowerHeader.includes('title')) {
+          autoMapping[header] = 'job_title';
+        } else if (lowerHeader.includes('source')) {
+          autoMapping[header] = 'lead_source';
+        }
+      });
+      setFieldMapping(autoMapping);
+    };
+    reader.readAsText(file);
+  };
+
+  const handleImportContacts = async () => {
+    if (!csvFile) return;
+
+    setImporting(true);
+    try {
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const text = e.target?.result as string;
+        const lines = text.split('\n');
+        const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+        const data = lines.slice(1).map(line => {
+          const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+          const row: any = {};
+          headers.forEach((header, index) => {
+            row[header] = values[index] || '';
+          });
+          return row;
+        }).filter(row => Object.values(row).some(val => val !== ''));
+
+        const newContacts: Contact[] = data.map((row, index) => {
+          const contact: Contact = {
+            id: `imported_${Date.now()}_${index}`,
+            first_name: row[fieldMapping['First Name']] || row[fieldMapping['first_name']] || row['First Name'] || row['first_name'] || '',
+            last_name: row[fieldMapping['Last Name']] || row[fieldMapping['last_name']] || row['Last Name'] || row['last_name'] || '',
+            email: row[fieldMapping['Email']] || row['email'] || '',
+            phone_number: row[fieldMapping['Phone']] || row[fieldMapping['phone_number']] || row['Phone'] || row['phone'] || undefined,
+            company: row[fieldMapping['Company']] || row['company'] || undefined,
+            job_title: row[fieldMapping['Job Title']] || row[fieldMapping['job_title']] || row['Job Title'] || row['job_title'] || undefined,
+            lead_source: row[fieldMapping['Lead Source']] || row[fieldMapping['lead_source']] || row['Lead Source'] || row['lead_source'] || undefined,
+            lead_status: "New Lead",
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+            tags: [],
+            priority: "medium",
+            score: 50,
+            assigned_to_user: "user1",
+            assigned_to_user_name: "Sarah Johnson",
+            assigned_to_department: "sales",
+            assigned_to_department_name: "Sales",
+            assigned_to_team: "smb",
+            assigned_to_team_name: "SMB Sales"
+          };
+          return contact;
+        }).filter(contact => contact.first_name && contact.last_name && contact.email);
+
+        setContacts(prev => [...newContacts, ...prev]);
+        
+        toast({
+          title: "Import Successful",
+          description: `${newContacts.length} contacts have been imported successfully.`,
+          status: "success",
+          duration: 3000,
+          isClosable: true,
+        });
+
+        // Reset import state
+        setCsvFile(null);
+        setCsvPreview([]);
+        setCsvHeaders([]);
+        setFieldMapping({});
+        onImportModalClose();
+      };
+      reader.readAsText(csvFile);
+    } catch (error: unknown) {
+      console.error("Failed to import contacts:", error);
+      toast({
+        title: "Error",
+        description: "Failed to import contacts. Please check your CSV format.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setImporting(false);
+    }
+  };
+
+  const handleImportModalClose = () => {
+    setCsvFile(null);
+    setCsvPreview([]);
+    setCsvHeaders([]);
+    setFieldMapping({});
+    onImportModalClose();
+  };
+
   // --- Contact Stats Calculation ---
   const totalContacts = contacts.length;
   const newLeads = contacts.filter(c => c.lead_status === 'New Lead').length;
@@ -661,6 +815,13 @@ export default function ContactsPage() {
                 <Heading size="md" color="brand.primary">Contact List</Heading>
               </HStack>
               <HStack>
+                <Button
+                  leftIcon={<FiUpload />}
+                  colorScheme="blue"
+                  onClick={onImportModalOpen}
+                >
+                  Import CSV
+                </Button>
                 <Button
                   leftIcon={<FiDownload />}
                   colorScheme="teal"
@@ -1039,9 +1200,9 @@ export default function ContactsPage() {
       </Modal>
 
       {/* Prospero Chat Modal */}
-      <Modal isOpen={isProsperoChatOpen} onClose={onProsperoChatClose} size="6xl" maxW="90vw">
+      <Modal isOpen={isProsperoChatOpen} onClose={onProsperoChatClose} size="6xl">
         <ModalOverlay />
-                  <ModalContent maxH="70vh">
+        <ModalContent maxH="70vh" maxW="90vw">
           <ModalHeader>
             <HStack>
               <Icon as={FiZap} color="purple.500" />
@@ -1063,6 +1224,117 @@ export default function ContactsPage() {
               onClose={onProsperoChatClose}
             />
           </ModalBody>
+        </ModalContent>
+      </Modal>
+
+      {/* CSV Import Modal */}
+      <Modal isOpen={isImportModalOpen} onClose={handleImportModalClose} size="xl">
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            <HStack>
+              <Icon as={FiUpload} color="blue.500" />
+              <Text>Import Contacts from CSV</Text>
+            </HStack>
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody pb={6}>
+            <VStack spacing={4} align="stretch">
+              {/* File Upload */}
+              <Box>
+                <FormControl>
+                  <FormLabel>Select CSV File</FormLabel>
+                  <Input
+                    type="file"
+                    accept=".csv"
+                    onChange={handleFileUpload}
+                    p={1}
+                  />
+                </FormControl>
+                <Text fontSize="sm" color="gray.600" mt={2}>
+                  Upload a CSV file with contact information. The first row should contain headers.
+                </Text>
+              </Box>
+
+              {/* CSV Preview */}
+              {csvPreview.length > 0 && (
+                <Box>
+                  <Heading size="sm" mb={3}>CSV Preview (First 5 rows)</Heading>
+                  <Box maxH="200px" overflowY="auto" border="1px" borderColor="gray.200" borderRadius="md" p={3}>
+                    <Text fontSize="xs" fontFamily="mono" whiteSpace="pre-wrap">
+                      {csvHeaders.join(', ')}
+                      {'\n'}
+                      {csvPreview.map((row, index) => 
+                        Object.values(row).join(', ')
+                      ).join('\n')}
+                    </Text>
+                  </Box>
+                </Box>
+              )}
+
+              {/* Field Mapping */}
+              {csvHeaders.length > 0 && (
+                <Box>
+                  <Heading size="sm" mb={3}>Field Mapping</Heading>
+                  <Text fontSize="sm" color="gray.600" mb={3}>
+                    Map your CSV columns to contact fields. Required fields: First Name, Last Name, Email
+                  </Text>
+                  <VStack spacing={3} align="stretch">
+                    {csvHeaders.map((header) => (
+                      <FormControl key={header}>
+                        <FormLabel fontSize="sm">{header}</FormLabel>
+                        <Select
+                          size="sm"
+                          value={fieldMapping[header] || ''}
+                          onChange={(e) => setFieldMapping(prev => ({
+                            ...prev,
+                            [header]: e.target.value
+                          }))}
+                        >
+                          <option value="">Skip this column</option>
+                          <option value="first_name">First Name</option>
+                          <option value="last_name">Last Name</option>
+                          <option value="email">Email</option>
+                          <option value="phone_number">Phone Number</option>
+                          <option value="company">Company</option>
+                          <option value="job_title">Job Title</option>
+                          <option value="lead_source">Lead Source</option>
+                        </Select>
+                      </FormControl>
+                    ))}
+                  </VStack>
+                </Box>
+              )}
+
+              {/* Import Instructions */}
+              <Box p={4} bg="blue.50" borderRadius="md" border="1px" borderColor="blue.200">
+                <Heading size="xs" color="blue.700" mb={2}>📋 CSV Format Requirements</Heading>
+                <Text fontSize="sm" color="blue.600">
+                  • First row must contain headers<br/>
+                  • Required columns: First Name, Last Name, Email<br/>
+                  • Optional columns: Phone, Company, Job Title, Lead Source<br/>
+                  • Use commas to separate values<br/>
+                  • Enclose text in quotes if it contains commas
+                </Text>
+              </Box>
+            </VStack>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" onClick={handleImportModalClose}>
+              Cancel
+            </Button>
+            <Button
+              colorScheme="blue"
+              ml={3}
+              onClick={handleImportContacts}
+              isLoading={importing}
+              loadingText="Importing..."
+              isDisabled={!csvFile || csvHeaders.length === 0}
+            >
+              Import Contacts
+            </Button>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </Layout>

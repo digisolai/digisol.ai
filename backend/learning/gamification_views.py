@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions, filters, status
+from core.permissions import DigiSolAdminOrAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db.models import Q, Count, Sum
@@ -23,7 +24,7 @@ class BadgeViewSet(viewsets.ModelViewSet):
     """
     queryset = Badge.objects.all()
     serializer_class = BadgeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'description', 'badge_type']
     ordering_fields = ['name', 'difficulty', 'created_at']
@@ -100,7 +101,7 @@ class UserBadgeViewSet(viewsets.ReadOnlyModelViewSet):
     ViewSet for viewing user badges (read-only).
     """
     serializer_class = UserBadgeSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['earned_at']
     ordering = ['-earned_at']
@@ -115,7 +116,7 @@ class LearningAchievementViewSet(viewsets.ModelViewSet):
     ViewSet for managing learning achievements.
     """
     serializer_class = LearningAchievementSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'description', 'achievement_type']
     ordering_fields = ['title', 'earned_at']
@@ -175,7 +176,7 @@ class MarketingResourceViewSet(viewsets.ModelViewSet):
     """
     queryset = MarketingResource.objects.all()
     serializer_class = MarketingResourceSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'description', 'tags']
     ordering_fields = ['title', 'created_at', 'view_count']
@@ -314,7 +315,7 @@ class UserResourceProgressViewSet(viewsets.ReadOnlyModelViewSet):
     ViewSet for viewing user resource progress (read-only).
     """
     serializer_class = UserResourceProgressSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [filters.OrderingFilter]
     ordering_fields = ['last_accessed', 'created_at']
     ordering = ['-last_accessed']
@@ -342,7 +343,7 @@ class GamificationStatsViewSet(viewsets.ViewSet):
     """
     ViewSet for gamification statistics and user progress.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     @action(detail=False, methods=['get'])
     def user_stats(self, request):

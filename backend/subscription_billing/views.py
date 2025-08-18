@@ -1,6 +1,7 @@
 import stripe
 from django.conf import settings
 from rest_framework import viewsets, status, permissions
+from core.permissions import DigiSolAdminOrAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django.db import transaction
@@ -84,7 +85,7 @@ class CustomerViewSet(viewsets.ModelViewSet):
     """
     queryset = Customer.objects.all()
     serializer_class = CustomerSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['user']
     search_fields = ['user__email', 'stripe_customer_id']
@@ -129,7 +130,7 @@ class SubscriptionViewSet(viewsets.ModelViewSet):
     """
     queryset = Subscription.objects.all()
     serializer_class = SubscriptionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status', 'plan', 'cancel_at_period_end']
     search_fields = ['plan__name', 'stripe_subscription_id']
@@ -154,7 +155,7 @@ class PaymentTransactionViewSet(viewsets.ModelViewSet):
     """
     queryset = PaymentTransaction.objects.all()
     serializer_class = PaymentTransactionSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     filterset_fields = ['status', 'currency']
     search_fields = ['stripe_payment_intent_id']
@@ -297,7 +298,7 @@ class SubscriptionManagementViewSet(viewsets.ViewSet):
     """
     API endpoints for subscription management actions.
     """
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [DigiSolAdminOrAuthenticated]
 
     @action(detail=False, methods=['post'])
     def create_subscription(self, request):

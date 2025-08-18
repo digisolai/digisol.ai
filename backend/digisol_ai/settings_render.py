@@ -168,6 +168,8 @@ CORS_ALLOW_HEADERS = [
     'cache-control',
     'pragma',
     'expires',
+    'x-digisol-admin',
+    'x-superuser-bypass',
 ]
 
 CORS_EXPOSE_HEADERS = [
@@ -317,10 +319,10 @@ MIDDLEWARE = [
 # REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'core.authentication.JWTAuthenticationWithDigiSolBypass',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
+        'core.permissions.DigiSolAdminOrAuthenticated',
     ),
 }
 
