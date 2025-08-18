@@ -26,7 +26,7 @@ class TokenCORSMiddleware:
             
             response['Access-Control-Allow-Credentials'] = 'true'
             response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-            response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+            response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With, x-digisol-admin, x-superuser-bypass'
             
             # Handle preflight requests
             if request.method == 'OPTIONS':

@@ -137,7 +137,7 @@ DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'noreply@digisolai.ca'
 # CORS Settings - Production only
 CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins for debugging
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_HEADERS = True
+CORS_ALLOW_ALL_HEADERS = True  # This allows any headers including x-digisol-admin
 
 # Force CORS to work for all API endpoints
 CORS_URLS_REGEX = r'^api/.*$'

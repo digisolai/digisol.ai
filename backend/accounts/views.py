@@ -42,7 +42,7 @@ def add_cors_headers(view_func):
         
         response['Access-Control-Allow-Credentials'] = 'true'
         response['Access-Control-Allow-Methods'] = 'DELETE, GET, OPTIONS, PATCH, POST, PUT'
-        response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with, access-control-request-method, access-control-request-headers, cache-control, pragma, expires'
+        response['Access-Control-Allow-Headers'] = 'accept, accept-encoding, authorization, content-type, dnt, origin, user-agent, x-csrftoken, x-requested-with, access-control-request-method, access-control-request-headers, cache-control, pragma, expires, x-digisol-admin, x-superuser-bypass'
         
         if request.method == 'OPTIONS':
             response['Access-Control-Max-Age'] = '86400'
@@ -650,7 +650,7 @@ class CustomTokenObtainPairView(TokenObtainPairView):
         response = HttpResponse()
         response['Access-Control-Allow-Origin'] = request.META.get('HTTP_ORIGIN', '*')
         response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, x-digisol-admin, x-superuser-bypass'
         response['Access-Control-Allow-Credentials'] = 'true'
         response['Access-Control-Max-Age'] = '86400'
         print(f"Token obtain view OPTIONS response headers: {dict(response.headers)}")
@@ -674,7 +674,7 @@ class CustomTokenRefreshView(TokenRefreshView):
         response = HttpResponse()
         response['Access-Control-Allow-Origin'] = request.META.get('HTTP_ORIGIN', '*')
         response['Access-Control-Allow-Methods'] = 'POST, OPTIONS'
-        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, x-digisol-admin, x-superuser-bypass'
         response['Access-Control-Allow-Credentials'] = 'true'
         response['Access-Control-Max-Age'] = '86400'
         print(f"Token refresh view OPTIONS response headers: {dict(response.headers)}")
@@ -712,7 +712,7 @@ class CORSTestView(APIView):
         response = HttpResponse()
         response['Access-Control-Allow-Origin'] = request.META.get('HTTP_ORIGIN', '*')
         response['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
-        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, x-digisol-admin, x-superuser-bypass'
         response['Access-Control-Allow-Credentials'] = 'true'
         response['Access-Control-Max-Age'] = '86400'
         print(f"CORS test OPTIONS response headers: {dict(response.headers)}")
