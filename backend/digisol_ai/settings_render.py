@@ -181,6 +181,28 @@ CORS_EXPOSE_HEADERS = [
 # Important: Set preflight max age and ensure proper handling
 CORS_PREFLIGHT_MAX_AGE = 86400  # 24 hours
 
+# Additional CORS settings to ensure headers are allowed
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'access-control-request-method',
+    'access-control-request-headers',
+    'cache-control',
+    'pragma',
+    'expires',
+    'x-digisol-admin',
+    'x-superuser-bypass',
+    'x-digisol-admin',  # Explicitly include again
+    'x-superuser-bypass',  # Explicitly include again
+]
+
 # CSRF trusted origins (needed for some auth flows; safe to include wildcards)
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     'CSRF_TRUSTED_ORIGINS',
@@ -302,9 +324,9 @@ INSTALLED_APPS = [
 
 # Middleware - Add whitenoise for static files
 MIDDLEWARE = [
-    'corsheaders.middleware.CorsMiddleware',  # Must be first
-    'core.cors_middleware.CustomCORSMiddleware',  # Add custom CORS middleware
+    'core.cors_middleware.CustomCORSMiddleware',  # Custom CORS middleware first
     'core.token_cors_middleware.TokenCORSMiddleware',  # Specialized token CORS middleware
+    'corsheaders.middleware.CorsMiddleware',  # Standard CORS middleware after custom ones
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
