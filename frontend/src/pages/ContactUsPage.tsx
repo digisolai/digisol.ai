@@ -121,6 +121,7 @@ const ContactUsPage = () => {
               maxW="3xl"
               textAlign="center"
               mx="auto"
+              color="white"
             >
               Get in Touch with{" "}
               <Text as="span" color="#FFC300">
