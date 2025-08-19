@@ -120,6 +120,7 @@ const ContactUsPage = () => {
               fontWeight="bold"
               maxW="3xl"
               textAlign="center"
+              mx="auto"
             >
               Get in Touch with{" "}
               <Text as="span" color="#FFC300">
@@ -216,7 +217,7 @@ const ContactUsPage = () => {
                           p={4}
                           borderRadius="full"
                           bg={social.color}
-                          color="#FFC300"
+                          color="white"
                         >
                           <Icon as={social.icon} boxSize={8} />
                         </Box>
