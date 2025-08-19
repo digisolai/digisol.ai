@@ -418,6 +418,14 @@ export default function HomePage() {
                  <Link 
                    color="#1F4287" 
                    _hover={{ color: "#163a6f" }}
+                   onClick={() => navigate('/blog')}
+                   cursor="pointer"
+                 >
+                   Blog
+                 </Link>
+                 <Link 
+                   color="#1F4287" 
+                   _hover={{ color: "#163a6f" }}
                    onClick={() => navigate('/about')}
                    cursor="pointer"
                  >
@@ -1382,6 +1390,16 @@ export default function HomePage() {
                     }}
                   >
                     Pricing
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    justifyContent="start"
+                    onClick={() => {
+                      navigate('/blog');
+                      onClose();
+                    }}
+                  >
+                    Blog
                   </Button>
                   <Button
                     variant="ghost"

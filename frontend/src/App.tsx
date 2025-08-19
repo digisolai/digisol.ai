@@ -36,6 +36,7 @@ import ReportsPage from './pages/ReportsPage';
 import SettingsPage from './pages/SettingsPage';
 import TutorialDetailPage from './pages/TutorialDetailPage';
 import AboutPage from './pages/AboutPage';
+import BlogPage from './pages/BlogPage';
 import ContactUsPage from './pages/ContactUsPage';
 import MyClientsPage from './pages/MyClientsPage';
 import DemoSchedulePage from './pages/DemoSchedulePage';
@@ -58,6 +59,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/blog" element={<BlogPage />} />
             <Route path="/contact-us" element={<ContactUsPage />} />
             <Route path="/demo-schedule" element={<DemoSchedulePage />} />
             
