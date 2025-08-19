@@ -1,0 +1,51 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="512" height="512" fill="white"/>
+  
+  <!-- Main swirling S-shape (dark blue) -->
+  <path d="M 120 80 Q 180 60 240 80 Q 300 100 320 140 Q 340 180 320 220 Q 300 260 240 280 Q 180 300 120 280 Q 60 260 40 220 Q 20 180 40 140 Q 60 100 120 80 Z" 
+        fill="#1F4287" opacity="0.9"/>
+  
+  <!-- Secondary swirl path for depth -->
+  <path d="M 100 100 Q 160 85 220 100 Q 280 115 300 150 Q 320 185 300 220 Q 280 255 220 270 Q 160 285 100 270 Q 40 255 20 220 Q 0 185 20 150 Q 40 115 100 100 Z" 
+        fill="#1F4287" opacity="0.7"/>
+  
+  <!-- Gold dots and connections -->
+  <circle cx="80" cy="120" r="6" fill="#FFC300"/>
+  <circle cx="160" cy="100" r="6" fill="#FFC300"/>
+  <circle cx="240" cy="120" r="6" fill="#FFC300"/>
+  <circle cx="320" cy="160" r="6" fill="#FFC300"/>
+  <circle cx="320" cy="240" r="6" fill="#FFC300"/>
+  <circle cx="240" cy="280" r="6" fill="#FFC300"/>
+  <circle cx="160" cy="300" r="6" fill="#FFC300"/>
+  <circle cx="80" cy="280" r="6" fill="#FFC300"/>
+  <circle cx="40" cy="200" r="6" fill="#FFC300"/>
+  
+  <!-- Gold connection lines -->
+  <path d="M 80 120 Q 120 110 160 100" stroke="#FFC300" stroke-width="3" fill="none"/>
+  <path d="M 160 100 Q 200 110 240 120" stroke="#FFC300" stroke-width="3" fill="none"/>
+  <path d="M 240 120 Q 280 140 320 160" stroke="#FFC300" stroke-width="3" fill="none"/>
+  <path d="M 320 160 Q 320 200 320 240" stroke="#FFC300" stroke-width="3" fill="none"/>
+  <path d="M 320 240 Q 280 260 240 280" stroke="#FFC300" stroke-width="3" fill="none"/>
+  <path d="M 240 280 Q 200 290 160 300" stroke="#FFC300" stroke-width="3" fill="none"/>
+  <path d="M 160 300 Q 120 290 80 280" stroke="#FFC300" stroke-width="3" fill="none"/>
+  <path d="M 80 280 Q 60 240 40 200" stroke="#FFC300" stroke-width="3" fill="none"/>
+  
+  <!-- Central AI glow and text -->
+  <circle cx="256" cy="256" r="50" fill="#FFC300" opacity="0.8"/>
+  <circle cx="256" cy="256" r="40" fill="#FFC300" opacity="0.9"/>
+  <text x="256" y="270" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white">AI</text>
+  
+  <!-- Directional arrow -->
+  <polygon points="400,120 410,130 400,140" fill="white"/>
+  
+  <!-- Additional gold accent dots -->
+  <circle cx="60" cy="160" r="4" fill="#FFC300"/>
+  <circle cx="380" cy="200" r="4" fill="#FFC300"/>
+  <circle cx="60" cy="240" r="4" fill="#FFC300"/>
+  <circle cx="380" cy="280" r="4" fill="#FFC300"/>
+  
+  <!-- DigiSol.AI text at bottom -->
+  <text x="256" y="420" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#1F4287">DigiSol</text>
+  <text x="256" y="460" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#FFC300">.AI</text>
+</svg> 
