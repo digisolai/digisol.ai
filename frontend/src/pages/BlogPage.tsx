@@ -57,12 +57,12 @@ const BlogPage = () => {
       <Box
         bgGradient="linear(to-r, #1F4287, #1F4287)"
         color="white"
-        py={20}
+        py={12}
         position="relative"
         overflow="hidden"
       >
         <Container maxW="container.xl">
-          <VStack spacing={8} textAlign="center">
+          <VStack spacing={6} textAlign="center">
             <HStack spacing={4}>
               <Logo size={40} />
               <VStack spacing={1} align="start">
@@ -82,20 +82,7 @@ const BlogPage = () => {
               Discover how artificial intelligence is revolutionizing marketing automation 
               and transforming the way businesses connect with their customers.
             </Text>
-            <HStack spacing={6} color="gray.300" fontSize="sm">
-              <HStack spacing={2}>
-                <Icon as={FiUser} />
-                <Text>DigiSol.AI Team</Text>
-              </HStack>
-              <HStack spacing={2}>
-                <Icon as={FiCalendar} />
-                <Text>January 15, 2024</Text>
-              </HStack>
-              <HStack spacing={2}>
-                <Icon as={FiClock} />
-                <Text>8 min read</Text>
-              </HStack>
-            </HStack>
+
             <HStack spacing={3}>
               <Badge colorScheme="blue" variant="solid" px={3} py={1}>
                 AI Marketing
