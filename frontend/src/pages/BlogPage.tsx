@@ -66,8 +66,8 @@ const BlogPage = () => {
             <HStack spacing={4}>
               <Logo size={40} />
               <VStack spacing={1} align="start">
-                <Text fontSize="sm" opacity={0.8}>DigiSol.AI Blog</Text>
-                <Text fontSize="xs" opacity={0.6}>AI-Powered Marketing Insights</Text>
+                <Text fontSize="sm" color="#FFC300" fontWeight="bold">DigiSol.AI Blog</Text>
+                <Text fontSize="xs" color="#FFC300" opacity={0.8}>AI-Powered Marketing Insights</Text>
               </VStack>
             </HStack>
             <Heading
@@ -75,10 +75,11 @@ const BlogPage = () => {
               size="2xl"
               fontWeight="bold"
               maxW="4xl"
+              color="#FFC300"
             >
               The Future of AI-Powered Marketing Automation
             </Heading>
-            <Text fontSize="xl" maxW="3xl" opacity={0.9}>
+            <Text fontSize="xl" maxW="3xl" color="#FFC300" opacity={0.9}>
               Discover how artificial intelligence is revolutionizing marketing automation 
               and transforming the way businesses connect with their customers.
             </Text>
