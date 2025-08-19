@@ -515,15 +515,15 @@ export default function HomePage() {
                  
                  <HStack spacing={8}>
                   <HStack>
-                    <Icon as={FiCheckCircle} color="green.300" />
+                    <Icon as={FiCheckCircle} color="#FFC300" />
                     <Text fontSize="sm">No credit card required</Text>
                   </HStack>
                   <HStack>
-                    <Icon as={FiCheckCircle} color="green.300" />
+                    <Icon as={FiCheckCircle} color="#FFC300" />
                     <Text fontSize="sm">14-day free trial</Text>
                   </HStack>
                   <HStack>
-                    <Icon as={FiCheckCircle} color="green.300" />
+                    <Icon as={FiCheckCircle} color="#FFC300" />
                     <Text fontSize="sm">Cancel anytime</Text>
                   </HStack>
                 </HStack>
@@ -584,7 +584,7 @@ export default function HomePage() {
                       <StatLabel color="gray.600">Revenue Generated</StatLabel>
                     </Stat>
                     <Stat>
-                      <StatNumber color="green.500" fontSize="2xl">15.2K</StatNumber>
+                      <StatNumber color="#FFC300" fontSize="2xl">15.2K</StatNumber>
                       <StatLabel color="gray.600">Leads Acquired</StatLabel>
                     </Stat>
                   </SimpleGrid>
@@ -905,7 +905,7 @@ export default function HomePage() {
                         <List spacing={3}>
                           {tier.features.map((feature, featureIndex) => (
                             <ListItem key={featureIndex}>
-                              <ListIcon as={FiCheckCircle} color="green.500" />
+                              <ListIcon as={FiCheckCircle} color="#FFC300" />
                               {feature}
                             </ListItem>
                           ))}
@@ -955,7 +955,7 @@ export default function HomePage() {
                         <List spacing={3}>
                           {tier.features.map((feature, featureIndex) => (
                             <ListItem key={featureIndex}>
-                              <ListIcon as={FiCheckCircle} color="green.500" />
+                              <ListIcon as={FiCheckCircle} color="#FFC300" />
                               {feature}
                             </ListItem>
                           ))}
@@ -1009,27 +1009,27 @@ export default function HomePage() {
                   <VStack spacing={4} align="stretch">
                     <List spacing={3}>
                       <ListItem>
-                        <ListIcon as={FiCheckCircle} color="green.500" />
+                        <ListIcon as={FiCheckCircle} color="#FFC300" />
                         Access to multi-client portal
                       </ListItem>
                       <ListItem>
-                        <ListIcon as={FiCheckCircle} color="green.500" />
+                        <ListIcon as={FiCheckCircle} color="#FFC300" />
                         Partner-exclusive resources
                       </ListItem>
                       <ListItem>
-                        <ListIcon as={FiCheckCircle} color="green.500" />
+                        <ListIcon as={FiCheckCircle} color="#FFC300" />
                         Unified dashboard for all clients
                       </ListItem>
                       <ListItem>
-                        <ListIcon as={FiCheckCircle} color="green.500" />
+                        <ListIcon as={FiCheckCircle} color="#FFC300" />
                         Pooled resources across accounts
                       </ListItem>
                       <ListItem>
-                        <ListIcon as={FiCheckCircle} color="green.500" />
+                        <ListIcon as={FiCheckCircle} color="#FFC300" />
                         Dedicated partnership support
                       </ListItem>
                       <ListItem>
-                        <ListIcon as={FiCheckCircle} color="green.500" />
+                        <ListIcon as={FiCheckCircle} color="#FFC300" />
                         Co-branded reporting
                       </ListItem>
                     </List>
@@ -1135,7 +1135,7 @@ export default function HomePage() {
             
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={8} w="full">
               <VStack spacing={4} p={6} bg="white" borderRadius="lg" shadow="md">
-                <Icon as={FiMail} boxSize={8} color="brand.primary" />
+                <Icon as={FiMail} boxSize={8} color="#FFC300" />
                 <Heading size="md" color="brand.primary">Email</Heading>
                 <Text color="gray.600" textAlign="center">admin@digisolai.ca</Text>
                 <Button
@@ -1148,7 +1148,7 @@ export default function HomePage() {
               </VStack>
               
               <VStack spacing={4} p={6} bg="white" borderRadius="lg" shadow="md">
-                <Icon as={FiPhone} boxSize={8} color="brand.primary" />
+                <Icon as={FiPhone} boxSize={8} color="#FFC300" />
                 <Heading size="md" color="brand.primary">Phone</Heading>
                 <Text color="gray.600" textAlign="center">+1 (587) 577-0782</Text>
                 <Button
@@ -1161,7 +1161,7 @@ export default function HomePage() {
               </VStack>
               
               <VStack spacing={4} p={6} bg="white" borderRadius="lg" shadow="md">
-                <Icon as={FiMapPin} boxSize={8} color="brand.primary" />
+                <Icon as={FiMapPin} boxSize={8} color="#FFC300" />
                 <Heading size="md" color="brand.primary">Address</Heading>
                 <Text color="gray.600" textAlign="center">
                   Box 1764<br />
@@ -1193,15 +1193,15 @@ export default function HomePage() {
                 </Text>
                 <VStack align="start" spacing={2} color="brand.accent" fontSize="sm">
                   <HStack spacing={2}>
-                    <Icon as={FiMail} boxSize={4} />
+                    <Icon as={FiMail} boxSize={4} color="#FFC300" />
                     <Text>admin@digisolai.ca</Text>
                   </HStack>
                   <HStack spacing={2}>
-                    <Icon as={FiPhone} boxSize={4} />
+                    <Icon as={FiPhone} boxSize={4} color="#FFC300" />
                     <Text>+1 (587) 577-0782</Text>
                   </HStack>
                   <HStack spacing={2}>
-                    <Icon as={FiMapPin} boxSize={4} />
+                    <Icon as={FiMapPin} boxSize={4} color="#FFC300" />
                     <Text>Box 1764, Carstairs, Alberta T0M 0N0</Text>
                   </HStack>
                 </VStack>

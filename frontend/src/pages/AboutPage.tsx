@@ -22,6 +22,7 @@ import {
   List,
   ListItem,
   ListIcon,
+  useColorModeValue,
 } from "@chakra-ui/react";
 import {
   FiTarget,
@@ -43,7 +44,6 @@ import {
   FiBookOpen,
   FiSettings,
 } from "react-icons/fi";
-import { Layout } from "../components/Layout";
 
 interface Capability {
   icon: React.ElementType;
@@ -125,194 +125,162 @@ const teamMembers: TeamMember[] = [
 ];
 
 export default function AboutPage() {
+  const bgColor = useColorModeValue("gray.50", "gray.900");
+  const cardBg = useColorModeValue("white", "gray.800");
+  const borderColor = useColorModeValue("gray.200", "gray.700");
+
   return (
-    <Layout>
-      <Container maxW="container.xl" py={8}>
-        <VStack spacing={12} align="stretch">
-          {/* Hero Section */}
-          <Box textAlign="center" py={12}>
+    <Box bg={bgColor} minH="100vh">
+      {/* Hero Section */}
+      <Box
+        bgGradient="linear(to-r, #1F4287, #1F4287)"
+        color="white"
+        py={20}
+        position="relative"
+        overflow="hidden"
+      >
+        <Container maxW="container.xl">
+          <VStack spacing={8} textAlign="center">
             <Heading
+              as="h1"
               size="2xl"
-              color="brand.primary"
-              mb={6}
               fontWeight="bold"
+              maxW="3xl"
+              textAlign="center"
             >
-              About DigiSol.AI
+              About{" "}
+              <Text as="span" color="#FFC300">
+                DigiSol.AI
+              </Text>
             </Heading>
-            <Text
-              fontSize="xl"
-              color="brand.neutral.600"
-              maxW="4xl"
-              mx="auto"
-              lineHeight="1.6"
-              mb={8}
-            >
-              Empowering B2B marketers with AI-driven insights and no-code automation 
-              to create hyper-personalized customer experiences at scale.
+            <Text fontSize="xl" maxW="2xl" opacity={0.9}>
+              We're revolutionizing B2B marketing with AI-powered automation, 
+              intelligent insights, and comprehensive tools that scale with your business.
             </Text>
-            <HStack spacing={4} justify="center">
-              <Badge bg="brand.primary" color="white" variant="solid" fontSize="md" px={4} py={2}>
-                <Icon as={FiAward} mr={2} color="brand.accent" />
-                Trusted by 500+ Companies
-              </Badge>
-              <Badge bg="brand.primary" color="white" variant="solid" fontSize="md" px={4} py={2}>
-                <Icon as={FiShield} mr={2} color="brand.accent" />
-                Enterprise Security
-              </Badge>
-              <Badge bg="brand.primary" color="white" variant="solid" fontSize="md" px={4} py={2}>
-                <Icon as={FiCpu} mr={2} color="brand.accent" />
-                AI-Powered
-              </Badge>
-            </HStack>
+          </VStack>
+        </Container>
+      </Box>
+
+      {/* Main Content */}
+      <Container maxW="container.xl" py={16}>
+        <VStack spacing={16}>
+          {/* Mission Section */}
+          <Box>
+            <VStack spacing={8} textAlign="center">
+              <Heading size="xl" color="#1F4287">
+                Our Mission
+              </Heading>
+              <Text fontSize="lg" color="gray.600" maxW="3xl" lineHeight="1.8">
+                To democratize AI-powered marketing for B2B organizations of all sizes. 
+                We believe every business deserves access to enterprise-grade marketing 
+                automation and intelligence that drives real results.
+              </Text>
+            </VStack>
           </Box>
 
-          {/* Mission & Vision */}
-          <SimpleGrid columns={{ base: 1, md: 2 }} spacing={8}>
-            <Card bg="brand.neutral.50" border="1px solid" borderColor="brand.neutral.200">
-              <CardBody p={8}>
-                <VStack spacing={6} align="stretch">
-                  <Heading size="lg" color="brand.primary" textAlign="center">
-                    Our Mission
-                  </Heading>
-                  <Text fontSize="lg" color="brand.neutral.700" lineHeight="1.6">
-                    To democratize AI-powered marketing by providing enterprise-grade tools 
-                    that make sophisticated marketing automation accessible to businesses of all sizes.
-                  </Text>
-                  <List spacing={3}>
-                    <ListItem>
-                      <ListIcon as={FiCheck} color="brand.accent" />
-                      Simplify complex marketing workflows
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={FiCheck} color="brand.accent" />
-                      Reduce time-to-market for campaigns
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={FiCheck} color="brand.accent" />
-                      Increase ROI through AI optimization
-                    </ListItem>
-                  </List>
-                </VStack>
-              </CardBody>
-            </Card>
-
-            <Card bg="brand.neutral.50" border="1px solid" borderColor="brand.neutral.200">
-              <CardBody p={8}>
-                <VStack spacing={6} align="stretch">
-                  <Heading size="lg" color="brand.primary" textAlign="center">
-                    Our Vision
-                  </Heading>
-                  <Text fontSize="lg" color="brand.neutral.700" lineHeight="1.6">
-                    To become the leading AI-powered marketing platform that transforms 
-                    how businesses connect with their customers through intelligent, 
-                    personalized experiences.
-                  </Text>
-                  <List spacing={3}>
-                    <ListItem>
-                      <ListIcon as={FiCheck} color="brand.accent" />
-                      AI-first approach to marketing
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={FiCheck} color="brand.accent" />
-                      Seamless integration ecosystem
-                    </ListItem>
-                    <ListItem>
-                      <ListIcon as={FiCheck} color="brand.accent" />
-                      Continuous innovation and learning
-                    </ListItem>
-                  </List>
-                </VStack>
-              </CardBody>
-            </Card>
-          </SimpleGrid>
-
           {/* Stats Section */}
-          <Card bg="brand.primary" color="white">
-            <CardBody p={8}>
-              <StatGroup>
-                <Stat textAlign="center">
-                  <StatLabel fontSize="lg">Active Users</StatLabel>
-                  <StatNumber fontSize="3xl">10,000+</StatNumber>
-                </Stat>
-                <Stat textAlign="center">
-                  <StatLabel fontSize="lg">Campaigns Created</StatLabel>
-                  <StatNumber fontSize="3xl">50,000+</StatNumber>
-                </Stat>
-                <Stat textAlign="center">
-                  <StatLabel fontSize="lg">AI Agents</StatLabel>
-                  <StatNumber fontSize="3xl">25+</StatNumber>
-                </Stat>
-                <Stat textAlign="center">
-                  <StatLabel fontSize="lg">Customer Satisfaction</StatLabel>
-                  <StatNumber fontSize="3xl">98%</StatNumber>
-                </Stat>
-              </StatGroup>
-            </CardBody>
-          </Card>
+          <Box w="full">
+            <Card bg={cardBg} border="1px" borderColor={borderColor}>
+              <CardBody p={8}>
+                <StatGroup>
+                  <Stat textAlign="center">
+                    <StatNumber color="#1F4287" fontSize="3xl">500+</StatNumber>
+                    <StatLabel color="gray.600">Active Users</StatLabel>
+                  </Stat>
+                  <Stat textAlign="center">
+                    <StatNumber color="#FFC300" fontSize="3xl">$2.4M</StatNumber>
+                    <StatLabel color="gray.600">Revenue Generated</StatLabel>
+                  </Stat>
+                  <Stat textAlign="center">
+                    <StatNumber color="#1F4287" fontSize="3xl">15.2K</StatNumber>
+                    <StatLabel color="gray.600">Leads Acquired</StatLabel>
+                  </Stat>
+                  <Stat textAlign="center">
+                    <StatNumber color="#FFC300" fontSize="3xl">98%</StatNumber>
+                    <StatLabel color="gray.600">Customer Satisfaction</StatLabel>
+                  </Stat>
+                </StatGroup>
+              </CardBody>
+            </Card>
+          </Box>
 
-          {/* Features Section */}
+          {/* Capabilities Section */}
           <Box>
-            <Heading size="xl" color="brand.primary" textAlign="center" mb={8}>
-              Platform Features
-            </Heading>
-            <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
-              {capabilities.map((capability, index) => (
-                <Card key={index} shadow="md" _hover={{ shadow: 'lg' }} transition="all 0.3s">
-                  <CardBody p={6}>
-                    <VStack spacing={4} align="start">
-                      <Icon
-                        as={capability.icon}
-                        boxSize={8}
-                        color="brand.accent"
-                      />
-                      <Heading size="md" color="brand.primary">
-                        {capability.title}
-                      </Heading>
-                      <Text fontSize="sm" color="brand.neutral.600" lineHeight="1.5">
-                        {capability.description}
-                      </Text>
-                    </VStack>
-                  </CardBody>
-                </Card>
-              ))}
-            </SimpleGrid>
+            <VStack spacing={8}>
+              <VStack spacing={4} textAlign="center">
+                <Heading size="xl" color="#1F4287">
+                  What We Do
+                </Heading>
+                <Text fontSize="lg" color="gray.600" maxW="2xl">
+                  DigiSol.AI provides a comprehensive suite of AI-powered marketing tools 
+                  designed specifically for B2B organizations.
+                </Text>
+              </VStack>
+
+              <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6} w="full">
+                {capabilities.map((capability, index) => (
+                  <Card key={index} bg={cardBg} border="1px" borderColor={borderColor} _hover={{ transform: "translateY(-4px)", boxShadow: "xl" }} transition="all 0.3s">
+                    <CardBody p={6}>
+                      <VStack spacing={4} align="start">
+                        <Box
+                          p={3}
+                          bg="#1F4287"
+                          color="#FFC300"
+                          borderRadius="lg"
+                        >
+                          <Icon as={capability.icon} boxSize={6} />
+                        </Box>
+                        <VStack spacing={2} align="start">
+                          <Heading size="md" color="#1F4287">
+                            {capability.title}
+                          </Heading>
+                          <Text fontSize="sm" color="gray.600" lineHeight="1.5">
+                            {capability.description}
+                          </Text>
+                        </VStack>
+                      </VStack>
+                    </CardBody>
+                  </Card>
+                ))}
+              </SimpleGrid>
+            </VStack>
           </Box>
 
           {/* Team Section */}
           <Box>
-            <Heading size="xl" color="brand.primary" textAlign="center" mb={8}>
+            <Heading size="xl" color="#1F4287" textAlign="center" mb={8}>
               Leadership Team
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
               {teamMembers.map((member, index) => (
-                <Card key={index} shadow="md" _hover={{ shadow: 'lg' }} transition="all 0.3s">
+                <Card key={index} bg={cardBg} border="1px" borderColor={borderColor} shadow="md" _hover={{ shadow: 'lg' }} transition="all 0.3s">
                   <CardBody p={6}>
                     <VStack spacing={4} align="start">
                       <HStack spacing={4}>
                         <Box
                           w={16}
                           h={16}
-                          bg="brand.primary"
+                          bg="#1F4287"
+                          color="#FFC300"
                           borderRadius="full"
                           display="flex"
                           alignItems="center"
                           justifyContent="center"
-                          color="white"
                           fontSize="xl"
                           fontWeight="bold"
                         >
                           {member.name.split(' ').map(n => n[0]).join('')}
                         </Box>
                         <VStack align="start" spacing={1}>
-                          <Heading size="md" color="brand.primary">
+                          <Heading size="md" color="#1F4287">
                             {member.name}
                           </Heading>
-                          <Badge bg="brand.primary" color="white" variant="solid">
+                          <Badge bg="#1F4287" color="#FFC300" variant="solid">
                             {member.role}
                           </Badge>
                         </VStack>
                       </HStack>
-                      <Text fontSize="sm" color="brand.neutral.600" lineHeight="1.5">
+                      <Text fontSize="sm" color="gray.600" lineHeight="1.5">
                         {member.description}
                       </Text>
                     </VStack>
@@ -323,36 +291,36 @@ export default function AboutPage() {
           </Box>
 
           {/* Contact Section */}
-          <Card bg="brand.neutral.50" border="1px solid" borderColor="brand.neutral.200">
+          <Card bg="gray.50" border="1px solid" borderColor="gray.200">
             <CardBody p={8}>
               <VStack spacing={6} align="stretch">
-                <Heading size="lg" color="brand.primary" textAlign="center">
+                <Heading size="lg" color="#1F4287" textAlign="center">
                   Get in Touch
                 </Heading>
                 <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
                   <VStack spacing={3} align="center">
-                    <Icon as={FiMail} boxSize={6} color="brand.accent" />
+                    <Icon as={FiMail} boxSize={6} color="#FFC300" />
                     <Text fontSize="sm" fontWeight="medium">Email</Text>
-                    <Text fontSize="sm" color="brand.neutral.600">admin@digisolai.ca</Text>
+                    <Text fontSize="sm" color="gray.600">admin@digisolai.ca</Text>
                   </VStack>
                   <VStack spacing={3} align="center">
-                    <Icon as={FiPhone} boxSize={6} color="brand.accent" />
+                    <Icon as={FiPhone} boxSize={6} color="#FFC300" />
                     <Text fontSize="sm" fontWeight="medium">Phone</Text>
-                    <Text fontSize="sm" color="brand.neutral.600">+1 (587) 577-0782</Text>
+                    <Text fontSize="sm" color="gray.600">+1 (587) 577-0782</Text>
                   </VStack>
                   <VStack spacing={3} align="center">
-                    <Icon as={FiMapPin} boxSize={6} color="brand.accent" />
+                    <Icon as={FiMapPin} boxSize={6} color="#FFC300" />
                     <Text fontSize="sm" fontWeight="medium">Address</Text>
-                    <Text fontSize="sm" color="brand.neutral.600" textAlign="center">Box 1764<br />Carstairs, Alberta<br />T0M 0N0</Text>
+                    <Text fontSize="sm" color="gray.600" textAlign="center">Box 1764<br />Carstairs, Alberta<br />T0M 0N0</Text>
                   </VStack>
                 </SimpleGrid>
                 <HStack justify="center" pt={4}>
                   <Button
                     leftIcon={<FiMail />}
-                    bg="brand.primary"
-                    color="white"
-                    _hover={{ bg: "brand.600" }}
-                    _active={{ bg: "brand.700" }}
+                    bg="#1F4287"
+                    color="#FFC300"
+                    _hover={{ bg: "#163a6f" }}
+                    _active={{ bg: "#163a6f" }}
                     size="lg"
                     onClick={() => window.open('mailto:admin@digisolai.ca', '_blank')}
                   >
@@ -364,6 +332,6 @@ export default function AboutPage() {
           </Card>
         </VStack>
       </Container>
-    </Layout>
+    </Box>
   );
 } 

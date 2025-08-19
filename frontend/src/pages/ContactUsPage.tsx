@@ -46,21 +46,21 @@ const ContactUsPage = () => {
     {
       icon: FiMail,
       title: "Email",
-      value: "hello@digisolai.ca",
+      value: "admin@digisolai.ca",
       description: "Send us an email anytime",
-      link: "mailto:hello@digisolai.ca",
+      link: "mailto:admin@digisolai.ca",
     },
     {
       icon: FiPhone,
       title: "Phone",
-      value: "+1 (403) 555-0123",
+      value: "+1 (587) 577-0782",
       description: "Mon-Fri from 9am to 5pm MST",
-      link: "tel:+14035550123",
+      link: "tel:+15875770782",
     },
     {
       icon: FiMapPin,
       title: "Office",
-      value: "Calgary, Alberta, Canada",
+      value: "Box 1764, Carstairs, Alberta T0M 0N0",
       description: "Headquartered in the heart of Alberta",
     },
     {
@@ -119,6 +119,7 @@ const ContactUsPage = () => {
               size="2xl"
               fontWeight="bold"
               maxW="3xl"
+              textAlign="center"
             >
               Get in Touch with{" "}
               <Text as="span" color="#FFC300">
@@ -158,7 +159,7 @@ const ContactUsPage = () => {
                           p={3}
                           borderRadius="full"
                           bg="#1F4287"
-                          color="white"
+                          color="#FFC300"
                         >
                           <Icon as={contact.icon} boxSize={6} />
                         </Box>
@@ -215,7 +216,7 @@ const ContactUsPage = () => {
                           p={4}
                           borderRadius="full"
                           bg={social.color}
-                          color="white"
+                          color="#FFC300"
                         >
                           <Icon as={social.icon} boxSize={8} />
                         </Box>
@@ -255,12 +256,12 @@ const ContactUsPage = () => {
             <Card bg={cardBg} border="1px" borderColor={borderColor}>
               <CardBody>
                 <VStack spacing={6} align="stretch">
-                  <HStack spacing={3}>
-                    <Icon as={FiClock} color="#1F4287" boxSize={6} />
-                    <Heading size="md" color="#1F4287">
-                      Business Hours
-                    </Heading>
-                  </HStack>
+                                     <HStack spacing={3}>
+                     <Icon as={FiClock} color="#FFC300" boxSize={6} />
+                     <Heading size="md" color="#1F4287">
+                       Business Hours
+                     </Heading>
+                   </HStack>
                   <List spacing={3}>
                     {businessHours.map((schedule, index) => (
                       <ListItem key={index}>
@@ -283,37 +284,37 @@ const ContactUsPage = () => {
             <Card bg={cardBg} border="1px" borderColor={borderColor}>
               <CardBody>
                 <VStack spacing={6} align="stretch">
-                  <HStack spacing={3}>
-                    <Icon as={FiAward} color="#1F4287" boxSize={6} />
-                    <Heading size="md" color="#1F4287">
-                      Why Choose DigiSol.AI?
-                    </Heading>
-                  </HStack>
+                                     <HStack spacing={3}>
+                     <Icon as={FiAward} color="#FFC300" boxSize={6} />
+                     <Heading size="md" color="#1F4287">
+                       Why Choose DigiSol.AI?
+                     </Heading>
+                   </HStack>
                   <VStack spacing={4} align="stretch">
-                    <HStack spacing={3}>
-                      <Icon as={FiZap} color="green.500" boxSize={5} />
-                      <Text fontSize="sm" color="gray.600">
-                        AI-powered marketing automation
-                      </Text>
-                    </HStack>
-                    <HStack spacing={3}>
-                      <Icon as={FiUsers} color="blue.500" boxSize={5} />
-                      <Text fontSize="sm" color="gray.600">
-                        Expert support and guidance
-                      </Text>
-                    </HStack>
-                    <HStack spacing={3}>
-                      <Icon as={FiShield} color="purple.500" boxSize={5} />
-                      <Text fontSize="sm" color="gray.600">
-                        Enterprise-grade security
-                      </Text>
-                    </HStack>
-                    <HStack spacing={3}>
-                      <Icon as={FiMessageSquare} color="orange.500" boxSize={5} />
-                      <Text fontSize="sm" color="gray.600">
-                        Personalized onboarding experience
-                      </Text>
-                    </HStack>
+                                         <HStack spacing={3}>
+                       <Icon as={FiZap} color="#FFC300" boxSize={5} />
+                       <Text fontSize="sm" color="gray.600">
+                         AI-powered marketing automation
+                       </Text>
+                     </HStack>
+                     <HStack spacing={3}>
+                       <Icon as={FiUsers} color="#FFC300" boxSize={5} />
+                       <Text fontSize="sm" color="gray.600">
+                         Expert support and guidance
+                       </Text>
+                     </HStack>
+                     <HStack spacing={3}>
+                       <Icon as={FiShield} color="#FFC300" boxSize={5} />
+                       <Text fontSize="sm" color="gray.600">
+                         Enterprise-grade security
+                       </Text>
+                     </HStack>
+                     <HStack spacing={3}>
+                       <Icon as={FiMessageSquare} color="#FFC300" boxSize={5} />
+                       <Text fontSize="sm" color="gray.600">
+                         Personalized onboarding experience
+                       </Text>
+                     </HStack>
                   </VStack>
                 </VStack>
               </CardBody>

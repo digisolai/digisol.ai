@@ -390,31 +390,31 @@ const BillingPage: React.FC = () => {
                       {/* Features */}
                       <VStack spacing={2} align="start">
                         <HStack>
-                          <Icon as={FiUsers} color="green.500" />
+                          <Icon as={FiUsers} color="#FFC300" />
                           <Text>Contacts: {plan.contact_limit === -1 ? 'Unlimited' : plan.contact_limit.toLocaleString()}</Text>
                         </HStack>
                         <HStack>
-                          <Icon as={FiMail} color="green.500" />
+                          <Icon as={FiMail} color="#FFC300" />
                           <Text>Emails: {plan.email_send_limit === -1 ? 'Unlimited' : plan.email_send_limit.toLocaleString()}</Text>
                         </HStack>
                         <HStack>
-                          <Icon as={FiZap} color="green.500" />
+                          <Icon as={FiZap} color="#FFC300" />
                           <Text>AI Text Credits: {plan.ai_text_credits_per_month === -1 ? 'Unlimited' : plan.ai_text_credits_per_month.toLocaleString()}</Text>
                         </HStack>
                         <HStack>
-                          <Icon as={FiImage} color="green.500" />
+                          <Icon as={FiImage} color="#FFC300" />
                           <Text>AI Image Credits: {plan.ai_image_credits_per_month === -1 ? 'Unlimited' : plan.ai_image_credits_per_month.toLocaleString()}</Text>
                         </HStack>
                         <HStack>
-                          <Icon as={FiTarget} color="green.500" />
+                          <Icon as={FiTarget} color="#FFC300" />
                           <Text>AI Planning: {plan.ai_planning_requests_per_month === -1 ? 'Unlimited' : plan.ai_planning_requests_per_month.toLocaleString()}</Text>
                         </HStack>
                         <HStack>
-                          <Icon as={FiUsers} color="green.500" />
+                          <Icon as={FiUsers} color="#FFC300" />
                           <Text>User Seats: {plan.user_seats}</Text>
                         </HStack>
                         <HStack>
-                          <Icon as={FiCheck} color="green.500" />
+                          <Icon as={FiCheck} color="#FFC300" />
                           <Text>Support: {plan.support_level}</Text>
                         </HStack>
                       </VStack>

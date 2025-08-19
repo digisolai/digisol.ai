@@ -367,7 +367,7 @@ export default function SettingsPage() {
                     <VStack spacing={4} align="stretch">
                       <HStack justify="space-between" p={3} bg="green.50" borderRadius="md">
                         <HStack>
-                          <Icon as={FiCheck} color="green.500" />
+                          <Icon as={FiCheck} color="#FFC300" />
                           <Text fontWeight="medium">Google Analytics</Text>
                         </HStack>
                         <Badge colorScheme="green">Connected</Badge>

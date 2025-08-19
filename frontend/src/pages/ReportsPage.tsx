@@ -613,7 +613,7 @@ export default function ReportsPage() {
                               <List spacing={1}>
                                 {insight.recommendations.map((rec, recIndex) => (
                                   <ListItem key={recIndex} fontSize="sm">
-                                    <ListIcon as={FiCheckCircle} color="green.500" />
+                                    <ListIcon as={FiCheckCircle} color="#FFC300" />
                                     {rec}
                                   </ListItem>
                                 ))}

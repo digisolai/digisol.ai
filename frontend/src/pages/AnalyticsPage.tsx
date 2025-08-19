@@ -757,7 +757,7 @@ function AnalyticsPage() {
                                 Launch targeted retention campaign for customers with engagement score below threshold
                               </ListItem>
                               <ListItem fontSize="sm">
-                                <ListIcon as={FiTrendingUp} color="green.500" />
+                                <ListIcon as={FiTrendingUp} color="#FFC300" />
                                 Shift 5% of budget from display ads to influencer marketing for 12% brand awareness increase
                               </ListItem>
                               <ListItem fontSize="sm">
@@ -1064,7 +1064,7 @@ function AnalyticsPage() {
                             <List spacing={1}>
                               {insight.recommendations.map((rec, index) => (
                                 <ListItem key={index} fontSize="sm">
-                                  <ListIcon as={FiCheckCircle} color="green.500" />
+                                  <ListIcon as={FiCheckCircle} color="#FFC300" />
                                   {rec}
                                 </ListItem>
                               ))}
@@ -1121,7 +1121,7 @@ function AnalyticsPage() {
                               <List spacing={1}>
                                 {analysis.strengths.slice(0, 3).map((strength, index) => (
                                   <ListItem key={index} fontSize="sm">
-                                    <ListIcon as={FiCheckCircle} color="green.500" />
+                                    <ListIcon as={FiCheckCircle} color="#FFC300" />
                                     {strength}
                                   </ListItem>
                                 ))}

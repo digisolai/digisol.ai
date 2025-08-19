@@ -140,10 +140,10 @@ const BlogPage = () => {
                   </Heading>
                   <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
                     <VStack spacing={4} align="stretch">
-                      <HStack spacing={3}>
-                        <Box p={2} borderRadius="full" bg="#1F4287" color="white">
-                          <Icon as={FiZap} boxSize={5} />
-                        </Box>
+                                             <HStack spacing={3}>
+                         <Box p={2} borderRadius="full" bg="#1F4287" color="#FFC300">
+                           <Icon as={FiZap} boxSize={5} />
+                         </Box>
                         <VStack spacing={1} align="start">
                           <Text fontWeight="bold" color="#1F4287">Real-Time Optimization</Text>
                           <Text fontSize="sm" color="gray.600">
@@ -152,10 +152,10 @@ const BlogPage = () => {
                           </Text>
                         </VStack>
                       </HStack>
-                      <HStack spacing={3}>
-                        <Box p={2} borderRadius="full" bg="#1F4287" color="white">
-                          <Icon as={FiUsers} boxSize={5} />
-                        </Box>
+                                             <HStack spacing={3}>
+                         <Box p={2} borderRadius="full" bg="#1F4287" color="#FFC300">
+                           <Icon as={FiUsers} boxSize={5} />
+                         </Box>
                         <VStack spacing={1} align="start">
                           <Text fontWeight="bold" color="#1F4287">Personalization at Scale</Text>
                           <Text fontSize="sm" color="gray.600">
@@ -166,10 +166,10 @@ const BlogPage = () => {
                       </HStack>
                     </VStack>
                     <VStack spacing={4} align="stretch">
-                      <HStack spacing={3}>
-                        <Box p={2} borderRadius="full" bg="#1F4287" color="white">
-                          <Icon as={FiBarChart2} boxSize={5} />
-                        </Box>
+                                             <HStack spacing={3}>
+                         <Box p={2} borderRadius="full" bg="#1F4287" color="#FFC300">
+                           <Icon as={FiBarChart2} boxSize={5} />
+                         </Box>
                         <VStack spacing={1} align="start">
                           <Text fontWeight="bold" color="#1F4287">Predictive Analytics</Text>
                           <Text fontSize="sm" color="gray.600">
@@ -178,10 +178,10 @@ const BlogPage = () => {
                           </Text>
                         </VStack>
                       </HStack>
-                      <HStack spacing={3}>
-                        <Box p={2} borderRadius="full" bg="#1F4287" color="white">
-                          <Icon as={FiTarget} boxSize={5} />
-                        </Box>
+                                             <HStack spacing={3}>
+                         <Box p={2} borderRadius="full" bg="#1F4287" color="#FFC300">
+                           <Icon as={FiTarget} boxSize={5} />
+                         </Box>
                         <VStack spacing={1} align="start">
                           <Text fontWeight="bold" color="#1F4287">Intelligent Targeting</Text>
                           <Text fontSize="sm" color="gray.600">

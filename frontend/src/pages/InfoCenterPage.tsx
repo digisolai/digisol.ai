@@ -706,7 +706,7 @@ export default function InfoCenterPage() {
                     <List spacing={3}>
                       <ListItem>
                         <HStack>
-                          <ListIcon as={FiCheck} color="green.500" />
+                          <ListIcon as={FiCheck} color="#FFC300" />
                           <Text>Completed "Digital Marketing Fundamentals"</Text>
                           <Badge colorScheme="green" size="sm">+25 tokens</Badge>
                         </HStack>
