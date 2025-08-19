@@ -2,50 +2,43 @@
   <!-- Background -->
   <rect width="512" height="512" fill="white"/>
   
-  <!-- Main swirling S-shape (dark blue) -->
-  <path d="M 120 80 Q 180 60 240 80 Q 300 100 320 140 Q 340 180 320 220 Q 300 260 240 280 Q 180 300 120 280 Q 60 260 40 220 Q 20 180 40 140 Q 60 100 120 80 Z" 
+  <!-- Main flowing dark blue shape -->
+  <path d="M76.8 128 Q153.6 76.8 230.4 102.4 Q307.2 128 358.4 153.6 Q409.6 204.8 435.2 256 Q409.6 307.2 358.4 358.4 Q307.2 384 230.4 409.6 Q153.6 435.2 76.8 384 Z" 
         fill="#1F4287" opacity="0.9"/>
   
-  <!-- Secondary swirl path for depth -->
-  <path d="M 100 100 Q 160 85 220 100 Q 280 115 300 150 Q 320 185 300 220 Q 280 255 220 270 Q 160 285 100 270 Q 40 255 20 220 Q 0 185 20 150 Q 40 115 100 100 Z" 
-        fill="#1F4287" opacity="0.7"/>
+  <!-- Gold circuitry lines -->
+  <path d="M102.4 153.6 Q179.2 115.2 256 140.8 Q332.8 166.4 384 192" stroke="#FFC300" stroke-width="5" fill="none"/>
+  <path d="M128 204.8 Q204.8 179.2 281.6 204.8 Q358.4 230.4 409.6 256" stroke="#FFC300" stroke-width="5" fill="none"/>
+  <path d="M153.6 256 Q230.4 243.2 307.2 268.8 Q384 294.4 435.2 320" stroke="#FFC300" stroke-width="5" fill="none"/>
   
-  <!-- Gold dots and connections -->
-  <circle cx="80" cy="120" r="6" fill="#FFC300"/>
-  <circle cx="160" cy="100" r="6" fill="#FFC300"/>
-  <circle cx="240" cy="120" r="6" fill="#FFC300"/>
-  <circle cx="320" cy="160" r="6" fill="#FFC300"/>
-  <circle cx="320" cy="240" r="6" fill="#FFC300"/>
-  <circle cx="240" cy="280" r="6" fill="#FFC300"/>
-  <circle cx="160" cy="300" r="6" fill="#FFC300"/>
-  <circle cx="80" cy="280" r="6" fill="#FFC300"/>
-  <circle cx="40" cy="200" r="6" fill="#FFC300"/>
-  
-  <!-- Gold connection lines -->
-  <path d="M 80 120 Q 120 110 160 100" stroke="#FFC300" stroke-width="3" fill="none"/>
-  <path d="M 160 100 Q 200 110 240 120" stroke="#FFC300" stroke-width="3" fill="none"/>
-  <path d="M 240 120 Q 280 140 320 160" stroke="#FFC300" stroke-width="3" fill="none"/>
-  <path d="M 320 160 Q 320 200 320 240" stroke="#FFC300" stroke-width="3" fill="none"/>
-  <path d="M 320 240 Q 280 260 240 280" stroke="#FFC300" stroke-width="3" fill="none"/>
-  <path d="M 240 280 Q 200 290 160 300" stroke="#FFC300" stroke-width="3" fill="none"/>
-  <path d="M 160 300 Q 120 290 80 280" stroke="#FFC300" stroke-width="3" fill="none"/>
-  <path d="M 80 280 Q 60 240 40 200" stroke="#FFC300" stroke-width="3" fill="none"/>
+  <!-- Gold nodes/dots along circuitry -->
+  <circle cx="179.2" cy="115.2" r="8" fill="#FFC300"/>
+  <circle cx="256" cy="140.8" r="8" fill="#FFC300"/>
+  <circle cx="332.8" cy="166.4" r="8" fill="#FFC300"/>
+  <circle cx="204.8" cy="179.2" r="8" fill="#FFC300"/>
+  <circle cx="281.6" cy="204.8" r="8" fill="#FFC300"/>
+  <circle cx="358.4" cy="230.4" r="8" fill="#FFC300"/>
+  <circle cx="230.4" cy="243.2" r="8" fill="#FFC300"/>
+  <circle cx="307.2" cy="268.8" r="8" fill="#FFC300"/>
+  <circle cx="384" cy="294.4" r="8" fill="#FFC300"/>
   
   <!-- Central AI glow and text -->
-  <circle cx="256" cy="256" r="50" fill="#FFC300" opacity="0.8"/>
-  <circle cx="256" cy="256" r="40" fill="#FFC300" opacity="0.9"/>
-  <text x="256" y="270" font-family="Arial, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white">AI</text>
+  <circle cx="256" cy="256" r="64" fill="#FFC300" opacity="0.8"/>
+  <circle cx="256" cy="256" r="51.2" fill="#FFC300" opacity="0.9"/>
+  <text x="256" y="268.8" font-family="Arial, sans-serif" font-size="41" font-weight="bold" text-anchor="middle" fill="white">AI</text>
   
-  <!-- Directional arrow -->
-  <polygon points="400,120 410,130 400,140" fill="white"/>
+  <!-- Arrowhead -->
+  <polygon points="409.6,204.8 422.4,217.6 409.6,230.4" fill="white"/>
   
-  <!-- Additional gold accent dots -->
-  <circle cx="60" cy="160" r="4" fill="#FFC300"/>
-  <circle cx="380" cy="200" r="4" fill="#FFC300"/>
-  <circle cx="60" cy="240" r="4" fill="#FFC300"/>
-  <circle cx="380" cy="280" r="4" fill="#FFC300"/>
+  <!-- Dot patterns at ends -->
+  <circle cx="64" cy="115.2" r="5" fill="#1F4287"/>
+  <circle cx="89.6" cy="102.4" r="5" fill="#1F4287"/>
+  <circle cx="76.8" cy="128" r="5" fill="#1F4287"/>
+  <circle cx="448" cy="396.8" r="5" fill="#1F4287"/>
+  <circle cx="422.4" cy="384" r="5" fill="#1F4287"/>
+  <circle cx="435.2" cy="409.6" r="5" fill="#1F4287"/>
   
-  <!-- DigiSol.AI text at bottom -->
-  <text x="256" y="420" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#1F4287">DigiSol</text>
-  <text x="256" y="460" font-family="Arial, sans-serif" font-size="32" font-weight="bold" text-anchor="middle" fill="#FFC300">.AI</text>
+  <!-- Gold accent dots -->
+  <circle cx="51.2" cy="128" r="5" fill="#FFC300"/>
+  <circle cx="460.8" cy="384" r="5" fill="#FFC300"/>
 </svg> 
