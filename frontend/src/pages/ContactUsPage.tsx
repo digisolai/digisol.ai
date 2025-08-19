@@ -128,7 +128,7 @@ const ContactUsPage = () => {
                 DigiSol.AI
               </Text>
             </Heading>
-            <Text fontSize="xl" maxW="2xl" opacity={0.9}>
+            <Text fontSize="xl" maxW="2xl" color="#FFC300">
               Ready to transform your marketing with AI? We're here to help you get started 
               and answer any questions about our platform.
             </Text>
