@@ -418,10 +418,18 @@ export default function HomePage() {
                  <Link 
                    color="#1F4287" 
                    _hover={{ color: "#163a6f" }}
-                   onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}
+                   onClick={() => navigate('/about')}
                    cursor="pointer"
                  >
-                   Contact
+                   About
+                 </Link>
+                 <Link 
+                   color="#1F4287" 
+                   _hover={{ color: "#163a6f" }}
+                   onClick={() => navigate('/contact-us')}
+                   cursor="pointer"
+                 >
+                   Contact Us
                  </Link>
                </HStack>
              </Flex>
@@ -1379,11 +1387,21 @@ export default function HomePage() {
                     variant="ghost"
                     justifyContent="start"
                     onClick={() => {
-                      document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+                      navigate('/about');
                       onClose();
                     }}
                   >
-                    Contact
+                    About
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    justifyContent="start"
+                    onClick={() => {
+                      navigate('/contact-us');
+                      onClose();
+                    }}
+                  >
+                    Contact Us
                   </Button>
                 </VStack>
               </VStack>

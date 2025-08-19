@@ -1,0 +1,10 @@
+[33m9f45939[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Fix CORS headers for DigiSol admin authentication - add x-digisol-admin and x-superuser-bypass headers to all CORS configurations
+[33m6eb424f[m Add CSV import functionality to contacts page and implement DigiSol admin authentication bypass for live deployment
+[33m2fe2e29[m Add temporary cleanup endpoint for AI agents
+[33m7d55fc7[m Add cleanup_ai_agents command to Render build process
+[33m2958b43[m Remove Orchestra, Planner, Strategist agents and replace Planner with Promana
+[33m3b12f98[m Fix AI agent configuration to match backend agents exactly - Orchestra, Planner, and Strategist DO exist
+[33m685f206[m Clean up pre-deployment and debugging files to reduce codebase confusion
+[33mc25aaab[m Shorten AI agent descriptions and remove non-existent Orchestra agent
+[33m2e3354f[m Update color scheme to use DigiSol brand colors (Deep Sapphire Blue #1F4287 and Golden Yellow #FFC300)
+[33m9a09a3f[m Fix JavaScript filter error - add defensive programming for campaigns data
