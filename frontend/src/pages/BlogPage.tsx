@@ -4,10 +4,8 @@ import {
   Text,
   VStack,
   HStack,
-  SimpleGrid,
   Card,
   CardBody,
-  CardHeader,
   Icon,
   Container,
   Divider,
@@ -15,135 +13,43 @@ import {
   Link,
   useColorModeValue,
   Badge,
-  Avatar,
   Flex,
   Tag,
   TagLabel,
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
+  Image,
+  List,
+  ListItem,
+  ListIcon,
+  SimpleGrid,
 } from "@chakra-ui/react";
 import {
   FiCalendar,
   FiClock,
   FiUser,
   FiArrowRight,
-  FiTrendingUp,
+  FiChevronRight,
   FiZap,
   FiTarget,
   FiBarChart2,
   FiUsers,
   FiMessageSquare,
-  FiBookOpen,
   FiCpu,
   FiShield,
-  FiGlobe,
-  FiAward,
-  FiChevronRight,
+  FiTrendingUp,
+  FiCheck,
+  FiMail,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-
-interface BlogPost {
-  id: string;
-  title: string;
-  excerpt: string;
-  content: string;
-  author: string;
-  authorAvatar?: string;
-  publishDate: string;
-  readTime: string;
-  category: string;
-  tags: string[];
-  featured?: boolean;
-  imageUrl?: string;
-}
+import Logo from "../components/Logo";
 
 const BlogPage = () => {
   const navigate = useNavigate();
   const bgColor = useColorModeValue("gray.50", "gray.900");
   const cardBg = useColorModeValue("white", "gray.800");
   const borderColor = useColorModeValue("gray.200", "gray.700");
-
-  const blogPosts: BlogPost[] = [
-    {
-      id: "1",
-      title: "The Future of AI-Powered Marketing Automation",
-      excerpt: "Discover how artificial intelligence is revolutionizing marketing automation and transforming the way businesses connect with their customers.",
-      content: "AI-powered marketing automation represents the next evolution in digital marketing. By leveraging machine learning algorithms, businesses can now create highly personalized customer experiences at scale...",
-      author: "DigiSol.AI Team",
-      publishDate: "2024-01-15",
-      readTime: "8 min read",
-      category: "AI Marketing",
-      tags: ["AI Automation", "Marketing", "Personalization"],
-      featured: true,
-    },
-    {
-      id: "2",
-      title: "Building Intelligent Campaign Workflows with AI",
-      excerpt: "Learn how to design and implement intelligent marketing workflows that adapt and optimize in real-time using AI technology.",
-      content: "Intelligent campaign workflows are the backbone of modern marketing success. With AI at the helm, these workflows can automatically adjust strategies based on real-time performance data...",
-      author: "Sarah Johnson",
-      publishDate: "2024-01-12",
-      readTime: "6 min read",
-      category: "Campaign Management",
-      tags: ["Workflows", "Campaigns", "Optimization"],
-    },
-    {
-      id: "3",
-      title: "The Power of Predictive Analytics in Marketing",
-      excerpt: "Explore how predictive analytics can help you anticipate customer behavior and make data-driven marketing decisions.",
-      content: "Predictive analytics has become a game-changer in marketing, allowing businesses to forecast trends, identify opportunities, and optimize their strategies before competitors even react...",
-      author: "Michael Chen",
-      publishDate: "2024-01-10",
-      readTime: "7 min read",
-      category: "Analytics",
-      tags: ["Predictive Analytics", "Data Science", "ROI"],
-    },
-    {
-      id: "4",
-      title: "AI-Driven Content Generation: Beyond Basic Automation",
-      excerpt: "Discover advanced AI content generation techniques that create engaging, personalized content that resonates with your audience.",
-      content: "Modern AI content generation goes far beyond simple text creation. It involves understanding context, audience preferences, and brand voice to produce content that truly connects...",
-      author: "Emily Rodriguez",
-      publishDate: "2024-01-08",
-      readTime: "9 min read",
-      category: "Content Marketing",
-      tags: ["Content Generation", "Personalization", "AI Writing"],
-    },
-    {
-      id: "5",
-      title: "Customer Journey Mapping with AI Insights",
-      excerpt: "Learn how AI can help you map and optimize customer journeys for maximum engagement and conversion.",
-      content: "Customer journey mapping with AI provides unprecedented insights into how customers interact with your brand across all touchpoints...",
-      author: "David Thompson",
-      publishDate: "2024-01-05",
-      readTime: "5 min read",
-      category: "Customer Experience",
-      tags: ["Customer Journey", "UX", "Conversion"],
-    },
-    {
-      id: "6",
-      title: "The ROI of AI Marketing: Measuring Success",
-      excerpt: "Understand how to measure and demonstrate the return on investment from your AI marketing initiatives.",
-      content: "Measuring AI marketing ROI requires a comprehensive approach that goes beyond traditional metrics. It involves tracking both quantitative and qualitative improvements...",
-      author: "Lisa Wang",
-      publishDate: "2024-01-03",
-      readTime: "6 min read",
-      category: "ROI & Analytics",
-      tags: ["ROI", "Metrics", "Performance"],
-    },
-  ];
-
-  const categories = [
-    { name: "AI Marketing", count: 2, color: "blue" },
-    { name: "Campaign Management", count: 1, color: "green" },
-    { name: "Analytics", count: 1, color: "purple" },
-    { name: "Content Marketing", count: 1, color: "orange" },
-    { name: "Customer Experience", count: 1, color: "teal" },
-    { name: "ROI & Analytics", count: 1, color: "pink" },
-  ];
-
-  const featuredPost = blogPosts.find(post => post.featured);
 
   return (
     <Box bg={bgColor} minH="100vh">
@@ -157,35 +63,49 @@ const BlogPage = () => {
       >
         <Container maxW="container.xl">
           <VStack spacing={8} textAlign="center">
+            <HStack spacing={4}>
+              <Logo size={40} />
+              <VStack spacing={1} align="start">
+                <Text fontSize="sm" opacity={0.8}>DigiSol.AI Blog</Text>
+                <Text fontSize="xs" opacity={0.6}>AI-Powered Marketing Insights</Text>
+              </VStack>
+            </HStack>
             <Heading
               as="h1"
               size="2xl"
               fontWeight="bold"
-              maxW="3xl"
+              maxW="4xl"
             >
-              DigiSol.AI{" "}
-              <Text as="span" color="#FFC300">
-                Blog
-              </Text>
+              The Future of AI-Powered Marketing Automation
             </Heading>
-            <Text fontSize="xl" maxW="2xl" opacity={0.9}>
-              Insights, strategies, and expert perspectives on AI-powered marketing 
-              automation and digital transformation.
+            <Text fontSize="xl" maxW="3xl" opacity={0.9}>
+              Discover how artificial intelligence is revolutionizing marketing automation 
+              and transforming the way businesses connect with their customers.
             </Text>
-            <HStack spacing={4} flexWrap="wrap" justify="center">
-              {categories.slice(0, 4).map((category, index) => (
-                <Badge
-                  key={index}
-                  colorScheme={category.color}
-                  variant="subtle"
-                  px={3}
-                  py={1}
-                  borderRadius="full"
-                  fontSize="sm"
-                >
-                  {category.name}
-                </Badge>
-              ))}
+            <HStack spacing={6} color="gray.300" fontSize="sm">
+              <HStack spacing={2}>
+                <Icon as={FiUser} />
+                <Text>DigiSol.AI Team</Text>
+              </HStack>
+              <HStack spacing={2}>
+                <Icon as={FiCalendar} />
+                <Text>January 15, 2024</Text>
+              </HStack>
+              <HStack spacing={2}>
+                <Icon as={FiClock} />
+                <Text>8 min read</Text>
+              </HStack>
+            </HStack>
+            <HStack spacing={3}>
+              <Badge colorScheme="blue" variant="solid" px={3} py={1}>
+                AI Marketing
+              </Badge>
+              <Badge colorScheme="green" variant="solid" px={3} py={1}>
+                Automation
+              </Badge>
+              <Badge colorScheme="purple" variant="solid" px={3} py={1}>
+                Digital Transformation
+              </Badge>
             </HStack>
           </VStack>
         </Container>
@@ -209,156 +129,211 @@ const BlogPage = () => {
         </Breadcrumb>
       </Container>
 
-      {/* Featured Post */}
-      {featuredPost && (
-        <Container maxW="container.xl" py={8}>
-          <VStack spacing={6} align="stretch">
-            <Heading size="lg" color="#1F4287">
-              Featured Article
-            </Heading>
-            <Card bg={cardBg} border="1px" borderColor={borderColor} overflow="hidden">
-              <CardHeader>
-                <VStack spacing={4} align="stretch">
-                  <HStack spacing={3}>
-                    <Badge colorScheme="blue" variant="solid" px={3} py={1}>
-                      {featuredPost.category}
-                    </Badge>
-                    <Badge colorScheme="yellow" variant="subtle" px={3} py={1}>
-                      Featured
-                    </Badge>
-                  </HStack>
-                  <Heading size="lg" color="#1F4287">
-                    {featuredPost.title}
+      {/* Article Content */}
+      <Container maxW="container.lg" py={12}>
+        <VStack spacing={12} align="stretch">
+          {/* Article Body */}
+          <Card bg={cardBg} border="1px" borderColor={borderColor}>
+            <CardBody>
+              <VStack spacing={8} align="stretch">
+                {/* Introduction */}
+                <Box>
+                  <Text fontSize="lg" color="gray.700" lineHeight="tall">
+                    AI-powered marketing automation represents the next evolution in digital marketing. 
+                    By leveraging machine learning algorithms, businesses can now create highly 
+                    personalized customer experiences at scale, optimize campaigns in real-time, 
+                    and drive unprecedented levels of engagement and conversion.
+                  </Text>
+                </Box>
+
+                {/* Key Benefits Section */}
+                <Box>
+                  <Heading size="lg" color="#1F4287" mb={6}>
+                    The Transformative Power of AI in Marketing
                   </Heading>
-                  <Text fontSize="lg" color="gray.600">
-                    {featuredPost.excerpt}
-                  </Text>
-                  <HStack spacing={6} color="gray.500" fontSize="sm">
-                    <HStack spacing={2}>
-                      <Icon as={FiUser} />
-                      <Text>{featuredPost.author}</Text>
-                    </HStack>
-                    <HStack spacing={2}>
-                      <Icon as={FiCalendar} />
-                      <Text>{new Date(featuredPost.publishDate).toLocaleDateString()}</Text>
-                    </HStack>
-                    <HStack spacing={2}>
-                      <Icon as={FiClock} />
-                      <Text>{featuredPost.readTime}</Text>
-                    </HStack>
-                  </HStack>
-                </VStack>
-              </CardHeader>
-              <CardBody pt={0}>
-                <VStack spacing={4} align="stretch">
-                  <Text color="gray.700" lineHeight="tall">
-                    {featuredPost.content}
-                  </Text>
-                  <HStack spacing={2} flexWrap="wrap">
-                    {featuredPost.tags.map((tag, index) => (
-                      <Tag key={index} size="sm" colorScheme="blue" variant="outline">
-                        <TagLabel>{tag}</TagLabel>
-                      </Tag>
-                    ))}
-                  </HStack>
-                  <Button
-                    rightIcon={<FiArrowRight />}
-                    colorScheme="blue"
-                    variant="outline"
-                    alignSelf="flex-start"
-                  >
-                    Read Full Article
-                  </Button>
-                </VStack>
-              </CardBody>
-            </Card>
-          </VStack>
-        </Container>
-      )}
-
-      <Divider />
-
-      {/* Blog Posts Grid */}
-      <Container maxW="container.xl" py={16}>
-        <VStack spacing={12}>
-          {/* Section Header */}
-          <VStack spacing={4} textAlign="center">
-            <Heading size="lg" color="#1F4287">
-              Latest Articles
-            </Heading>
-            <Text fontSize="lg" color="gray.600" maxW="2xl">
-              Stay ahead of the curve with our latest insights on AI marketing, 
-              automation strategies, and digital transformation.
-            </Text>
-          </VStack>
-
-          {/* Blog Posts */}
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8} w="full">
-            {blogPosts.filter(post => !post.featured).map((post) => (
-              <Card key={post.id} bg={cardBg} border="1px" borderColor={borderColor} h="full">
-                <CardHeader>
-                  <VStack spacing={3} align="stretch">
-                    <HStack justify="space-between">
-                      <Badge colorScheme="blue" variant="subtle" px={3} py={1}>
-                        {post.category}
-                      </Badge>
-                      <HStack spacing={2} color="gray.500" fontSize="sm">
-                        <Icon as={FiClock} />
-                        <Text>{post.readTime}</Text>
+                  <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
+                    <VStack spacing={4} align="stretch">
+                      <HStack spacing={3}>
+                        <Box p={2} borderRadius="full" bg="#1F4287" color="white">
+                          <Icon as={FiZap} boxSize={5} />
+                        </Box>
+                        <VStack spacing={1} align="start">
+                          <Text fontWeight="bold" color="#1F4287">Real-Time Optimization</Text>
+                          <Text fontSize="sm" color="gray.600">
+                            AI continuously analyzes performance data and automatically adjusts 
+                            campaigns for maximum effectiveness.
+                          </Text>
+                        </VStack>
                       </HStack>
-                    </HStack>
-                    <Heading size="md" color="#1F4287" noOfLines={2}>
-                      {post.title}
+                      <HStack spacing={3}>
+                        <Box p={2} borderRadius="full" bg="#1F4287" color="white">
+                          <Icon as={FiUsers} boxSize={5} />
+                        </Box>
+                        <VStack spacing={1} align="start">
+                          <Text fontWeight="bold" color="#1F4287">Personalization at Scale</Text>
+                          <Text fontSize="sm" color="gray.600">
+                            Deliver tailored content and experiences to individual customers 
+                            across all touchpoints automatically.
+                          </Text>
+                        </VStack>
+                      </HStack>
+                    </VStack>
+                    <VStack spacing={4} align="stretch">
+                      <HStack spacing={3}>
+                        <Box p={2} borderRadius="full" bg="#1F4287" color="white">
+                          <Icon as={FiBarChart2} boxSize={5} />
+                        </Box>
+                        <VStack spacing={1} align="start">
+                          <Text fontWeight="bold" color="#1F4287">Predictive Analytics</Text>
+                          <Text fontSize="sm" color="gray.600">
+                            Anticipate customer behavior and market trends to stay ahead 
+                            of the competition.
+                          </Text>
+                        </VStack>
+                      </HStack>
+                      <HStack spacing={3}>
+                        <Box p={2} borderRadius="full" bg="#1F4287" color="white">
+                          <Icon as={FiTarget} boxSize={5} />
+                        </Box>
+                        <VStack spacing={1} align="start">
+                          <Text fontWeight="bold" color="#1F4287">Intelligent Targeting</Text>
+                          <Text fontSize="sm" color="gray.600">
+                            Identify and reach the most valuable prospects with precision 
+                            targeting algorithms.
+                          </Text>
+                        </VStack>
+                      </HStack>
+                    </VStack>
+                  </SimpleGrid>
+                </Box>
+
+                {/* Main Content */}
+                <Box>
+                  <Heading size="lg" color="#1F4287" mb={6}>
+                    How AI Marketing Automation Works
+                  </Heading>
+                  <Text fontSize="md" color="gray.700" lineHeight="tall" mb={6}>
+                    At its core, AI marketing automation combines the power of artificial intelligence 
+                    with sophisticated marketing workflows to create a system that learns, adapts, 
+                    and optimizes continuously. Here's how it transforms your marketing efforts:
+                  </Text>
+                  
+                  <VStack spacing={6} align="stretch">
+                    <Box>
+                      <Heading size="md" color="#1F4287" mb={3}>
+                        1. Data Collection and Analysis
+                      </Heading>
+                      <Text fontSize="md" color="gray.700" lineHeight="tall">
+                        AI systems gather data from multiple sources including website interactions, 
+                        email engagement, social media activity, and customer behavior patterns. 
+                        This data is then analyzed to identify trends, preferences, and opportunities 
+                        that human marketers might miss.
+                      </Text>
+                    </Box>
+
+                    <Box>
+                      <Heading size="md" color="#1F4287" mb={3}>
+                        2. Intelligent Content Creation
+                      </Heading>
+                      <Text fontSize="md" color="gray.700" lineHeight="tall">
+                        AI can generate personalized content, email subject lines, ad copy, and 
+                        social media posts that resonate with specific audience segments. It learns 
+                        what works best for different demographics and continuously improves its output.
+                      </Text>
+                    </Box>
+
+                    <Box>
+                      <Heading size="md" color="#1F4287" mb={3}>
+                        3. Automated Campaign Management
+                      </Heading>
+                      <Text fontSize="md" color="gray.700" lineHeight="tall">
+                        Campaigns are automatically triggered based on customer behavior, 
+                        optimized in real-time based on performance metrics, and scaled up or 
+                        down according to predefined business rules and AI recommendations.
+                      </Text>
+                    </Box>
+
+                    <Box>
+                      <Heading size="md" color="#1F4287" mb={3}>
+                        4. Predictive Customer Journey Mapping
+                      </Heading>
+                      <Text fontSize="md" color="gray.700" lineHeight="tall">
+                        AI predicts the optimal path each customer should take through your 
+                        marketing funnel, automatically delivering the right message at the 
+                        right time to maximize conversion probability.
+                      </Text>
+                    </Box>
+                  </VStack>
+                </Box>
+
+                {/* ROI Section */}
+                <Box>
+                  <Heading size="lg" color="#1F4287" mb={6}>
+                    Measurable Results and ROI
+                  </Heading>
+                  <Text fontSize="md" color="gray.700" lineHeight="tall" mb={6}>
+                    The impact of AI-powered marketing automation is measurable and significant. 
+                    Businesses implementing these solutions typically see:
+                  </Text>
+                  
+                  <SimpleGrid columns={{ base: 1, md: 3 }} spacing={6}>
+                    <Card bg="blue.50" border="1px" borderColor="blue.200">
+                      <CardBody textAlign="center">
+                        <Text fontSize="3xl" fontWeight="bold" color="#1F4287">40%</Text>
+                        <Text fontSize="sm" color="gray.600">Increase in Conversion Rates</Text>
+                      </CardBody>
+                    </Card>
+                    <Card bg="green.50" border="1px" borderColor="green.200">
+                      <CardBody textAlign="center">
+                        <Text fontSize="3xl" fontWeight="bold" color="green.600">60%</Text>
+                        <Text fontSize="sm" color="gray.600">Reduction in Customer Acquisition Cost</Text>
+                      </CardBody>
+                    </Card>
+                    <Card bg="purple.50" border="1px" borderColor="purple.200">
+                      <CardBody textAlign="center">
+                        <Text fontSize="3xl" fontWeight="bold" color="purple.600">3x</Text>
+                        <Text fontSize="sm" color="gray.600">Faster Campaign Optimization</Text>
+                      </CardBody>
+                    </Card>
+                  </SimpleGrid>
+                </Box>
+
+                {/* Call to Action */}
+                <Box textAlign="center" py={8}>
+                  <VStack spacing={6}>
+                    <Heading size="lg" color="#1F4287">
+                      Ready to Transform Your Marketing with AI?
                     </Heading>
-                    <Text fontSize="sm" color="gray.600" noOfLines={3}>
-                      {post.excerpt}
+                    <Text fontSize="lg" color="gray.600" maxW="2xl">
+                      Join thousands of marketers who are already leveraging AI to automate 
+                      their campaigns and drive unprecedented results.
                     </Text>
-                  </VStack>
-                </CardHeader>
-                <CardBody pt={0}>
-                  <VStack spacing={4} align="stretch">
-                    <HStack spacing={4} color="gray.500" fontSize="sm">
-                      <HStack spacing={2}>
-                        <Icon as={FiUser} />
-                        <Text>{post.author}</Text>
-                      </HStack>
-                      <HStack spacing={2}>
-                        <Icon as={FiCalendar} />
-                        <Text>{new Date(post.publishDate).toLocaleDateString()}</Text>
-                      </HStack>
+                    <HStack spacing={4}>
+                      <Button
+                        size="lg"
+                        bg="#1F4287"
+                        color="#FFC300"
+                        _hover={{ bg: "#163a6f" }}
+                        onClick={() => navigate('/signup')}
+                      >
+                        Start Free Trial
+                      </Button>
+                      <Button
+                        size="lg"
+                        variant="outline"
+                        color="#1F4287"
+                        borderColor="#1F4287"
+                        _hover={{ bg: "#1F4287", color: "white" }}
+                        onClick={() => navigate('/contact-us')}
+                      >
+                        Schedule Demo
+                      </Button>
                     </HStack>
-                    <HStack spacing={2} flexWrap="wrap">
-                      {post.tags.slice(0, 2).map((tag, index) => (
-                        <Tag key={index} size="sm" colorScheme="gray" variant="outline">
-                          <TagLabel>{tag}</TagLabel>
-                        </Tag>
-                      ))}
-                    </HStack>
-                    <Button
-                      rightIcon={<FiArrowRight />}
-                      colorScheme="blue"
-                      variant="ghost"
-                      size="sm"
-                      alignSelf="flex-start"
-                    >
-                      Read More
-                    </Button>
                   </VStack>
-                </CardBody>
-              </Card>
-            ))}
-          </SimpleGrid>
-
-          {/* Load More Button */}
-          <Button
-            size="lg"
-            bg="#1F4287"
-            color="#FFC300"
-            _hover={{ bg: "#163a6f" }}
-            px={8}
-          >
-            Load More Articles
-          </Button>
+                </Box>
+              </VStack>
+            </CardBody>
+          </Card>
         </VStack>
       </Container>
 
@@ -367,25 +342,34 @@ const BlogPage = () => {
         <Container maxW="container.xl">
           <VStack spacing={8} textAlign="center">
             <VStack spacing={4}>
-              <Heading size="lg" color="#1F4287">
-                Stay Updated with AI Marketing Insights
-              </Heading>
+              <HStack spacing={3}>
+                <Logo size={32} />
+                <Text fontSize="lg" fontWeight="bold" color="#1F4287">
+                  Stay Updated with AI Marketing Insights
+                </Text>
+              </HStack>
               <Text fontSize="lg" color="gray.600" maxW="2xl">
                 Get the latest articles, tips, and strategies delivered directly to your inbox. 
                 Join thousands of marketers who are already transforming their campaigns with AI.
               </Text>
             </VStack>
-            <HStack spacing={4} maxW="md" w="full">
-              <Button
-                size="lg"
-                bg="#1F4287"
-                color="#FFC300"
-                _hover={{ bg: "#163a6f" }}
-                flex={1}
-              >
-                Subscribe to Newsletter
-              </Button>
-            </HStack>
+            <VStack spacing={4} maxW="md" w="full">
+              <HStack spacing={4} w="full">
+                <Button
+                  size="lg"
+                  bg="#1F4287"
+                  color="#FFC300"
+                  _hover={{ bg: "#163a6f" }}
+                  flex={1}
+                  leftIcon={<FiMail />}
+                >
+                  Subscribe to Newsletter
+                </Button>
+              </HStack>
+              <Text fontSize="sm" color="gray.500">
+                No spam, unsubscribe at any time. We respect your privacy.
+              </Text>
+            </VStack>
           </VStack>
         </Container>
       </Box>
