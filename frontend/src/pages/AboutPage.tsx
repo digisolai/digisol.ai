@@ -147,6 +147,7 @@ export default function AboutPage() {
               fontWeight="bold"
               maxW="3xl"
               textAlign="center"
+              color="white"
             >
               About{" "}
               <Text as="span" color="#FFC300">
