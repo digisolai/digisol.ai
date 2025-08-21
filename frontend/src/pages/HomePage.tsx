@@ -528,13 +528,14 @@ export default function HomePage() {
                   </HStack>
                 </HStack>
                 
-                                     <Heading
-                     size="xl"
-                     fontWeight="bold"
-                     lineHeight="1.2"
-                   >
-                     Transform Your B2B Marketing with AI Intelligence
-                   </Heading>
+                                                     <Heading
+                  size="xl"
+                  fontWeight="bold"
+                  lineHeight="1.2"
+                  color="#FFC300"
+                >
+                  Transform Your B2B Marketing with AI Intelligence
+                </Heading>
                 
                                  <HStack spacing={4}>
                    <Button
