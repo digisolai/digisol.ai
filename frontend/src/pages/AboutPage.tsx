@@ -103,24 +103,9 @@ const capabilities: Capability[] = [
 
 const teamMembers: TeamMember[] = [
   {
-    name: "Sarah Johnson",
-    role: "CEO & Founder",
-    description: "Former VP of Marketing at Fortune 500 companies with 15+ years in digital marketing.",
-  },
-  {
-    name: "Michael Chen",
-    role: "CTO",
-    description: "AI/ML expert with experience building scalable platforms for enterprise clients.",
-  },
-  {
-    name: "Emily Rodriguez",
-    role: "Head of Product",
-    description: "Product leader focused on creating intuitive user experiences and innovative features.",
-  },
-  {
-    name: "David Kim",
-    role: "Head of Customer Success",
-    description: "Dedicated to ensuring customer success and building long-term partnerships.",
+    name: "Cameron Brown",
+    role: "CEO",
+    description: "Full Stack Developer and Digital Marketing and Social Media Expert with extensive experience in AI-powered marketing solutions.",
   },
 ];
 
@@ -250,7 +235,7 @@ export default function AboutPage() {
           {/* Team Section */}
           <Box>
             <Heading size="xl" color="#1F4287" textAlign="center" mb={8}>
-              Leadership Team
+              Founder & CEO
             </Heading>
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
               {teamMembers.map((member, index) => (
