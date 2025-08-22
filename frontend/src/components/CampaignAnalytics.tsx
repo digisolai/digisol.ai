@@ -277,10 +277,10 @@ export default function CampaignAnalytics({ campaignId, dateRange = 30 }: Campai
                 <Text fontWeight="medium">Click-Through Rate (CTR)</Text>
               </HStack>
               <Text fontSize="2xl" fontWeight="bold" color="brand.primary">
-                {analyticsData.metrics.ctr.toFixed(2)}%
+                {(analyticsData.metrics.ctr || 0).toFixed(2)}%
               </Text>
               <Progress
-                value={analyticsData.metrics.ctr}
+                value={analyticsData.metrics.ctr || 0}
                 colorScheme="brand"
                 size="sm"
                 w="full"
@@ -300,10 +300,10 @@ export default function CampaignAnalytics({ campaignId, dateRange = 30 }: Campai
                 <Text fontWeight="medium">Conversion Rate</Text>
               </HStack>
               <Text fontSize="2xl" fontWeight="bold" color="brand.primary">
-                {analyticsData.metrics.conversion_rate.toFixed(2)}%
+                {(analyticsData.metrics.conversion_rate || 0).toFixed(2)}%
               </Text>
               <Progress
-                value={analyticsData.metrics.conversion_rate}
+                value={analyticsData.metrics.conversion_rate || 0}
                 colorScheme="green"
                 size="sm"
                 w="full"
@@ -323,11 +323,11 @@ export default function CampaignAnalytics({ campaignId, dateRange = 30 }: Campai
                 <Text fontWeight="medium">Return on Investment (ROI)</Text>
               </HStack>
               <Text fontSize="2xl" fontWeight="bold" color="brand.primary">
-                {analyticsData.metrics.roi.toFixed(1)}%
+                {(analyticsData.metrics.roi || 0).toFixed(1)}%
               </Text>
               <Progress
-                value={Math.min(analyticsData.metrics.roi, 100)}
-                colorScheme={analyticsData.metrics.roi >= 0 ? 'green' : 'red'}
+                value={Math.min(analyticsData.metrics.roi || 0, 100)}
+                colorScheme={(analyticsData.metrics.roi || 0) >= 0 ? 'green' : 'red'}
                 size="sm"
                 w="full"
               />

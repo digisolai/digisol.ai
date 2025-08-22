@@ -507,16 +507,16 @@ export default function CampaignsPage() {
             <HStack justify="space-between" fontSize="sm">
               <Text color="gray.500">Budget:</Text>
               <Text fontWeight="medium">
-                ${campaign.spent_budget.toFixed(2)}
-                {campaign.budget && ` / $${campaign.budget.toFixed(2)}`}
+                ${(campaign.spent_budget || 0).toFixed(2)}
+                {campaign.budget && ` / $${(campaign.budget || 0).toFixed(2)}`}
               </Text>
             </HStack>
             
             {campaign.budget && (
               <Progress
-                value={(campaign.spent_budget / campaign.budget) * 100}
+                value={((campaign.spent_budget || 0) / (campaign.budget || 1)) * 100}
                 size="sm"
-                colorScheme={campaign.spent_budget > campaign.budget * 0.9 ? 'red' : 'brand.primary'}
+                colorScheme={(campaign.spent_budget || 0) > (campaign.budget || 0) * 0.9 ? 'red' : 'brand.primary'}
               />
             )}
             
@@ -578,28 +578,28 @@ export default function CampaignsPage() {
           <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4}>
             <StatsCard
               label="Total Campaigns"
-              value={stats.total_campaigns}
+              value={stats.total_campaigns || 0}
               icon={FiBarChart}
               color="brand.primary"
             />
             <StatsCard
               label="Active Campaigns"
-              value={stats.active_campaigns}
+              value={stats.active_campaigns || 0}
               icon={FiPlay}
               color="brand.primary"
             />
             <StatsCard
               label="Total Budget"
-              value={`$${stats.total_budget.toFixed(2)}`}
+              value={`$${(stats.total_budget || 0).toFixed(2)}`}
               icon={FiDollarSign}
               color="brand.accent"
             />
             <StatsCard
               label="Average ROI"
-              value={`${stats.average_roi.toFixed(1)}%`}
+              value={`${(stats.average_roi || 0).toFixed(1)}%`}
               icon={FiTrendingUp}
               color="brand.accent"
-              helpText={stats.average_roi > 0 ? "Positive return" : "Negative return"}
+              helpText={(stats.average_roi || 0) > 0 ? "Positive return" : "Negative return"}
             />
           </SimpleGrid>
         </SectionCard>
@@ -1209,23 +1209,23 @@ function ViewCampaignModal({ isOpen, onClose, campaign }: {
                 <VStack spacing={4} align="stretch">
                   <HStack justify="space-between">
                     <Text fontWeight="medium">Budget Spent:</Text>
-                    <Text>${campaign.spent_budget.toFixed(2)}</Text>
+                    <Text>${(campaign.spent_budget || 0).toFixed(2)}</Text>
                   </HStack>
                   
                   {campaign.budget && (
                     <>
                       <HStack justify="space-between">
                         <Text fontWeight="medium">Total Budget:</Text>
-                        <Text>${campaign.budget.toFixed(2)}</Text>
+                        <Text>${(campaign.budget || 0).toFixed(2)}</Text>
                       </HStack>
                       <Box>
                         <HStack justify="space-between" mb={2}>
                           <Text fontSize="sm">Budget Utilization</Text>
-                          <Text fontSize="sm">{((campaign.spent_budget / campaign.budget) * 100).toFixed(1)}%</Text>
+                          <Text fontSize="sm">{(((campaign.spent_budget || 0) / (campaign.budget || 1)) * 100).toFixed(1)}%</Text>
                         </HStack>
                         <Progress
-                          value={(campaign.spent_budget / campaign.budget) * 100}
-                          colorScheme={campaign.spent_budget > campaign.budget * 0.9 ? 'red' : 'brand.primary'}
+                          value={((campaign.spent_budget || 0) / (campaign.budget || 1)) * 100}
+                          colorScheme={(campaign.spent_budget || 0) > (campaign.budget || 0) * 0.9 ? 'red' : 'brand.primary'}
                         />
                       </Box>
                     </>
