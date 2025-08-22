@@ -182,6 +182,8 @@ const components = {
         _hover: {
           bg: "brand.accent",
           opacity: 0.9,
+          transform: "translateY(-1px)",
+          boxShadow: "lg",
         },
       },
       brandOutline: {
@@ -193,6 +195,7 @@ const components = {
         _hover: {
           bg: "brand.accent",
           color: "brand.primary",
+          transform: "translateY(-1px)",
         },
       },
       brandGhost: {
@@ -210,6 +213,8 @@ const components = {
         fontWeight: "bold",
         _hover: {
           bg: "brand.600",
+          transform: "translateY(-1px)",
+          boxShadow: "lg",
         },
       },
     },
@@ -221,10 +226,30 @@ const components = {
     defaultProps: {
       colorScheme: "brand",
     },
+    variants: {
+      solid: {
+        bg: "brand.primary",
+        color: "white",
+        fontWeight: "bold",
+      },
+      outline: {
+        borderColor: "brand.primary",
+        color: "brand.primary",
+        fontWeight: "bold",
+      },
+    },
   },
   Progress: {
     defaultProps: {
       colorScheme: "brand",
+    },
+    baseStyle: {
+      track: {
+        bg: "brand.neutral.200",
+      },
+      filledTrack: {
+        bg: "brand.primary",
+      },
     },
   },
   Select: {
@@ -234,6 +259,63 @@ const components = {
     baseStyle: {
       field: {
         zIndex: 1,
+        borderColor: "brand.200",
+        _focus: {
+          borderColor: "brand.accent",
+          boxShadow: "0 0 0 1px var(--chakra-colors-brand-accent)",
+        },
+        _hover: {
+          borderColor: "brand.300",
+        },
+      },
+    },
+  },
+  Input: {
+    defaultProps: {
+      colorScheme: "brand",
+    },
+    baseStyle: {
+      field: {
+        borderColor: "brand.200",
+        _focus: {
+          borderColor: "brand.accent",
+          boxShadow: "0 0 0 1px var(--chakra-colors-brand-accent)",
+        },
+        _hover: {
+          borderColor: "brand.300",
+        },
+      },
+    },
+  },
+  Card: {
+    baseStyle: {
+      container: {
+        borderColor: "brand.100",
+        _hover: {
+          borderColor: "brand.accent",
+        },
+      },
+    },
+  },
+  Tabs: {
+    defaultProps: {
+      colorScheme: "brand",
+    },
+    baseStyle: {
+      tab: {
+        color: "brand.primary",
+        fontWeight: "bold",
+        _selected: {
+          bg: "brand.accent",
+          color: "brand.primary",
+          borderColor: "brand.accent",
+        },
+        _hover: {
+          bg: "brand.50",
+        },
+      },
+      tablist: {
+        borderColor: "brand.200",
       },
     },
   },
@@ -241,6 +323,29 @@ const components = {
     baseStyle: {
       list: {
         zIndex: 9999,
+        borderColor: "brand.200",
+        boxShadow: "lg",
+      },
+      item: {
+        _hover: {
+          bg: "brand.50",
+        },
+      },
+    },
+  },
+  Stat: {
+    baseStyle: {
+      label: {
+        color: "brand.primary",
+        fontWeight: "bold",
+      },
+      number: {
+        color: "brand.primary",
+        fontWeight: "bold",
+      },
+      helpText: {
+        color: "brand.accent",
+        fontWeight: "medium",
       },
     },
   },
@@ -266,6 +371,25 @@ const theme = extendTheme({
       },
       ".chakra-modal__content": {
         zIndex: "9999 !important",
+      },
+      // Enhanced brand color consistency
+      ".chakra-heading": {
+        color: "brand.primary",
+      },
+      ".chakra-text": {
+        color: "brand.neutral.600",
+      },
+      ".chakra-icon": {
+        color: "brand.primary",
+      },
+      // Hover effects for interactive elements
+      ".chakra-button:hover": {
+        transform: "translateY(-1px)",
+        transition: "all 0.2s ease-in-out",
+      },
+      ".chakra-card:hover": {
+        borderColor: "brand.accent",
+        transition: "all 0.2s ease-in-out",
       },
     },
   },

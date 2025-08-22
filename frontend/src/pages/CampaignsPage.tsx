@@ -419,21 +419,28 @@ export default function CampaignsPage() {
     const TypeIcon = typeInfo.icon;
 
     return (
-      <Card boxShadow="md" _hover={{ boxShadow: "lg" }} transition="all 0.2s ease-in-out">
-        <CardHeader pb={2}>
+      <Card 
+        boxShadow="md" 
+        _hover={{ boxShadow: "lg", borderColor: "brand.accent" }} 
+        transition="all 0.2s ease-in-out"
+        border="2px solid"
+        borderColor="transparent"
+        bg="white"
+      >
+        <CardHeader pb={2} bg="brand.50" borderBottom="1px solid" borderColor="brand.100">
           <Flex justify="space-between" align="start">
             <VStack align="start" spacing={1}>
               <HStack>
-                <Icon as={TypeIcon} color={`${typeInfo.color}.500`} />
-                <Badge colorScheme={typeInfo.color} variant="subtle">
+                <Icon as={TypeIcon} color="brand.primary" size="20px" />
+                <Badge colorScheme="brand" variant="solid" bg="brand.accent" color="brand.primary" fontWeight="bold">
                   {typeInfo.label}
                 </Badge>
               </HStack>
-              <Heading size="md" noOfLines={1}>
+              <Heading size="md" noOfLines={1} color="brand.primary">
                 {campaign.name}
               </Heading>
               {campaign.description && (
-                <Text fontSize="sm" color="gray.500" noOfLines={2}>
+                <Text fontSize="sm" color="brand.neutral.400" noOfLines={2}>
                   {campaign.description}
                 </Text>
               )}
@@ -482,22 +489,30 @@ export default function CampaignsPage() {
             </Menu>
           </Flex>
         </CardHeader>
-        <CardBody pt={0}>
-          <VStack spacing={3} align="stretch">
+        <CardBody pt={4} bg="brand.neutral.50">
+          <VStack spacing={4} align="stretch">
             <HStack justify="space-between">
-              <Badge colorScheme={STATUS_COLORS[campaign.status]} variant="solid">
+              <Badge 
+                colorScheme="brand" 
+                variant="solid" 
+                bg={STATUS_COLORS[campaign.status] === 'brand.primary' ? 'brand.primary' : 
+                    STATUS_COLORS[campaign.status] === 'brand.accent' ? 'brand.accent' : 'brand.neutral.300'}
+                color={STATUS_COLORS[campaign.status] === 'brand.accent' ? 'brand.primary' : 'white'}
+                fontWeight="bold"
+              >
                 {campaign.status}
               </Badge>
               {campaign.optimizer_health_score && (
                 <HStack>
-                  <Text fontSize="sm" color="gray.500">Health:</Text>
+                  <Text fontSize="sm" color="brand.primary" fontWeight="medium">Health:</Text>
                   <Progress
                     value={campaign.optimizer_health_score}
                     size="sm"
                     width="60px"
-                    colorScheme={campaign.optimizer_health_score > 70 ? 'brand.primary' : campaign.optimizer_health_score > 40 ? 'brand.accent' : 'red'}
+                    bg="brand.neutral.200"
+                    colorScheme={campaign.optimizer_health_score > 70 ? 'brand' : campaign.optimizer_health_score > 40 ? 'yellow' : 'red'}
                   />
-                  <Text fontSize="sm" fontWeight="medium">
+                  <Text fontSize="sm" fontWeight="bold" color="brand.primary">
                     {campaign.optimizer_health_score}%
                   </Text>
                 </HStack>
@@ -505,8 +520,8 @@ export default function CampaignsPage() {
             </HStack>
             
             <HStack justify="space-between" fontSize="sm">
-              <Text color="gray.500">Budget:</Text>
-              <Text fontWeight="medium">
+              <Text color="brand.primary" fontWeight="medium">Budget:</Text>
+              <Text fontWeight="bold" color="brand.primary">
                 ${(campaign.spent_budget || 0).toFixed(2)}
                 {campaign.budget && ` / $${(campaign.budget || 0).toFixed(2)}`}
               </Text>
@@ -516,19 +531,20 @@ export default function CampaignsPage() {
               <Progress
                 value={((campaign.spent_budget || 0) / (campaign.budget || 1)) * 100}
                 size="sm"
-                colorScheme={(campaign.spent_budget || 0) > (campaign.budget || 0) * 0.9 ? 'red' : 'brand.primary'}
+                bg="brand.neutral.200"
+                colorScheme={(campaign.spent_budget || 0) > (campaign.budget || 0) * 0.9 ? 'red' : 'brand'}
               />
             )}
             
             <HStack justify="space-between" fontSize="sm">
-              <Text color="gray.500">Created:</Text>
-              <Text>{new Date(campaign.created_at).toLocaleDateString()}</Text>
+              <Text color="brand.primary" fontWeight="medium">Created:</Text>
+              <Text color="brand.neutral.600" fontWeight="medium">{new Date(campaign.created_at).toLocaleDateString()}</Text>
             </HStack>
             
             {campaign.steps && campaign.steps.length > 0 && (
               <HStack justify="space-between" fontSize="sm">
-                <Text color="gray.500">Steps:</Text>
-                <Text fontWeight="medium">{campaign.steps.length}</Text>
+                <Text color="brand.primary" fontWeight="medium">Steps:</Text>
+                <Text fontWeight="bold" color="brand.accent">{campaign.steps.length}</Text>
               </HStack>
             )}
           </VStack>
@@ -545,15 +561,22 @@ export default function CampaignsPage() {
     color: string;
     helpText?: string;
   }) => (
-    <Card boxShadow="md">
+    <Card 
+      boxShadow="lg" 
+      border="2px solid" 
+      borderColor="brand.100"
+      bg="white"
+      _hover={{ borderColor: "brand.accent", transform: "translateY(-2px)" }}
+      transition="all 0.2s ease-in-out"
+    >
       <CardBody>
         <Stat>
           <HStack>
-            <Icon color={`${color}.500`} />
-            <StatLabel>{label}</StatLabel>
+            <Icon color="brand.primary" size="24px" />
+            <StatLabel color="brand.primary" fontWeight="bold">{label}</StatLabel>
           </HStack>
-          <StatNumber fontSize="2xl">{value}</StatNumber>
-          {helpText && <StatHelpText>{helpText}</StatHelpText>}
+          <StatNumber fontSize="3xl" color="brand.primary" fontWeight="bold">{value}</StatNumber>
+          {helpText && <StatHelpText color="brand.accent" fontWeight="medium">{helpText}</StatHelpText>}
         </Stat>
       </CardBody>
     </Card>
@@ -611,12 +634,15 @@ export default function CampaignsPage() {
           <HStack w="full" spacing={4}>
             <InputGroup>
               <InputLeftElement>
-                <Icon as={FiSearch} color="gray.400" />
+                <Icon as={FiSearch} color="brand.primary" />
               </InputLeftElement>
               <Input
                 placeholder="Search campaigns..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                borderColor="brand.200"
+                _focus={{ borderColor: "brand.accent", boxShadow: "0 0 0 1px var(--chakra-colors-brand-accent)" }}
+                _hover={{ borderColor: "brand.300" }}
               />
             </InputGroup>
             <Select
@@ -625,6 +651,9 @@ export default function CampaignsPage() {
               onChange={(e) => setFilters(prev => ({ ...prev, campaign_type: e.target.value as any }))}
               maxW="200px"
               zIndex={9999}
+              borderColor="brand.200"
+              _focus={{ borderColor: "brand.accent", boxShadow: "0 0 0 1px var(--chakra-colors-brand-accent)" }}
+              _hover={{ borderColor: "brand.300" }}
             >
               {Object.entries(CAMPAIGN_TYPES).map(([value, info]) => (
                 <option key={value} value={value}>
@@ -638,6 +667,9 @@ export default function CampaignsPage() {
               onChange={(e) => setFilters(prev => ({ ...prev, objective: e.target.value as any }))}
               maxW="200px"
               zIndex={9999}
+              borderColor="brand.200"
+              _focus={{ borderColor: "brand.accent", boxShadow: "0 0 0 1px var(--chakra-colors-brand-accent)" }}
+              _hover={{ borderColor: "brand.300" }}
             >
               <option value="awareness">Brand Awareness</option>
               <option value="traffic">Drive Traffic</option>
@@ -656,6 +688,9 @@ export default function CampaignsPage() {
                 setActiveTab('all');
               }}
               aria-label="Clear filters"
+              colorScheme="brand"
+              variant="outline"
+              _hover={{ bg: "brand.accent", color: "brand.primary" }}
             />
           </HStack>
         </VStack>
@@ -663,40 +698,92 @@ export default function CampaignsPage() {
 
       {/* Campaigns Tabs */}
       <SectionCard title="Campaigns">
-        <Tabs index={activeTab === 'all' ? 0 : ['Draft', 'Active', 'Paused', 'Completed', 'Archived'].indexOf(activeTab) + 1} onChange={(index) => {
-          const tabs = ['all', 'Draft', 'Active', 'Paused', 'Completed', 'Archived'];
-          setActiveTab(tabs[index]);
-        }}>
-          <TabList>
-                          <Tab value="all">All ({Array.isArray(campaigns) ? campaigns.length : 0})</Tab>
-            <Tab value="Draft">Draft ({safeFilterCampaigns(c => c.status === 'Draft').length})</Tab>
-            <Tab value="Active">Active ({safeFilterCampaigns(c => c.status === 'Active').length})</Tab>
-            <Tab value="Paused">Paused ({safeFilterCampaigns(c => c.status === 'Paused').length})</Tab>
-            <Tab value="Completed">Completed ({safeFilterCampaigns(c => c.status === 'Completed').length})</Tab>
-            <Tab value="Archived">Archived ({safeFilterCampaigns(c => c.status === 'Archived').length})</Tab>
+        <Tabs 
+          index={activeTab === 'all' ? 0 : ['Draft', 'Active', 'Paused', 'Completed', 'Archived'].indexOf(activeTab) + 1} 
+          onChange={(index) => {
+            const tabs = ['all', 'Draft', 'Active', 'Paused', 'Completed', 'Archived'];
+            setActiveTab(tabs[index]);
+          }}
+          colorScheme="brand"
+          variant="enclosed"
+        >
+          <TabList bg="brand.50" borderBottom="2px solid" borderColor="brand.200">
+            <Tab 
+              value="all" 
+              color="brand.primary" 
+              fontWeight="bold"
+              _selected={{ bg: "brand.accent", color: "brand.primary", borderColor: "brand.accent" }}
+            >
+              All ({Array.isArray(campaigns) ? campaigns.length : 0})
+            </Tab>
+            <Tab 
+              value="Draft" 
+              color="brand.primary" 
+              fontWeight="bold"
+              _selected={{ bg: "brand.accent", color: "brand.primary", borderColor: "brand.accent" }}
+            >
+              Draft ({safeFilterCampaigns(c => c.status === 'Draft').length})
+            </Tab>
+            <Tab 
+              value="Active" 
+              color="brand.primary" 
+              fontWeight="bold"
+              _selected={{ bg: "brand.accent", color: "brand.primary", borderColor: "brand.accent" }}
+            >
+              Active ({safeFilterCampaigns(c => c.status === 'Active').length})
+            </Tab>
+            <Tab 
+              value="Paused" 
+              color="brand.primary" 
+              fontWeight="bold"
+              _selected={{ bg: "brand.accent", color: "brand.primary", borderColor: "brand.accent" }}
+            >
+              Paused ({safeFilterCampaigns(c => c.status === 'Paused').length})
+            </Tab>
+            <Tab 
+              value="Completed" 
+              color="brand.primary" 
+              fontWeight="bold"
+              _selected={{ bg: "brand.accent", color: "brand.primary", borderColor: "brand.accent" }}
+            >
+              Completed ({safeFilterCampaigns(c => c.status === 'Completed').length})
+            </Tab>
+            <Tab 
+              value="Archived" 
+              color="brand.primary" 
+              fontWeight="bold"
+              _selected={{ bg: "brand.accent", color: "brand.primary", borderColor: "brand.accent" }}
+            >
+              Archived ({safeFilterCampaigns(c => c.status === 'Archived').length})
+            </Tab>
           </TabList>
           
           <TabPanels>
             <TabPanel px={0}>
-              {loading ? (
-                <VStack spacing={4} py={8}>
-                  <Spinner size="lg" color="brand.primary" />
-                  <Text>Loading campaigns...</Text>
-                </VStack>
-              ) : filteredCampaigns.length === 0 ? (
-                <VStack spacing={4} py={8}>
-                  <Text color="gray.500">No campaigns found</Text>
-                  <Button 
-                    bg="brand.primary" 
-                    color="brand.accent" 
-                    fontWeight="bold" 
-                    _hover={{ bg: "brand.600" }}
-                    onClick={onCreateOpen}
-                  >
-                    Create Your First Campaign
-                  </Button>
-                </VStack>
-              ) : (
+                             {loading ? (
+                 <VStack spacing={4} py={8}>
+                   <Spinner size="lg" color="brand.primary" thickness="4px" />
+                   <Text color="brand.primary" fontWeight="bold" fontSize="lg">Loading campaigns...</Text>
+                 </VStack>
+               ) : filteredCampaigns.length === 0 ? (
+                 <VStack spacing={6} py={12}>
+                   <Text color="brand.neutral.500" fontSize="lg" fontWeight="medium">No campaigns found</Text>
+                   <Button 
+                     bg="brand.accent" 
+                     color="brand.primary" 
+                     fontWeight="bold" 
+                     size="lg"
+                     px={8}
+                     py={4}
+                     _hover={{ bg: "brand.accent", transform: "translateY(-2px)", boxShadow: "lg" }}
+                     _active={{ bg: "brand.accent" }}
+                     onClick={onCreateOpen}
+                     leftIcon={<FiPlus />}
+                   >
+                     Create Your First Campaign
+                   </Button>
+                 </VStack>
+               ) : (
                 <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={6}>
                   {filteredCampaigns.map(campaign => (
                     <CampaignCard key={campaign.id} campaign={campaign} />
@@ -719,70 +806,32 @@ export default function CampaignsPage() {
     </VStack>
   );
 
-  // Right Column - Quick Actions & Stats
+  // Right Column - Campaign Status Only
   const rightColumn = (
-    <>
-      <SideCard title="Quick Actions">
-        <VStack spacing={3} align="stretch">
-          <Button
-            leftIcon={<FiPlus />}
-            bg="brand.primary"
-            color="brand.accent"
-            fontWeight="bold"
-            _hover={{ bg: "brand.600" }}
-            _active={{ bg: "brand.700" }}
-            onClick={onCreateOpen}
-            isDisabled={!hasFeatureAccess('campaign_management')}
-            size="lg"
-          >
-            Create Campaign
-          </Button>
-          <Button
-            leftIcon={<FiBarChart />}
-            variant="outline"
-            colorScheme="brand"
-            onClick={() => window.location.href = '/analytics'}
-            size="lg"
-          >
-            View Analytics
-          </Button>
-          <Button
-            leftIcon={<FiUsers />}
-            variant="outline"
-            colorScheme="brand"
-            onClick={() => window.location.href = '/contacts'}
-            size="lg"
-          >
-            Manage Contacts
-          </Button>
-        </VStack>
-      </SideCard>
-
-      <SideCard title="Campaign Status">
-        <VStack spacing={3} align="stretch">
-          <HStack justify="space-between">
-            <Text>Draft</Text>
-            <Badge colorScheme="gray">{safeFilterCampaigns(c => c.status === 'Draft').length}</Badge>
-          </HStack>
-          <HStack justify="space-between">
-            <Text>Active</Text>
-            <Badge colorScheme="brand.primary">{safeFilterCampaigns(c => c.status === 'Active').length}</Badge>
-          </HStack>
-          <HStack justify="space-between">
-            <Text>Paused</Text>
-            <Badge colorScheme="brand.accent">{safeFilterCampaigns(c => c.status === 'Paused').length}</Badge>
-          </HStack>
-          <HStack justify="space-between">
-            <Text>Completed</Text>
-            <Badge colorScheme="brand.primary">{safeFilterCampaigns(c => c.status === 'Completed').length}</Badge>
-          </HStack>
-          <HStack justify="space-between">
-            <Text>Archived</Text>
-            <Badge colorScheme="gray">{safeFilterCampaigns(c => c.status === 'Archived').length}</Badge>
-          </HStack>
-        </VStack>
-      </SideCard>
-    </>
+    <SideCard title="Campaign Status">
+      <VStack spacing={3} align="stretch">
+        <HStack justify="space-between">
+          <Text color="brand.primary" fontWeight="medium">Draft</Text>
+          <Badge colorScheme="brand.primary" variant="solid">{safeFilterCampaigns(c => c.status === 'Draft').length}</Badge>
+        </HStack>
+        <HStack justify="space-between">
+          <Text color="brand.primary" fontWeight="medium">Active</Text>
+          <Badge colorScheme="brand.accent" variant="solid">{safeFilterCampaigns(c => c.status === 'Active').length}</Badge>
+        </HStack>
+        <HStack justify="space-between">
+          <Text color="brand.primary" fontWeight="medium">Paused</Text>
+          <Badge colorScheme="brand.primary" variant="outline">{safeFilterCampaigns(c => c.status === 'Paused').length}</Badge>
+        </HStack>
+        <HStack justify="space-between">
+          <Text color="brand.primary" fontWeight="medium">Completed</Text>
+          <Badge colorScheme="brand.accent" variant="solid">{safeFilterCampaigns(c => c.status === 'Completed').length}</Badge>
+        </HStack>
+        <HStack justify="space-between">
+          <Text color="brand.primary" fontWeight="medium">Archived</Text>
+          <Badge colorScheme="gray" variant="solid">{safeFilterCampaigns(c => c.status === 'Archived').length}</Badge>
+        </HStack>
+      </VStack>
+    </SideCard>
   );
 
   return (
@@ -793,7 +842,7 @@ export default function CampaignsPage() {
         centerColumn={centerColumn}
         rightColumn={rightColumn}
         showLeftColumn={true}
-        showRightColumn={true}
+        showRightColumn={false}
       />
 
       {/* Create Campaign Modal */}
