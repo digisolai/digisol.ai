@@ -37,6 +37,7 @@ import {
   ListItem,
   ListIcon,
   Grid,
+  GridItem,
   Icon,
 } from "@chakra-ui/react";
 import {
@@ -657,32 +658,57 @@ function AnalyticsPage() {
         title="Advanced Analytics"
         breadcrumbItems={[{ label: "Analytics" }]}
       >
-        <StandardPageHeader
-          actionButton={
-            <Button
-              leftIcon={<FiPlus />}
-              bg="brand.primary"
-              color="brand.accent"
-              fontWeight="bold"
-              _hover={{ bg: "brand.600" }}
-              _active={{ bg: "brand.700" }}
-              onClick={onAnalysisOpen}
-              size="lg"
-            >
-              Start New Analysis
-            </Button>
-          }
-        />
+        <StandardPageHeader title="Advanced Analytics" />
         
-        {/* Metrika AI Agent Section */}
-        <StandardAIAgent
-          agent={metrikaAgent} 
-          loading={loadingAgent}
-          error={agentError}
-          onAskQuestion={handleAskMetrika}
-          title="Metrika"
-          description="Your intelligent analytics assistant. Metrika analyzes complex data patterns, generates predictive insights, and provides strategic recommendations to optimize your business performance. Ask me anything about your analytics, trends, or data-driven decisions."
-        />
+        {/* Main Content with Grid Layout */}
+        <Grid templateColumns={{ base: '1fr', lg: '2fr 1fr' }} gap={6}>
+          {/* Left Column - Main Content */}
+          <GridItem>
+            {/* Metrika AI Agent Section */}
+            <StandardAIAgent
+              agent={metrikaAgent} 
+              loading={loadingAgent}
+              error={agentError}
+              onAskQuestion={handleAskMetrika}
+              title="Metrika"
+              description="Your intelligent analytics assistant. Metrika analyzes complex data patterns, generates predictive insights, and provides strategic recommendations to optimize your business performance. Ask me anything about your analytics, trends, or data-driven decisions."
+            />
+          </GridItem>
+
+          {/* Right Column - Action Button */}
+          <GridItem>
+            <Box
+              bg="white"
+              border="1px solid"
+              borderColor="gray.200"
+              borderRadius="lg"
+              p={6}
+              shadow="sm"
+              _hover={{ shadow: 'md' }}
+              transition="all 0.2s"
+              h="fit-content"
+            >
+              <VStack spacing={4} align="center" textAlign="center">
+                <Text fontWeight="bold" fontSize="lg" color="brand.primary">
+                  Quick Actions
+                </Text>
+                <Button
+                  leftIcon={<FiPlus />}
+                  bg="brand.primary"
+                  color="brand.accent"
+                  fontWeight="bold"
+                  _hover={{ bg: "brand.600" }}
+                  _active={{ bg: "brand.700" }}
+                  onClick={onAnalysisOpen}
+                  size="lg"
+                  w="full"
+                >
+                  Start New Analysis
+                </Button>
+              </VStack>
+            </Box>
+          </GridItem>
+        </Grid>
         
         <Tabs index={parseInt(activeTab)} onChange={(index) => setActiveTab(index.toString())}>
             <TabList mb={6}>

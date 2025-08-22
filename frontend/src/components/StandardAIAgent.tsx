@@ -124,15 +124,15 @@ export const StandardAIAgent: React.FC<StandardAIAgentProps> = ({
       >
         <VStack align="center" spacing={4} textAlign="center">
           {/* Header */}
-          <VStack spacing={3}>
+          <HStack spacing={3} align="center">
             <Box
               p={3}
-              bg="brand.accent"
+              bg="brand.primary"
               borderRadius="full"
             >
-              <Icon as={FiCpu} boxSize={5} color="brand.primary" />
+              <Icon as={FiCpu} boxSize={5} color="brand.accent" />
             </Box>
-            <VStack spacing={1}>
+            <VStack spacing={1} align="start">
               <Text fontWeight="bold" fontSize="lg" color="brand.primary">
                 {title || agent.name}
               </Text>
@@ -140,7 +140,7 @@ export const StandardAIAgent: React.FC<StandardAIAgentProps> = ({
                 {agent.specialization.replace('_', ' ')}
               </Badge>
             </VStack>
-          </VStack>
+          </HStack>
 
           {/* Description */}
           {(description || agent.personality_description) && (
